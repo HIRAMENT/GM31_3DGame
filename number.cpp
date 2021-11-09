@@ -14,24 +14,18 @@ Number::Number(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int number, int
 	m_NumberUI->SetPartition(number);
 }
 
-void Number::Init()
-{
-}
-
 void Number::Uninit()
 {
 	m_NumberUI->SetDestroy();
 }
 
-void Number::Update()
-{
-}
-
-void Number::Draw()
-{
-}
 
 void Number::ChangeNumber(int num)
 {
 	m_NumberUI->SetPartition(num);
+}
+
+void Number::SetDisplay(bool dis)
+{
+	m_NumberUI->SetDisplay(dis);
 }

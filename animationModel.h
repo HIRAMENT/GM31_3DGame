@@ -41,6 +41,8 @@ private:
 	std::vector<DEFORM_VERTEX>* m_DeformVertex;
 	std::unordered_map<std::string, BONE> m_Bone;
 
+	D3DXVECTOR3 m_Size;
+
 	void CreateBone(aiNode* node);
 	void UpdateBoneMatrix(aiNode* node, aiMatrix4x4 matrix);
 
@@ -53,6 +55,8 @@ public:
 	//void Update(const char *AnimationName1, const char *AnimationName2, int frame, float BlendRate);
 	void Update(AnimationTag animationTag1, AnimationTag animationTag2, int frame, float BlendRate);
 	void Draw();
+
+	D3DXVECTOR3 GetSize() const { return m_Size; }
 	
 };
 

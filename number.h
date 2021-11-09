@@ -9,10 +9,11 @@ private:
 public:
 	Number(class Scene* scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int number, int drawPriority);
 
-	void Init() override;
+	void Init() override {}
 	void Uninit() override;
-	void Update() override;
-	void Draw() override;
+	void Update() override {}
+	void Draw() override {}
 
 	void ChangeNumber(int num);
+	void SetDisplay(bool dis);
 };

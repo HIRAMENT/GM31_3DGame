@@ -23,6 +23,8 @@
 #include "sensor.h"
 #include "gameScene.h"
 #include "resultScene.h"
+#include "status.h"
+#include "hitPoint.h"
 
 
 void GameScene::Init()
@@ -77,11 +79,16 @@ void GameScene::Update()
 {
 	Scene::Update();
 
-	POINT ScreenPoint;
-	GetCursorPos(&ScreenPoint);
-	ScreenPoint = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
-	SetCursorPos(ScreenPoint.x, ScreenPoint.y);
-	ShowCursor(false);
+
+	if (!Keyboard_IsPress(DIK_LMENU))
+	{
+		POINT ScreenPoint;
+		GetCursorPos(&ScreenPoint);
+		ScreenPoint = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+		SetCursorPos(ScreenPoint.x, ScreenPoint.y);
+		ShowCursor(false);
+	}
+
 
 
 	if (Keyboard_IsTrigger(DIK_SPACE))
@@ -94,7 +101,7 @@ void GameScene::Update()
 		Fade::GetInstance()->FadeIn(SceneTag::eResult);
 		ResultScene::SetClear(true);
 	}
-	if (GetGameObject<Player>(ObjectType::eObPlayer)->GetHP() <= 0)
+	if (GetGameObject<Player>(ObjectType::eObPlayer)->GetStatus()->GetHitPoint()->GetHitPoint() <= 0)
 	{
 		Fade::GetInstance()->FadeIn(SceneTag::eResult);
 		Fade::GetInstance()->SetColor({ 1.0f,0.0f,0.0f });

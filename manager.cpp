@@ -9,6 +9,10 @@
 #include "gameScene.h"
 #include "resultScene.h"
 #include "resource.h"
+#include "myImGui.h"
+#include "ImGUI/imgui.h"
+#include "information.h"
+
 
 // ‰Šú‰»
 void Manager::Init()
@@ -16,6 +20,8 @@ void Manager::Init()
 	Renderer::GetInstance()->Init();		// ‚±‚±‚ÅDirectX‚Ì‰Šú‰»‚ð‚µ‚Ä‚¢‚é‚Ì‚Å‚±‚ÌŒã‚É‘‚©‚È‚¢‚Æ“®‚©‚È‚¢
 	Audio::InitMaster();
 	ResourceData::GetInstance()->Init();
+	MyImGui::GetInstance()->Init();
+
 	Fade::GetInstance();
 
 	SetScene(SceneTag::eTitle);
@@ -27,6 +33,7 @@ void Manager::Uninit()
 	m_Scene->Uninit();
 	delete m_Scene;
 
+	MyImGui::GetInstance()->Uninit();
 	Fade::GetInstance()->Uninit();
 	Audio::UninitMaster();
 	ResourceData::GetInstance()->Uninit();
@@ -36,12 +43,14 @@ void Manager::Uninit()
 // XVˆ—
 void Manager::Update()
 {
+	MyImGui::GetInstance()->UpdateStart();
+
 	m_Scene->Update();
-	//if (GetCursorPos(GetMousePos()) && ClientToScreen(GetWindow(), GetMousePos()))
-	//{
-	//	std::string pien = "pien";
-	//}
 	Fade::GetInstance()->Update();
+
+	Information::GetInstance()->Display();
+
+	MyImGui::GetInstance()->UpdateEnd();
 }
 
 // •`‰æˆ—
@@ -51,6 +60,7 @@ void Manager::Draw()
 
 	m_Scene->Draw();
 	Fade::GetInstance()->Draw();
+	MyImGui::GetInstance()->Draw();
 
 	Renderer::GetInstance()->End();
 }
@@ -83,3 +93,4 @@ void Manager::SetScene(SceneTag tag)
 
 	m_Scene->Init();
 }
+

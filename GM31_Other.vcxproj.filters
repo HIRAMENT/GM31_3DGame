@@ -43,6 +43,18 @@
     <Filter Include="ヘッダー ファイル\System\ADX2\ADX2">
       <UniqueIdentifier>{3d76b9ab-2fcc-4d35-9c95-6885522d9b67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\System\ImGUI">
+      <UniqueIdentifier>{6c233ae8-e3fa-492a-9314-629be697934e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\System\ImGUI\ImGUI">
+      <UniqueIdentifier>{d4fc61ac-3781-4790-b073-3ac239789a79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameObject\Status">
+      <UniqueIdentifier>{da365518-5fd0-4cd9-95c6-58342a87ae09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\Status">
+      <UniqueIdentifier>{42671218-5f46-4a5d-be27-3a9385ef753c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp">
@@ -176,6 +188,39 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui.cpp">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_demo.cpp">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_draw.cpp">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_impl_dx11.cpp">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_impl_win32.cpp">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_tables.cpp">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_widgets.cpp">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="myImGui.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="information.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="hitPoint.cpp">
+      <Filter>ソース ファイル\GameObject\Status</Filter>
+    </ClCompile>
+    <ClCompile Include="status.cpp">
+      <Filter>ソース ファイル\GameObject\Status</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -364,6 +409,48 @@
     </ClInclude>
     <ClInclude Include="fileManager.h">
       <Filter>ヘッダー ファイル\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imconfig.h">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui.h">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui_impl_dx11.h">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui_impl_win32.h">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui_internal.h">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imstb_rectpack.h">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imstb_textedit.h">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imstb_truetype.h">
+      <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="myImGui.h">
+      <Filter>ヘッダー ファイル\System\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="information.h">
+      <Filter>ヘッダー ファイル\System</Filter>
+    </ClInclude>
+    <ClInclude Include="experiencePoint.h">
+      <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="hitPoint.h">
+      <Filter>ヘッダー ファイル\GameObject\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="level.h">
+      <Filter>ヘッダー ファイル\GameObject\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="status.h">
+      <Filter>ヘッダー ファイル\GameObject\Status</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

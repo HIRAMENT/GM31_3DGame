@@ -33,4 +33,5 @@ public:
 	D3DXMATRIX GetViewMatrix() const { return m_ViewMatrix; }
 	D3DXVECTOR3 GetForwardVec() const;
 	D3DXVECTOR3 GetRightVec() const;
+	bool CheckView(D3DXVECTOR3 position, D3DXVECTOR3 size);
 };

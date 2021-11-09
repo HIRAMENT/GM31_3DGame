@@ -22,32 +22,31 @@
 #include "movement.h"
 #include "rock.h"
 #include "fileManager.h"
+#include "ImGUI/imgui.h"
+#include "experiencePoint.h" 
+#include "status.h"
+#include "hitPoint.h"
 
 Player::Player(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	:GameObject(scene,ObjectType::eObPlayer,drawPriority)
-	, m_Size({1.0f,1.0f,1.0f})
 {
 	SetPosition(pos);
 	m_Transform.SetPosition(pos);
 	SetRotation({ 0.0f, 0.0f, 0.0f });
 	SetScale({ 0.015f, 0.015f, 0.015f });
-	m_HP = 1234;
-	m_HPMax = 1234;
+
+	m_Model = ResourceData::GetInstance()->GetAnimationModel(ResourceTag::fPlayer);
+	m_Size = m_Model->GetSize() * m_Scale;
+
 	m_Shadow = new Shadow(scene, { pos.x, 0.f,pos.z }, {2.0f,2.0f}, 2);
 	m_Sword = new Sword(scene, { pos.x ,pos.y, pos.z }, 2);
 	m_Obb = new OBB(m_Position, m_Size, m_Rotation);
-	m_HPGauge = new Gauge(scene, { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 64 }, { 100.0f,100.0f}, m_HP, 100);
-	m_HPGauge->ChangeColor(0, 255, 0);
-	for (int i = 0; i < 4; i++)
-	{
-		m_HPNumber[i]    = new Number(scene, { (float)SCREEN_WIDTH / 2 - (16 * (i + 1)),            (float)SCREEN_HEIGHT - 64,0 }, { 24,24,0 }, Calculation::GetInstance()->ExtractDigit(m_HP, i + 1), 110);
-		m_HPMaxNumber[i] = new Number(scene, { (float)SCREEN_WIDTH / 2 + (16 * 5) - (16 * (i + 1)), (float)SCREEN_HEIGHT - 64,0 }, { 24,24,0 }, Calculation::GetInstance()->ExtractDigit(m_HP, i + 1), 110);
-	}
-	m_HPSlashNumber = new Number(scene, { (float)SCREEN_WIDTH / 2, (float)SCREEN_HEIGHT - 64 ,0 }, { 24, 24, 0 }, 12, 110);
-	m_HitCoolTime = 0;
+
 	m_Dash = false;
 
-	m_Model = ResourceData::GetInstance()->GetAnimationModel(ResourceTag::fPlayer);
+	m_Status = new Status(scene, { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 64, 0 }, {100,100,0}, 100, 0, 0, 0, 1234, 2);
+	m_Status->GetHitPoint()->GetGauge()->ChangeColor(0, 255, 0);
+	m_Status->GetHitPoint()->SetNumberDisplay(true);
 	
 	m_AnimeFrame = 0;
 	m_BlendRate = 0.0f;
@@ -63,15 +62,8 @@ void Player::Uninit()
 {
 	m_Shadow->SetDestroy();
 	m_Sword->SetDestroy();
-	m_HPGauge->SetDestroy();
-	for (int i = 0; i < 4; i++)
-	{
-		m_HPNumber[i]->SetDestroy();
-		m_HPMaxNumber[i]->SetDestroy();
-	}
-	m_HPSlashNumber->SetDestroy();
+	m_Status->SetDestroy();
 	delete m_Obb;
-
 	delete m_Model;
 }
 
@@ -140,7 +132,7 @@ void Player::Update()
 	m_Model->Update(AnimationTag::Idle, AnimationTag::Run, m_AnimeFrame, m_BlendRate);
 
 
-	if (!m_HitCoolTime)
+	if (m_Status->GetHitPoint()->CheckCollTime())
 	{
 		std::vector<Enemy*> enemyList = GetScene()->GetGameObjects<Enemy>(ObjectType::eObSmallEnemy);
 		Enemy* bossEnemy = GetScene()->GetGameObject<Enemy>(ObjectType::eObBossEnemy);
@@ -148,22 +140,15 @@ void Player::Update()
 		{
 			if (enemy && enemy->GetAttack() && Collision::GetInstance()->ObbToObb(enemy->GetObb(), m_Obb))
 			{
-				TakeDamage(enemy->GetDamageValue());
+				m_Status->GetHitPoint()->Damage(enemy->GetStatus()->GetAttack());
 				ADXSound::GetInstance()->Play(7);
-				m_HitCoolTime++;
 			}
 		}
 		if (bossEnemy && bossEnemy->GetAttack() && Collision::GetInstance()->ObbToObb(bossEnemy->GetObb(), m_Obb))
 		{
-			TakeDamage(bossEnemy->GetDamageValue());
+			m_Status->GetHitPoint()->Damage(bossEnemy->GetStatus()->GetAttack());
 			ADXSound::GetInstance()->Play(7);
-			m_HitCoolTime++;
 		}
-	}
-	else if (m_HitCoolTime)
-	{
-		m_HitCoolTime++;
-		if (m_HitCoolTime > HITCOOLTIME_MAX) m_HitCoolTime = 0;
 	}
 
 	SetPlayer();
@@ -178,10 +163,20 @@ void Player::Update()
 			SetPlayer();
 		}
 	}
+
+	ImGui();
 }
 
 void Player::Draw()
 {
+	Camera* camera = GetScene()->GetGameObject<Camera>(ObjectType::eObCamera);
+	if (camera->CheckView(m_Position, m_Size))
+	{
+		m_Position = m_Position;
+		return;
+	}
+
+
 	// 入力レイアウト設定 fvfs
 	Renderer::GetInstance()->GetDeviceContext()->IASetInputLayout(Shader::GetInstance()->GetVertexLayputLighting());
 
@@ -217,16 +212,10 @@ void Player::SetPlayerRotation(const Quaternion & qua)
 	m_Right = qua * Vec3::Right;
 }
 
-void Player::TakeDamage(int damage)
+void Player::ImGui()
 {
-	m_HP -= damage;
-	if (m_HP <= 0) 
-	{
-		m_HP = 0;
-	}
-	m_HPGauge->DegCapacity(damage);
-	for (int i = 0; i < 4; i++)
-	{
-		m_HPNumber[i]->ChangeNumber(Calculation::GetInstance()->ExtractDigit(m_HP, i + 1));
-	}
+	ImGui::Begin("Status");
+	ImGui::SliderInt("Attack",m_Status->, 0, 10);
+
+	ImGui::End();
 }

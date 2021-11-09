@@ -23,6 +23,9 @@ void AnimationModel::Load(const char * FileName)
 	// 再帰的にボーン作成
 	CreateBone(m_AiScene->mRootNode);
 
+	D3DXVECTOR3 sizeMax = { -1000.f,-1000.f, -1000.f };
+	D3DXVECTOR3 sizeMin = { 1000.f, 1000.f,  1000.f };
+
 	for (unsigned int m = 0; m < m_AiScene->mNumMeshes; m++)
 	{
 		aiMesh* mesh = m_AiScene->mMeshes[m];
@@ -37,7 +40,16 @@ void AnimationModel::Load(const char * FileName)
 				vertex[v].Normal   = D3DXVECTOR3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
 				vertex[v].TexCoord = D3DXVECTOR2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
 				vertex[v].Diffuse  = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+
+				if (sizeMax.x < vertex[v].Position.x)sizeMax.x = vertex[v].Position.x;
+				if (sizeMax.y < vertex[v].Position.y)sizeMax.y = vertex[v].Position.y;
+				if (sizeMax.z < vertex[v].Position.z)sizeMax.z = vertex[v].Position.z;
+				if (sizeMin.x > vertex[v].Position.x)sizeMin.x = vertex[v].Position.x;
+				if (sizeMin.y > vertex[v].Position.y)sizeMin.y = vertex[v].Position.y;
+				if (sizeMin.z > vertex[v].Position.z)sizeMin.z = vertex[v].Position.z;
 			}
+
+			m_Size = D3DXVECTOR3(sizeMax.x + fabsf(sizeMin.x), sizeMax.y + fabsf(sizeMin.y), sizeMax.z + fabsf(sizeMin.z));
 
 			D3D11_BUFFER_DESC bd;
 			ZeroMemory(&bd, sizeof(bd));

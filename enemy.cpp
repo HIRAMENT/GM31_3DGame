@@ -17,6 +17,9 @@
 #include "shadow.h"
 #include "movement.h"
 #include "rock.h"
+#include "experiencePoint.h"
+#include "status.h"
+#include "hitPoint.h"
 
 Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjust, int hp, ObjectType type, int drawPriority)
 	:GameObject(scene, type,drawPriority)
@@ -25,8 +28,9 @@ Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjus
 	SetRotation({ 0.0f, degToRad(180), 0.0f });
 	SetScale(size * 1.5f);
 
-	m_HP = hp;
-	m_HitCoolTime = 0;
+	m_Status = new Status(scene, pos, adjust, 50, 0, 100, 0, hp, 3);
+	m_Status->GetHitPoint()->GetGauge()->ChangeColor(255, 0, 0);
+
 	m_Size = size;
 	m_SensorSize = { 15.0f,15.0f,15.0f };
 
@@ -42,15 +46,13 @@ Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjus
 	if (type == ObjectType::eObSmallEnemy)
 	{
 		m_ModelTag = ResourceTag::mSmallEnemy;
-		m_HPGauge = new Gauge(scene, pos, adjust, m_HP, 50);
+		//m_HPGauge = new Gauge(scene, pos, adjust, m_HP, 50);
 	}
 	else if (type == ObjectType::eObBossEnemy)
 	{
 		m_ModelTag = ResourceTag::mBossEnemy;
-		m_HPGauge = new Gauge(scene, { SCREEN_WIDTH / 2, 32 }, {100,50}, m_HP, 100);
+		//m_HPGauge = new Gauge(scene, { SCREEN_WIDTH / 2, 32 }, {100,50}, m_HP, 100);
 	}
-
-	m_HPGauge->ChangeColor(255, 0, 0);
 
 	m_SensorEnter = false;
 
@@ -64,8 +66,8 @@ void Enemy::Init()
 void Enemy::Uninit()
 {
 	m_Sensor->SetDestroy();
-	m_HPGauge->SetDestroy();
 	m_Shadow->SetDestroy();
+	m_Status->SetDestroy();
 	delete m_Obb;
 }
 
@@ -89,7 +91,7 @@ void Enemy::Update()
 			m_Exclamation->SetScale(m_ExcScale);
 			m_SensorEnter = true;
 			m_AttackCollTime = 0;
-			m_HPGauge->SetDisplay(true);
+			m_Status->GetHitPoint()->GetGauge()->SetDisplay(true);
 		}
 
 		TargetMove(player->GetPosition());
@@ -99,7 +101,7 @@ void Enemy::Update()
 	{
 		SloppyMove();
 		m_SensorEnter = false;
-		m_HPGauge->SetDisplay(false);
+		m_Status->GetHitPoint()->GetGauge()->SetDisplay(false);
 	}
 
 	if(m_Exclamation)
@@ -119,25 +121,20 @@ void Enemy::Update()
 		} 
 	}
 
-	if (!m_HitCoolTime)
+	if (m_Status->GetHitPoint()->CheckCollTime())
 	{
 		Sword* sword = GetScene()->GetGameObject<Sword>(ObjectType::eObSword);
 		if (sword->GetAttack() && Collision::GetInstance()->ObbToObb(sword->GetObb(), m_Obb))
 		{
 			new Billboard(GetScene(), m_Position, { 5.0f, 5.0f }, ResourceTag::tSlash,true, 2);
-			TakeDamage(sword->GetDamageValue());
+			m_Status->GetHitPoint()->Damage(sword->GetDamageValue());
 			ADXSound::GetInstance()->Play(9);
-			m_HitCoolTime++;
 		}
 	}
 
-	if (m_HitCoolTime)
-	{
-		m_HitCoolTime++;
-		if (m_HitCoolTime >= HITCOOLTIME_MAX) m_HitCoolTime = 0;
-	}
 
-	if (m_HP <= 0) { SetDestroy(); }
+	if (m_Status->GetHitPoint()->GetHitPoint() <= 0) { SetDestroy(); }
+
 
 	if (!m_Attack && m_AttackCollTime >= 30)
 	{
@@ -189,19 +186,14 @@ void Enemy::Draw()
 	ResourceData::GetInstance()->GetModelResource(m_ModelTag)->Draw();
 }
 
-void Enemy::TakeDamage(int damage)
-{
-	m_HP -= damage;
-	m_HPGauge->DegCapacity(damage);
-}
-
 void Enemy::SetEnemy()
 {
 	m_Position += m_MoveVlaue;
 	m_Sensor->SetSensorPosition(m_Position, m_SensorSize, m_Rotation);
 	m_Shadow->SetPosition({ m_Position.x, 0.f,m_Position.z });
 	m_Obb->SetObb(m_Position, m_Size, m_Rotation);
-	m_HPGauge->SetGaugePos(m_Position);
+	//m_HPGauge->SetGaugePos(m_Position);
+	m_Status->GetHitPoint()->GetGauge()->SetGaugePos(m_Position);
 }
 
 void Enemy::Attack(D3DXVECTOR3 ppos)

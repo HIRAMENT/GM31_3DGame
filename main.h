@@ -38,3 +38,4 @@
 
 
 HWND GetWindow();
+float GetFPS();

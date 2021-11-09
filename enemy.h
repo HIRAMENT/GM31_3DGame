@@ -13,14 +13,12 @@ protected:
 	D3DXVECTOR3 m_Target;
 	class Sensor* m_Sensor = nullptr;
 	class OBB* m_Obb = nullptr;
-	class Gauge* m_HPGauge = nullptr;
 	class Billboard* m_Exclamation = nullptr;
 	float m_ExcScale;
 	ResourceTag m_ModelTag;
 
-	int m_HP;
-	int m_HitCoolTime;
-	const int HITCOOLTIME_MAX = 36;
+	class Status* m_Status = nullptr;
+
 	bool m_SensorEnter;
 	int m_AttackCount;
 	int m_SloppyTime;
@@ -52,9 +50,9 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	void TakeDamage(int damage);
 	void SetEnemy();
 	bool GetAttack() const { return m_Attack; }
 	OBB* GetObb() const { return m_Obb; }
+	Status* GetStatus() const { return m_Status; }
 	virtual int GetDamageValue() const = 0;
 };

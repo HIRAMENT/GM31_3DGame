@@ -3,7 +3,8 @@
 #include "gamepad.h"
 #include "manager.h"
 #include "resource.h"
-#include "shader.h"
+#include "shader.h" 
+#include "myImGui.h"
 #include "ADX2/adxSound.h"
 
 
@@ -15,6 +16,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 
 HWND g_Window;
+
 
 HWND GetWindow()
 {
@@ -108,6 +110,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 				Manager::GetInstance()->Update();
 				GamepadX::GetInstance()->Update();
 				ADXSound::GetInstance()->Update();
+
 				Manager::GetInstance()->Draw();
 			}
 		}
@@ -129,9 +132,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 
 
-
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam)){
+		return true;
+	}
 
 	switch(uMsg)
 	{
