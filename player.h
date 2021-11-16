@@ -14,7 +14,7 @@ private:
 	float m_BlendRate;
 
 	class Shadow* m_Shadow = nullptr;
-	class Sword* m_Sword = nullptr;
+	//class Sword* m_Sword = nullptr;
 	class OBB* m_Obb = nullptr;
 	bool m_Dash;
 

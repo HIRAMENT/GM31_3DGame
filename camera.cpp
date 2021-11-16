@@ -84,7 +84,7 @@ void Camera::Draw()
 {
 	// ビューマトリクス設定
 	D3DXMatrixIdentity(&m_ViewMatrix);
-	D3DXMatrixLookAtLH(&m_ViewMatrix, &GetPosition(), &m_Target,&m_Up);
+	D3DXMatrixLookAtLH(&m_ViewMatrix, &m_Position, &m_Target,&m_Up);
 	Renderer::GetInstance()->SetViewMatrix(&m_ViewMatrix);
 
 	// プロジェクションマトリクス設定
@@ -148,6 +148,7 @@ bool Camera::CheckView(D3DXVECTOR3 position, D3DXVECTOR3 size)
 
 	D3DXVECTOR3 v, v1, v2, n;
 	D3DXVECTOR3 ts = { size.x / 2, size.y / 2, size.z / 2 };
+	float dot = 0.0f;
 
 	// 左の壁
 	// カメラから対象のベクトル
@@ -156,7 +157,7 @@ bool Camera::CheckView(D3DXVECTOR3 position, D3DXVECTOR3 size)
 	v2 = wpos[2] - m_Position;
 	D3DXVec3Cross(&n, &v1, &v2);
 
-	if (D3DXVec3Dot(&n, &v) < 0.0f)
+	if (dot = D3DXVec3Dot(&n, &v) < 0.0f)
 		return false;
 
 	// 右の壁
@@ -187,13 +188,13 @@ bool Camera::CheckView(D3DXVECTOR3 position, D3DXVECTOR3 size)
 		return false;
 
 	// 奥の壁
-	v = D3DXVECTOR3(position.x, position.y, position.z + ts.z) - m_Position;
-	v1 = wpos[0] - wpos[2];
-	v2 = wpos[1] - wpos[3];
-	D3DXVec3Cross(&n, &v1, &v2);
+	//v = D3DXVECTOR3(position.x, position.y, position.z + ts.z) - m_Position;
+	//v1 = wpos[0] - wpos[2];
+	//v2 = wpos[1] - wpos[3];
+	//D3DXVec3Cross(&n, &v1, &v2);
 
-	if (D3DXVec3Dot(&n, &v) > 0.0f)
-		return false;
+	//if (D3DXVec3Dot(&n, &v) > 0.0f)
+	//	return false;
 
 	return true;
 }

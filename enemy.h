@@ -19,9 +19,12 @@ protected:
 
 	class Status* m_Status = nullptr;
 
+	class Boids* m_Boids;
+
 	bool m_SensorEnter;
 	int m_AttackCount;
 	int m_SloppyTime;
+	const float m_FollowRange;
 
 private:
 	class Shadow* m_Shadow = nullptr;

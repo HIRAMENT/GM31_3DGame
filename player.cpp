@@ -39,7 +39,7 @@ Player::Player(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	m_Size = m_Model->GetSize() * m_Scale;
 
 	m_Shadow = new Shadow(scene, { pos.x, 0.f,pos.z }, {2.0f,2.0f}, 2);
-	m_Sword = new Sword(scene, { pos.x ,pos.y, pos.z }, 2);
+	//m_Sword = new Sword(scene, { pos.x ,pos.y, pos.z }, 2);
 	m_Obb = new OBB(m_Position, m_Size, m_Rotation);
 
 	m_Dash = false;
@@ -61,7 +61,7 @@ void Player::Init()
 void Player::Uninit()
 {
 	m_Shadow->SetDestroy();
-	m_Sword->SetDestroy();
+	//m_Sword->SetDestroy();
 	m_Status->SetDestroy();
 	delete m_Obb;
 	delete m_Model;
@@ -108,7 +108,7 @@ void Player::Update()
 
 	if (Mouse_IsLeftTrigger()) 
 	{
-		m_Sword->SetAttack({m_Forward.x, m_Forward.z}); 
+		//m_Sword->SetAttack({m_Forward.x, m_Forward.z}); 
 	}
 	if (Mouse_IsRightPress()) { m_Dash = true; }
 
@@ -170,7 +170,7 @@ void Player::Update()
 void Player::Draw()
 {
 	Camera* camera = GetScene()->GetGameObject<Camera>(ObjectType::eObCamera);
-	if (camera->CheckView(m_Position, m_Size))
+	if (!camera->CheckView(m_Position, m_Size))
 	{
 		m_Position = m_Position;
 		return;
@@ -215,7 +215,7 @@ void Player::SetPlayerRotation(const Quaternion & qua)
 void Player::ImGui()
 {
 	ImGui::Begin("Status");
-	ImGui::SliderInt("Attack",m_Status->, 0, 10);
+	//ImGui::SliderInt("Attack",m_Status->, 0, 10);
 
 	ImGui::End();
 }

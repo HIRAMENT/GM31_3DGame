@@ -55,6 +55,15 @@
     <Filter Include="ヘッダー ファイル\GameObject\Status">
       <UniqueIdentifier>{42671218-5f46-4a5d-be27-3a9385ef753c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\System\AI">
+      <UniqueIdentifier>{f0b3eee9-9a96-44b2-a27c-c173d0b93351}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\System\AI">
+      <UniqueIdentifier>{947adfdf-79d4-495b-9d0a-ed878ed3653f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\System\Sound">
+      <UniqueIdentifier>{aaee5351-20d8-4790-a9fa-8f3b211514e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp">
@@ -114,9 +123,6 @@
     <ClCompile Include="shadow.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="audio.cpp">
-      <Filter>ソース ファイル\System</Filter>
-    </ClCompile>
     <ClCompile Include="rock.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
@@ -128,9 +134,6 @@
     </ClCompile>
     <ClCompile Include="resultScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="ADX2\adxSound.cpp">
-      <Filter>ソース ファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="fade.cpp">
       <Filter>ソース ファイル\System</Filter>
@@ -210,17 +213,29 @@
     <ClCompile Include="ImGUI\imgui_widgets.cpp">
       <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="myImGui.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="information.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="hitPoint.cpp">
       <Filter>ソース ファイル\GameObject\Status</Filter>
     </ClCompile>
     <ClCompile Include="status.cpp">
       <Filter>ソース ファイル\GameObject\Status</Filter>
+    </ClCompile>
+    <ClCompile Include="myImGui.cpp">
+      <Filter>ソース ファイル\System</Filter>
+    </ClCompile>
+    <ClCompile Include="information.cpp">
+      <Filter>ソース ファイル\System</Filter>
+    </ClCompile>
+    <ClCompile Include="astar.cpp">
+      <Filter>ソース ファイル\System\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="ADX2\adxSound.cpp">
+      <Filter>ソース ファイル\System\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="audio.cpp">
+      <Filter>ソース ファイル\System\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="boids.cpp">
+      <Filter>ソース ファイル\System\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -451,6 +466,12 @@
     </ClInclude>
     <ClInclude Include="status.h">
       <Filter>ヘッダー ファイル\GameObject\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="astar.h">
+      <Filter>ヘッダー ファイル\System\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="boids.h">
+      <Filter>ヘッダー ファイル\System\AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

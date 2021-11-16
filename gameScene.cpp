@@ -37,6 +37,9 @@ void GameScene::Init()
 	new SmallEnemy(this, { -10.0f,1.0f,5.0f }, 2);
 	new SmallEnemy(this, { 0.0f,1.0f,5.0f }, 2);
 	new SmallEnemy(this, { 10.0f,1.0f,5.0f }, 2);
+	new SmallEnemy(this, { -10.0f,1.0f,0.0f }, 2);
+	new SmallEnemy(this, { 0.0f,1.0f,0.0f }, 2);
+	new SmallEnemy(this, { 10.0f,1.0f,.0f }, 2);
 	new BossEnemy(this, { 0.0f, 3.0f,20.0f }, 2);
 
 	srand(time(NULL));
@@ -62,14 +65,14 @@ void GameScene::Init()
 		sca.x    = rand() % 5 + 1;
 		sca.y    = rand() % 5 + 1;
 		sca.z    = rand() % 5 + 1;
-		new Rock(this, { pos.x,0.f,pos.z }, { rot.x,rot.y,rot.z }, { sca.x, sca.y, sca.z }, 2);
+		//new Rock(this, { pos.x,0.f,pos.z }, { rot.x,rot.y,rot.z }, { sca.x, sca.y, sca.z }, 2);
 	}
 
 	for (int i = 0; i < 100; i++)
 	{
 		pos.x = rand() % 150 - 75;
 		pos.z = rand() % 150 - 75;
-		new tree(this, { pos.x,9.5f,pos.z }, { 20.0f,20.0f,20.0f }, 2);
+		//new tree(this, { pos.x,9.5f,pos.z }, { 20.0f,20.0f,20.0f }, 2);
 	}
 
 	m_BGMID = ADXSound::GetInstance()->Play(1);

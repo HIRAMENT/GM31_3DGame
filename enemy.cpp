@@ -2,6 +2,7 @@
 #include <time.h>
 #include "manager.h"
 #include "renderer.h"
+#include "resource.h"
 #include "shader.h"
 #include "model.h"
 #include "ADX2/adxSound.h"
@@ -20,15 +21,17 @@
 #include "experiencePoint.h"
 #include "status.h"
 #include "hitPoint.h"
+#include "boids.h"
 
 Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjust, int hp, ObjectType type, int drawPriority)
 	:GameObject(scene, type,drawPriority)
+	, m_FollowRange(2.0f)
 {
 	SetPosition(pos);
 	SetRotation({ 0.0f, degToRad(180), 0.0f });
 	SetScale(size * 1.5f);
 
-	m_Status = new Status(scene, pos, adjust, 50, 0, 100, 0, hp, 3);
+	m_Status = new Status(scene, pos, adjust, 10, 0, 100, 0, hp, 3);
 	m_Status->GetHitPoint()->GetGauge()->ChangeColor(255, 0, 0);
 
 	m_Size = size;
@@ -56,6 +59,8 @@ Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjus
 
 	m_SensorEnter = false;
 
+	m_Boids = new Boids(m_Position);
+
 	scene->Add(this);
 }
 
@@ -73,7 +78,7 @@ void Enemy::Uninit()
 
 void Enemy::Update()
 {
-	m_MoveVlaue = { 0.0f,0.0f,0.0f };
+	/*m_MoveVlaue = { 0.0f,0.0f,0.0f };
 
 	if (m_Exclamation && m_Exclamation->GetDestroy())
 	{
@@ -151,19 +156,21 @@ void Enemy::Update()
 			RushAttack(player->GetPosition());
 		}
 		
-	}
+	}*/
+
+	m_Boids->FlockIt();
 
 	SetEnemy();
 
-	std::vector<Rock*>rockList = GetScene()->GetGameObjects<Rock>(ObjectType::eObRock);
-	for (Rock* rock : rockList)
-	{
-		if (Collision::GetInstance()->ObbToObb(m_Obb, rock->GetObb()))
-		{
-			m_Position -= m_MoveVlaue;
-			SetEnemy();
-		}
-	}
+	//std::vector<Rock*>rockList = GetScene()->GetGameObjects<Rock>(ObjectType::eObRock);
+	//for (Rock* rock : rockList)
+	//{
+	//	if (Collision::GetInstance()->ObbToObb(m_Obb, rock->GetObb()))
+	//	{
+	//		m_Position -= m_MoveVlaue;
+	//		SetEnemy();
+	//	}
+	//}
 }
 
 void Enemy::Draw()
@@ -188,7 +195,10 @@ void Enemy::Draw()
 
 void Enemy::SetEnemy()
 {
-	m_Position += m_MoveVlaue;
+	//m_Position += m_MoveVlaue;
+	m_Position = m_Boids->GetPosition();
+	//m_Rotation = m_Boids->GetRotation();
+
 	m_Sensor->SetSensorPosition(m_Position, m_SensorSize, m_Rotation);
 	m_Shadow->SetPosition({ m_Position.x, 0.f,m_Position.z });
 	m_Obb->SetObb(m_Position, m_Size, m_Rotation);
@@ -251,6 +261,10 @@ void Enemy::JumpAttack(D3DXVECTOR3 ppos)
 
 void Enemy::TargetMove(D3DXVECTOR3 pPos)
 {
+	float dis = D3DXVec3Length(&(pPos - m_Position));
+	if (dis < m_FollowRange)
+		return;
+
 	m_Position.x += Movement::GetInstance()->TargetFollow(m_Position, pPos, 0.05f).x;
 	m_Position.z += Movement::GetInstance()->TargetFollow(m_Position, pPos, 0.05f).z;
 	float angle = Movement::GetInstance()->GetTwoVecAngle({ 0,1 }, { pPos.x - m_Position.x, pPos.z - m_Position.z });

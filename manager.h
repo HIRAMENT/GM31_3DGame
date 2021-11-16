@@ -24,6 +24,7 @@ public:
 	void Draw();
 
 	void SetScene(SceneTag tag);
+	Scene* GetScene()const { return m_Scene; }
 
 protected:
 	Manager() {}

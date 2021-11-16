@@ -161,8 +161,10 @@
   <ItemGroup>
     <ClCompile Include="ADX2\adxSound.cpp" />
     <ClCompile Include="animationModel.cpp" />
+    <ClCompile Include="astar.cpp" />
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="billboard.cpp" />
+    <ClCompile Include="boids.cpp" />
     <ClCompile Include="bossEnemy.cpp" />
     <ClCompile Include="button.cpp" />
     <ClCompile Include="calculation.cpp" />
@@ -232,8 +234,10 @@
     <ClInclude Include="ADX2\GM31Summer_acf.h" />
     <ClInclude Include="ADX2\GMSummer.h" />
     <ClInclude Include="animationModel.h" />
+    <ClInclude Include="astar.h" />
     <ClInclude Include="audio.h" />
     <ClInclude Include="billboard.h" />
+    <ClInclude Include="boids.h" />
     <ClInclude Include="bossEnemy.h" />
     <ClInclude Include="button.h" />
     <ClInclude Include="calculation.h" />
