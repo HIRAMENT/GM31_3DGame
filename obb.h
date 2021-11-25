@@ -9,6 +9,7 @@ public:
 	D3DXVECTOR3 GetPosition() const;
 
 	void SetObb(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 rot);
+	void BorderDisplay(bool dis);
 
 public:
 	D3DXVECTOR3 m_Position;		// íÜêSì_

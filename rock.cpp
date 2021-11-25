@@ -7,6 +7,7 @@
 #include "scene.h"
 #include "shadow.h"
 #include "obb.h"
+#include "camera.h"
 
 
 Rock::Rock(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scale, int drawPriority)
@@ -36,6 +37,11 @@ void Rock::Update()
 
 void Rock::Draw()
 {
+	Camera* camera = GetScene()->GetGameObject<Camera>(ObjectType::eObCamera);
+	if (!camera->CheckView(m_Position, m_Scale))
+		return;
+
+	
 	// 入力レイアウト設定 fvfs
 	Renderer::GetInstance()->GetDeviceContext()->IASetInputLayout(Shader::GetInstance()->GetVertexLayputLighting());
 

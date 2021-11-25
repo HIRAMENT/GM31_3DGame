@@ -166,6 +166,7 @@
     <ClCompile Include="billboard.cpp" />
     <ClCompile Include="boids.cpp" />
     <ClCompile Include="bossEnemy.cpp" />
+    <ClCompile Include="bullet.cpp" />
     <ClCompile Include="button.cpp" />
     <ClCompile Include="calculation.cpp" />
     <ClCompile Include="camera.cpp" />
@@ -209,6 +210,7 @@
     <ClCompile Include="smallEnemy.cpp" />
     <ClCompile Include="status.cpp" />
     <ClCompile Include="sword.cpp" />
+    <ClCompile Include="targetMark.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="titleScene.cpp" />
     <ClCompile Include="transform.cpp" />
@@ -239,6 +241,7 @@
     <ClInclude Include="billboard.h" />
     <ClInclude Include="boids.h" />
     <ClInclude Include="bossEnemy.h" />
+    <ClInclude Include="bullet.h" />
     <ClInclude Include="button.h" />
     <ClInclude Include="calculation.h" />
     <ClInclude Include="camera.h" />
@@ -283,6 +286,7 @@
     <ClInclude Include="sensor.h" />
     <ClInclude Include="smallEnemy.h" />
     <ClInclude Include="status.h" />
+    <ClInclude Include="targetMark.h" />
     <ClInclude Include="titleScene.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="shadow.h" />

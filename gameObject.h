@@ -25,6 +25,7 @@ enum class ObjectType {
 	eObButton,
 	eObTree,
 	eObStatus,
+	eObTargetMark,
 };
 
 

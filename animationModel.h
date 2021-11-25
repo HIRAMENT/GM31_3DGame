@@ -68,6 +68,7 @@ public:
 	Animation(const char* FileName);
 
 	const aiScene* GetAnimation() { return m_Animation; }
+	int GetAnimationCount() const { return m_Animation->mAnimations[0]->mChannels[0]->mNumPositionKeys; }
 
 private:
 	void Load(const char * FileName);

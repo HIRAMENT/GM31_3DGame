@@ -24,7 +24,7 @@ void Manager::Init()
 
 	Fade::GetInstance();
 
-	SetScene(SceneTag::eTitle);
+	SetScene(SceneTag::eGame);
 }
 
 // I—¹ˆ—

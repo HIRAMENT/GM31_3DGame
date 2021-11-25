@@ -45,6 +45,8 @@ private:
 	SUBSET*	m_SubsetArray;
 	unsigned int	m_SubsetNum;
 
+	D3DXVECTOR3 m_Size;
+
 	void LoadObj(const char *FileName, MODEL *Model);
 	void LoadMaterial(const char *FileName, MODEL_MATERIAL **MaterialArray, unsigned int *MaterialNum);
 
@@ -57,5 +59,7 @@ public:
 
 	void Load(const char *FileName);
 	void Unload();
+
+	D3DXVECTOR3 GetSize()const { return m_Size; }
 
 };

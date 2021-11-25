@@ -22,9 +22,13 @@ private:
 
 	class AnimationModel* m_Model = nullptr;
 	int m_AnimeFrame;
+	int m_AnimeEndFrame;
+	AnimationTag m_BeforAnime;
+	AnimationTag m_AfterAnime;
 
 private:
 	void ImGui();
+	void Animation(AnimationTag anime1, AnimationTag anime2, bool isMove);
 
 public:
 	Player(class Scene* scene,D3DXVECTOR3 pos,int drawPriority);

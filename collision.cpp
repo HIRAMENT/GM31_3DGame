@@ -148,13 +148,34 @@ float Collision::LenSegOnSeparateAxis(D3DXVECTOR3 * sep, D3DXVECTOR3 * e1, D3DXV
 
 bool Collision::ObbToPoint(OBB* obb, D3DXVECTOR3 pos2, D3DXVECTOR3 size2)
 {
-	//D3DXVECTOR3 vector(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 direction = obb->GetPosition() - pos2;
 
-	//for(int i = 0; i < 3; i++)
-	//{
-	//	float length = D3DXVec2Length(&pos1)
-	//
-	//}
+	D3DXVECTOR3 obbx, obbz;
+	float obbLenx, obbLenz;
+
+	obbx = obb->GetDirection(0) * obb->GetLength(0);
+	obbLenx = D3DXVec3Length(&obbx);
+	obbx /= obbLenx;
+
+	obbz = obb->GetDirection(2) * obb->GetLength(2);
+	obbLenz = D3DXVec3Length(&obbz);
+	obbz /= obbLenz;
+
+	float lenx, lenz;
+	lenx = D3DXVec3Dot(&obbx, &direction);
+	lenz = D3DXVec3Dot(&obbz, &direction);
+
+	if (fabs(lenx) < obbLenx && fabs(lenz) < obbLenz) {
+		return true;
+	}
+
+	return false;
+}
+
+bool Collision::TriangleHit(float rad, float len, D3DXVECTOR3 forw, D3DXVECTOR3 pos1, D3DXVECTOR3 pos2)
+{
+	
+	
 
 	return false;
 }

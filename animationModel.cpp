@@ -41,12 +41,8 @@ void AnimationModel::Load(const char * FileName)
 				vertex[v].TexCoord = D3DXVECTOR2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
 				vertex[v].Diffuse  = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 
-				if (sizeMax.x < vertex[v].Position.x)sizeMax.x = vertex[v].Position.x;
-				if (sizeMax.y < vertex[v].Position.y)sizeMax.y = vertex[v].Position.y;
-				if (sizeMax.z < vertex[v].Position.z)sizeMax.z = vertex[v].Position.z;
-				if (sizeMin.x > vertex[v].Position.x)sizeMin.x = vertex[v].Position.x;
-				if (sizeMin.y > vertex[v].Position.y)sizeMin.y = vertex[v].Position.y;
-				if (sizeMin.z > vertex[v].Position.z)sizeMin.z = vertex[v].Position.z;
+				sizeMax = D3DXVECTOR3(std::max(sizeMax.x, vertex[v].Position.x), std::max(sizeMax.y, vertex[v].Position.y), std::max(sizeMax.z, vertex[v].Position.z));
+				sizeMin = D3DXVECTOR3(std::min(sizeMin.x, vertex[v].Position.x), std::min(sizeMin.y, vertex[v].Position.y), std::min(sizeMin.z, vertex[v].Position.z));
 			}
 
 			m_Size = D3DXVECTOR3(sizeMax.x + fabsf(sizeMin.x), sizeMax.y + fabsf(sizeMin.y), sizeMax.z + fabsf(sizeMin.z));
@@ -173,12 +169,6 @@ void AnimationModel::Load(const char * FileName)
 		}
 	}
 }
-
-//void AnimationModel::LoadAnimation(const char * FileName, const char * Name)
-//{
-//	m_Animation[Name] = aiImportFile(FileName, aiProcess_ConvertToLeftHanded);
-//	assert(m_Animation[Name]);
-//}
 
 void AnimationModel::CreateBone(aiNode * node)
 {

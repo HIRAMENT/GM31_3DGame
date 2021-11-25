@@ -30,17 +30,18 @@
 void GameScene::Init()
 {
 	new Camera(this, { 0.0f,5.0f,-20.0f }, 0);
-	//new Field(this, { 0.0f,0.0f,0.0f }, 1);
 	new MeshField({ this, {0.0f,0.0f,0.0f}, 1 });
 	new Skydome(this, { 0.0f,0.0f,0.0f }, 1);
-	new Player(this, { 0.0f,1.0f,-10.0f }, 2);
-	new SmallEnemy(this, { -10.0f,1.0f,5.0f }, 2);
+	new Player(this, { 0.0f,0.0f,-10.0f }, 2);
+
+	new SmallEnemy(this, { -20.0f,1.0f,5.0f }, 2);
 	new SmallEnemy(this, { 0.0f,1.0f,5.0f }, 2);
-	new SmallEnemy(this, { 10.0f,1.0f,5.0f }, 2);
-	new SmallEnemy(this, { -10.0f,1.0f,0.0f }, 2);
-	new SmallEnemy(this, { 0.0f,1.0f,0.0f }, 2);
-	new SmallEnemy(this, { 10.0f,1.0f,.0f }, 2);
-	new BossEnemy(this, { 0.0f, 3.0f,20.0f }, 2);
+	new SmallEnemy(this, { 20.0f,1.0f,5.0f }, 2);
+	new SmallEnemy(this, { -20.0f,1.0f,-5.0f }, 2);
+	new SmallEnemy(this, { 0.0f,1.0f,-5.0f }, 2);
+	new SmallEnemy(this, { 20.0f,1.0f,-5.0f }, 2);
+
+	//new BossEnemy(this, { 0.0f, 3.0f,20.0f }, 2);
 
 	srand(time(NULL));
 
@@ -83,27 +84,23 @@ void GameScene::Update()
 	Scene::Update();
 
 
-	if (!Keyboard_IsPress(DIK_LMENU))
-	{
+	if (!Keyboard_IsPress(DIK_LMENU)){
 		POINT ScreenPoint;
 		GetCursorPos(&ScreenPoint);
+		ScreenToClient(GetWindow(), &ScreenPoint);
 		ScreenPoint = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 		SetCursorPos(ScreenPoint.x, ScreenPoint.y);
 		ShowCursor(false);
 	}
-
-
-
-	if (Keyboard_IsTrigger(DIK_SPACE))
-	{
-		new SmallEnemy(this, GetGameObject<BossEnemy>(ObjectType::eObBossEnemy)->GetUp() * 7.0f, 5);
+	else {
+		ShowCursor(true);
 	}
 
-	if (!GetGameObject<Enemy>(ObjectType::eObBossEnemy))
-	{
-		Fade::GetInstance()->FadeIn(SceneTag::eResult);
-		ResultScene::SetClear(true);
-	}
+	//if (!GetGameObject<Enemy>(ObjectType::eObBossEnemy))
+	//{
+	//	Fade::GetInstance()->FadeIn(SceneTag::eResult);
+	//	ResultScene::SetClear(true);
+	//}
 	if (GetGameObject<Player>(ObjectType::eObPlayer)->GetStatus()->GetHitPoint()->GetHitPoint() <= 0)
 	{
 		Fade::GetInstance()->FadeIn(SceneTag::eResult);

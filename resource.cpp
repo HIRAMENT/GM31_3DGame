@@ -31,6 +31,8 @@ void ResourceData::InitModel()
 	m_ModelResource[ResourceTag::mEnemy]    = new Model("asset\\model\\character\\enemy.obj");
 	m_ModelResource[ResourceTag::mSmallEnemy]    = new Model("asset\\model\\character\\smallEnemy.obj");
 	m_ModelResource[ResourceTag::mBossEnemy]    = new Model("asset\\model\\character\\bossEnemy.obj");
+	m_ModelResource[ResourceTag::mBullet]    = new Model("asset\\model\\item\\torus.obj");
+	m_ModelResource[ResourceTag::mTestEnemy]    = new Model("asset\\model\\character\\enemy.obj");
 }
 
 void ResourceData::InitTexture()

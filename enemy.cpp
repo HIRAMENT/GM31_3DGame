@@ -48,7 +48,7 @@ Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjus
 	m_Shadow = new Shadow(scene, { pos.x, 0.f,pos.z }, {1.0f,1.0f}, 2);
 	if (type == ObjectType::eObSmallEnemy)
 	{
-		m_ModelTag = ResourceTag::mSmallEnemy;
+		m_ModelTag = ResourceTag::mTestEnemy;
 		//m_HPGauge = new Gauge(scene, pos, adjust, m_HP, 50);
 	}
 	else if (type == ObjectType::eObBossEnemy)
@@ -138,9 +138,6 @@ void Enemy::Update()
 	}
 
 
-	if (m_Status->GetHitPoint()->GetHitPoint() <= 0) { SetDestroy(); }
-
-
 	if (!m_Attack && m_AttackCollTime >= 30)
 	{
 		m_Attack = true;
@@ -160,7 +157,12 @@ void Enemy::Update()
 
 	m_Boids->FlockIt();
 
+
 	SetEnemy();
+
+
+	if (m_Status->GetHitPoint()->GetHitPoint() <= 0) 
+		SetDestroy();
 
 	//std::vector<Rock*>rockList = GetScene()->GetGameObjects<Rock>(ObjectType::eObRock);
 	//for (Rock* rock : rockList)
@@ -197,7 +199,9 @@ void Enemy::SetEnemy()
 {
 	//m_Position += m_MoveVlaue;
 	m_Position = m_Boids->GetPosition();
-	//m_Rotation = m_Boids->GetRotation();
+	m_Rotation = m_Boids->GetRotation();
+	Player* player = GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
+	m_Boids->SetTarget(player->GetPosition());
 
 	m_Sensor->SetSensorPosition(m_Position, m_SensorSize, m_Rotation);
 	m_Shadow->SetPosition({ m_Position.x, 0.f,m_Position.z });

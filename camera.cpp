@@ -1,11 +1,15 @@
 #include "main.h"
 #include "manager.h"
 #include "renderer.h"
+#include "resource.h"
+#include "obb.h"
+#include "status.h"
 #include "camera.h"
 #include "scene.h"
 #include "input.h"
 #include "transform.h"
 #include "player.h"
+#include "enemy.h"
 #include "skydome.h"
 #include "movement.h"
 
@@ -52,6 +56,26 @@ void Camera::Update()
 		if (m_Angle3D.x > 270) m_Angle3D.x = -90;
 	}
 
+	Player* player = GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
+	m_Target = player->GetPosition();
+
+	if (Keyboard_IsPress(DIK_F)) {
+		std::vector<Enemy*> enemys = GetScene()->GetGameObjects<Enemy>(ObjectType::eObSmallEnemy);
+		float dist, nearest = 1000.0f;
+		Enemy* ene = nullptr;
+		for (auto enemy : enemys) {
+			dist = D3DXVec3Length(&(player->GetPosition() - enemy->GetPosition()));
+			if (nearest > dist) {
+				nearest = dist;
+				ene = enemy;
+			}
+		}
+
+		// プレイヤーとエネミーを通る直線を見る
+		m_Target = ene->GetPosition();
+
+	}
+
 	D3DXVECTOR2 mouseMove;
 	mouseMove.x = Mouse_GetMoveX();
 	mouseMove.y = Mouse_GetMoveY();
@@ -69,9 +93,6 @@ void Camera::Update()
 		if (m_Angle3D.y <= 0) m_Angle3D.y = 0;
 		if (m_Angle3D.y >= 180) m_Angle3D.y = 180;
 	}
-
-	Player* player = GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
-	m_Target = player->GetPosition();
 
 	D3DXVECTOR3 movepos = Movement::GetInstance()->CirclualMotion3D(m_Target, m_Distance, m_Angle3D);
 	m_Position = movepos;

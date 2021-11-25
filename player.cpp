@@ -26,13 +26,18 @@
 #include "experiencePoint.h" 
 #include "status.h"
 #include "hitPoint.h"
+#include "meshField.h"
+#include "bullet.h"
+#include <math.h>
+
+#define BLENDRATE (0.1f)
 
 Player::Player(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	:GameObject(scene,ObjectType::eObPlayer,drawPriority)
 {
 	SetPosition(pos);
 	m_Transform.SetPosition(pos);
-	SetRotation({ 0.0f, 0.0f, 0.0f });
+	SetRotation({ 0.0f, degToRad(180), 0.0f });
 	SetScale({ 0.015f, 0.015f, 0.015f });
 
 	m_Model = ResourceData::GetInstance()->GetAnimationModel(ResourceTag::fPlayer);
@@ -49,7 +54,11 @@ Player::Player(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	m_Status->GetHitPoint()->SetNumberDisplay(true);
 	
 	m_AnimeFrame = 0;
+	m_AnimeEndFrame = 100000;
 	m_BlendRate = 0.0f;
+
+	m_BeforAnime = AnimationTag::Idle;
+	m_AfterAnime = AnimationTag::Run;
 	
 	scene->Add(this);
 }
@@ -72,6 +81,7 @@ void Player::Update()
 	D3DXVECTOR3 rot = { 0.0f,0.0f,0.0f };
 	D3DXVECTOR2 move = { 0.0f,0.0f };
 	float angle;
+	AnimationTag animation[2] = {m_BeforAnime, m_AfterAnime};
 	bool isMove = false;
 
 	Camera* camera = GetScene()->GetGameObject<Camera>(ObjectType::eObCamera);
@@ -81,55 +91,63 @@ void Player::Update()
 	angle = Movement::GetInstance()->GetTwoVecAngle({ Vec3::Forward.x,Vec3::Forward.z }, forward);
 	if (forward.x <= -0.01f) angle *= -1;
 
-	if (Keyboard_IsPress(DIK_A))
-	{
+
+	if (Keyboard_IsPress(DIK_A)){
 		move += right * 0.1f;
-		rot.x = radToDeg(angle) - 90;
-		isMove = true;
-	}
-	if (Keyboard_IsPress(DIK_D))
-	{
-		move -= right * 0.1f;
 		rot.x = radToDeg(angle) + 90;
-		isMove = true;
 	}
-	if (Keyboard_IsPress(DIK_W))
-	{
+	if (Keyboard_IsPress(DIK_D)){
+		move -= right * 0.1f;
+		rot.x = radToDeg(angle) - 90;
+	}
+	if (Keyboard_IsPress(DIK_W)){
 		move += forward * 0.1f;
-		rot.x = radToDeg(angle);
-		isMove = true;
-	}
-	if (Keyboard_IsPress(DIK_S))
-	{
-		move -= forward * 0.1f;
 		rot.x = radToDeg(angle) + 180;
-		isMove = true;
+	}
+	if (Keyboard_IsPress(DIK_S)){
+		move -= forward * 0.1f;
+		rot.x = radToDeg(angle);
 	}
 
-	if (Mouse_IsLeftTrigger()) 
-	{
-		//m_Sword->SetAttack({m_Forward.x, m_Forward.z}); 
-	}
-	if (Mouse_IsRightPress()) { m_Dash = true; }
+	m_Transform.Translate({ move.x, 0.0f, move.y });
 
-	if (m_Dash)
-	{
+	if (Mouse_IsRightPress()) 
+		m_Dash = true;
+
+	if (m_Dash){
 		move.x *= 2;
 		move.y *= 2;
 		m_Dash = false;
 	}
-	m_Transform.Translate({move.x, 0.0f, move.y});
-	if (isMove)
-	{
-		if (m_BlendRate <= 1.0f) { m_BlendRate += 0.1f; }
+
+	if (move.x != 0.0f || move.y != 0.0f){
 		m_Transform.SetRotation(Vec3::Up, rot.x);
-	}
-	else
-	{
-		if (m_BlendRate >= 0.0f) { m_BlendRate -= 0.1f; }
+		isMove = true;
 	}
 
-	m_Model->Update(AnimationTag::Idle, AnimationTag::Run, m_AnimeFrame, m_BlendRate);
+	if (Keyboard_IsPress(DIK_SPACE)) {
+		animation[0] = AnimationTag::Idle;
+		animation[1] = AnimationTag::Jump;
+	}
+
+	if (Mouse_IsLeftTrigger()) {
+		animation[0] = AnimationTag::Idle;
+		animation[1] = AnimationTag::Attack;
+		std::vector<Enemy*> enemys = GetScene()->GetGameObjects<Enemy>(ObjectType::eObSmallEnemy);
+		float eangle = 0.0f;
+		for (auto enemy : enemys) {
+			eangle = Movement::GetInstance()->GetTwoVecAngle({ -m_Forward.x, -m_Forward.z }, {enemy->GetPosition().x - m_Position.x, enemy->GetPosition().z - m_Position.z});
+			eangle = fabs(radToDeg(eangle));
+			if (eangle < 15) {
+				enemy->GetStatus()->GetHitPoint()->Damage(10);
+			}
+			
+		}
+		//new Bullet(GetScene(), m_Position, D3DXVECTOR3(forward.x, 1.0f, forward.y), 2);
+		//m_Sword->SetAttack({m_Forward.x, m_Forward.z}); 
+	}
+
+	Animation(animation[0], animation[1], isMove);
 
 
 	if (m_Status->GetHitPoint()->CheckCollTime())
@@ -152,7 +170,9 @@ void Player::Update()
 	}
 
 	SetPlayer();
-	m_AnimeFrame++;
+
+	MeshField* meshField = GetScene()->GetGameObject<MeshField>(ObjectType::eObField);
+	m_Position.y = meshField->GetHeight(m_Position);
 
 	std::vector<Rock*>rockList = GetScene()->GetGameObjects<Rock>(ObjectType::eObRock);
 	for (Rock* rock : rockList)
@@ -218,4 +238,47 @@ void Player::ImGui()
 	//ImGui::SliderInt("Attack",m_Status->, 0, 10);
 
 	ImGui::End();
+}
+
+void Player::Animation(AnimationTag anime1, AnimationTag anime2, bool isMove)
+{
+	// 前と違ったらアニメーションの切り替え
+	if (m_BeforAnime != anime1 || m_AfterAnime != anime2) {
+		m_BeforAnime = anime1;
+		m_AfterAnime = anime2;
+		m_AnimeFrame = 0;
+		m_AnimeEndFrame = ResourceData::GetInstance()->GetAnimationResource(m_AfterAnime)->GetAnimationCount();
+		m_BlendRate = 0.0f;
+	}
+
+	// アニメーション関連の初期化
+	if (m_AnimeFrame == m_AnimeEndFrame) {
+		m_AnimeFrame = 0;
+		m_AnimeEndFrame = 1000;
+		m_BeforAnime = AnimationTag::Idle;
+		m_AfterAnime = AnimationTag::Run;
+		m_BlendRate = 0.0f;
+	}
+
+	// ブレンドレートの変更
+	if (isMove)	{
+		if (m_BlendRate < 1.0f) { m_BlendRate += BLENDRATE; }
+	}
+	else if (!isMove && m_AfterAnime == AnimationTag::Run) {
+		if (m_BlendRate > 0.0f) { m_BlendRate -= BLENDRATE; }
+	}
+	else{
+		if (m_AnimeFrame >= 0 && m_AnimeFrame < 1.0f / BLENDRATE) {
+			m_BlendRate += BLENDRATE;
+		}
+		else if (m_AnimeEndFrame - (1.0f / BLENDRATE) <= m_AnimeFrame && m_AnimeEndFrame > m_AnimeFrame) {
+			m_BlendRate -= BLENDRATE;
+		}
+	}
+	
+
+	// アニメーションの更新
+	m_Model->Update(m_BeforAnime, m_AfterAnime, m_AnimeFrame, m_BlendRate);
+
+	m_AnimeFrame++;
 }

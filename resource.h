@@ -36,7 +36,8 @@ enum class ResourceTag
 	mEnemy,
 	mSmallEnemy,
 	mBossEnemy,
-	mKuma,
+	mBullet,
+	mTestEnemy,
 
 	fPlayer,
 

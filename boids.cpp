@@ -1,18 +1,24 @@
 #include "main.h"
 #include "renderer.h"
 #include "manager.h"
+#include "movement.h"
+#include "obb.h"
+#include "collision.h"
 #include "boids.h"
+
 #include <algorithm>
 #include <math.h>
 
-#define SEPARATION_DIST  (10)
-#define MIN_URGENCY (0.1f)
-#define MAX_URGENCY (1.0f)
+#define SEPARATION_DIST  (3)
+#define MIN_URGENCY (0.01f)
+#define MAX_URGENCY (0.05f)
 #define MAX_CHANGE (10.0f)
-#define MAX_SPEED (10.0f)
+#define MAX_SPEED (0.01f)
 #define DESIRED_SPEED (1.0f)
 #define GRAVITY (0.98f)
-#define PERCEPTION_RANGE (0.15f)
+#define PERCEPTION_RANGE (5.0f)
+
+#define RAND() ((float)rand()/RAND_MAX)
 
 
 Boids::Boids(D3DXVECTOR3 pos)
@@ -24,11 +30,18 @@ Boids::Boids(D3DXVECTOR3 pos)
 	m_NearMate = nullptr;
 	m_Perception = PERCEPTION_RANGE;
 	m_SeenNum = 0;
+	m_IsKeep = false;
+	m_IsChase = false;
 }
 
 D3DXVECTOR3 Boids::KeepDistance(void)
 {
+	m_IsKeep = false;
+
 	//  距離によって速さを調整する
+	if (m_NearMate == nullptr)
+		return D3DXVECTOR3({ 0.0f,0.0f,0.0f });
+
 	D3DXVECTOR3 nearvec = m_NearMate->GetPosition() - m_Position;
 	float near_distance = D3DXVec3Length(&nearvec);
 	float ratio = near_distance / SEPARATION_DIST;
@@ -37,57 +50,19 @@ D3DXVECTOR3 Boids::KeepDistance(void)
 
 	// もっとも近い仲間の方向を求める
 	D3DXVECTOR3 change = nearvec;
-	change /= near_distance;
+	D3DXVec3Normalize(&change, &change);
 
 	if (near_distance < SEPARATION_DIST) {	// 近かったら遠くへ
 		change *= -ratio;
 	}
-	else if (near_distance > SEPARATION_DIST) {	// 遠かったら近くへ
-		change *= ratio;
-	}
+	//else if (near_distance > SEPARATION_DIST) {
+	//	change *= ratio;
+	//}
 	else {	// いい感じなら動かさない
 		change = { 0.0f,0.0f,0.0f };
+		m_IsKeep = true;
 	}
 
-	return D3DXVECTOR3(change);
-}
-
-D3DXVECTOR3 Boids::MatchHeading(void)
-{
-	// 一番近い仲間の速さの向きを調べる
-	D3DXVECTOR3 change = m_NearMate->GetVelocity();
-	float near_distance = D3DXVec3Length(&change);
-
-	// 段々速度を合わせるように調整する
-	change *= MIN_URGENCY;
-	
-	return D3DXVECTOR3(change);
-}
-
-D3DXVECTOR3 Boids::SteerToCenter(void)
-{
-	D3DXVECTOR3 change;
-
-	// 見える仲間の中心位置を求める
-	D3DXVECTOR3 center = { 0.0f, 0.0f, 0.0f };
-	int matenum = 0;
-	for (Boids* bd : BoidsData::GetInstance()->boidsList)
-	{
-		if (bd != this)
-		{
-			center += bd->GetPosition();
-			matenum++;
-		}
-	}
-
-	center /= matenum;
-
-	// 中心の向きに段々近づく
-	change = center - m_Position;
-	float near_distance = D3DXVec3Length(&change);
-	change = change / near_distance;
-	change *= MIN_URGENCY;
-	
 	return D3DXVECTOR3(change);
 }
 
@@ -100,7 +75,8 @@ float Boids::CanISee(Boids * ptr)
 	float dist = D3DXVec3Length(&d);
 	
 	// 視野内にいたらその距離を返す
-	if (m_Perception > dist) return (dist);
+	if (m_Perception > dist) 
+		return (dist);
 
 	return (INFINITY);
 }
@@ -110,12 +86,12 @@ int Boids::SeeFriend(void)
 	// 可視化リストの初期化
 	ClearVisibleList();
 
-	for (Boids* bd : BoidsData::GetInstance()->visibleList)
+	for (Boids* bd : BoidsData::GetInstance()->boidsList)
 	{
-		float dist;
+		float dist = CanISee(bd);
 
 		// 可視判定
-		if (dist = CanISee(bd) != INFINITY)
+		if (dist != INFINITY)
 		{
 			// 見えたら可視化リストに追加
 			BoidsData::GetInstance()->visibleList.push_back(bd);
@@ -136,42 +112,10 @@ int Boids::SeeFriend(void)
 void Boids::ClearVisibleList(void)
 {
 	// それぞれの初期化
-	for (Boids* bd : BoidsData::GetInstance()->visibleList) {
-		delete bd;
-	}
 	BoidsData::GetInstance()->visibleList.clear();
-
+	
 	m_NearMate = nullptr;
 	m_NearDistance = INFINITY;
-}
-
-D3DXVECTOR3 Boids::Cruising(void)
-{
-	// 巡航速度(DESIRED_SPEED)に近づける
-	float diff = (m_Speed - DESIRED_SPEED) / MAX_SPEED;
-	float urgency = (float)fabs(diff);
-	if (urgency < MIN_URGENCY) urgency = MIN_URGENCY;
-	if (urgency > MAX_URGENCY) urgency = MAX_URGENCY;
-
-	// ランダム性を取り入れる
-	D3DXVECTOR3 change;
-		float jitter = rand();
-	if (jitter < 0.45f) {
-		change.x += MIN_URGENCY * std::signbit(diff);
-	}
-	else if (jitter < 0.90f) {
-		change.z += MIN_URGENCY * std::signbit(diff);
-	}
-	else{
-		change.y += MIN_URGENCY * std::signbit(diff);
-	}
-
-	// 速度変化を力に追加する
-	D3DXVECTOR3 change2 = m_Velocity;
-	D3DXVec3Normalize(&change2, &change2);
-	change2 *= (urgency * std::signbit(-diff));
-
-	return D3DXVECTOR3(change2);
 }
 
 void Boids::ComputeRPY(void)
@@ -208,34 +152,69 @@ void Boids::ComputeRPY(void)
 	m_Angle.z = roll;
 }
 
+D3DXVECTOR3 Boids::FollowTarget(void)
+{
+	m_IsChase = false;
+
+	D3DXVECTOR3 targetvec = m_Target - m_Position;
+	targetvec.y = 0.0f;
+	float target_distance = D3DXVec3Length(&targetvec);
+	float ratio = target_distance / SEPARATION_DIST;
+	if (ratio < MIN_URGENCY) ratio = MIN_URGENCY;
+	if (ratio > MAX_URGENCY) ratio = MAX_URGENCY;
+
+	// もっとも近い仲間の方向を求める
+	D3DXVECTOR3 change = targetvec;
+	D3DXVec3Normalize(&change, &change);
+
+	if (target_distance < SEPARATION_DIST) {	// 近かったら遠くへ
+		change *= -ratio;
+	}
+	else if (target_distance > SEPARATION_DIST) {
+		change *= ratio;
+	}
+	else {	// いい感じなら動かさない
+		change = { 0.0f,0.0f,0.0f };
+		m_IsChase = true;
+	}
+
+	return D3DXVECTOR3(change);
+}
+
 void Boids::FlockIt(void)
 {
 	// 前の状態の保存
 	m_OldPosition = m_Position;
-	m_Position += m_Velocity;
+	m_Position += m_Movement;
+	m_Movement = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	
 	// 仲間を探す
 	this->SeeFriend();
 
-	D3DXVECTOR3 acc = { 0.0f,0.0f, 0.0f };
+	D3DXVECTOR3 acc = { 0.0f, 0.0f, 0.0f };
 
 	// 群れの動作
 	if (m_SeenNum) {
 		acc += KeepDistance();
-
-		acc += MatchHeading();
-
-		acc += SteerToCenter();
 	}
 
-	// 巡回
-	acc += Cruising();
+	// ターゲットに向かって動く
+	acc += FollowTarget();
+
+	// y軸は動かない
+	acc.y = 0.0f;
 
 	// 加速の制限
 	if (D3DXVec3Length(&acc) > MAX_CHANGE) {
 		D3DXVec3Normalize(&acc, &acc);
 		acc *= MAX_CHANGE;
 	}
+
+	//if (m_IsChase && m_IsKeep) {
+	//	acc = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	//}
+
+	m_Movement = acc;
 
 	// 速度変化
 	m_OldVelocity = m_Velocity;
@@ -249,23 +228,6 @@ void Boids::FlockIt(void)
 	}
 
 	// 回転の計算
-	this->ComputeRPY();
-	// 世界の境界の処理
+	//this->ComputeRPY();
 
 }
-
-//D3DXVECTOR3 operator+=(const D3DXVECTOR3 & pos, const D3DXVECTOR3 pos1)
-//{
-//	return D3DXVECTOR3({ pos.x + pos1.x, pos.y + pos1.y });
-//}
-
-//float GetLength(const D3DXVECTOR3 & vec)
-//{
-//	return std::sqrtf(vec.x * vec.x + vec.y * vec.y);
-//}
-
-//D3DXVECTOR3 GetNormalize(const D3DXVECTOR3 & vec)
-//{
-//	float dist = std::sqrtf(vec.x * vec.x + vec.y * vec.y);
-//	return D3DXVECTOR3({ vec.x / dist, vec.y / dist });
-//}

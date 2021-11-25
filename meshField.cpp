@@ -11,21 +11,35 @@
 MeshField::MeshField(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	: GameObject(scene, ObjectType::eObField, drawPriority)
 {
-	std::ifstream ifs("stage.txt");
-	std::string line;
-	int x = 0, y = 0;
-	while (std::getline(ifs, line))
-	{
-		for (int i = 0; line[i] != '\0'; i++)
-		{
-			if (line[i] != ',')
-			{
-				m_FieldHeight[y][x] = atoi(&line[i]);
-				x++;
+	std::string filename("stage.txt");
+	char c;
+
+	std::ifstream input_file(filename);
+	if (!input_file.is_open()) {
+		for (int y = 0; y < 20; y++) {
+			for (int x = 0; x < 20; x++) {
+				m_FieldHeight[y][x] = 0;
 			}
 		}
-		y++;
 	}
+	else{
+		int x = 0, y = 0;
+		while (input_file.get(c)) {
+			if (c != ',' && c != '\n') {
+				m_FieldHeight[y][x] = atoi(&c);
+				if (x == 20) {
+					x = 0;
+					y++;
+				}
+				else {
+					x++;
+				}
+			}
+		}
+	}
+
+	input_file.close();
+
 
 	{//頂点バッファの中身を埋める
 

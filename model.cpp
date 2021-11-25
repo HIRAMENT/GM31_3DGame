@@ -255,6 +255,9 @@ void Model::LoadObj(const char *FileName, MODEL *Model)
 	unsigned int ic = 0;
 	unsigned int sc = 0;
 
+	D3DXVECTOR3 sizeMax = { -1000.f,-1000.f, -1000.f };
+	D3DXVECTOR3 sizeMin = { 1000.f, 1000.f,  1000.f };
+
 
 	fseek(file, 0, SEEK_SET);
 
@@ -288,7 +291,10 @@ void Model::LoadObj(const char *FileName, MODEL *Model)
 			fscanf(file, "%f", &position->x);
 			fscanf(file, "%f", &position->y);
 			fscanf(file, "%f", &position->z);
+			sizeMax = D3DXVECTOR3(max(sizeMax.x, position->x), max(sizeMax.y, position->y), max(sizeMax.z, position->z));
+			sizeMin = D3DXVECTOR3(min(sizeMin.x, position->x), min(sizeMin.y, position->y), min(sizeMin.z, position->z));
 			position++;
+
 		}
 		else if (strcmp(str, "vn") == 0)
 		{
@@ -372,6 +378,8 @@ void Model::LoadObj(const char *FileName, MODEL *Model)
 			}
 		}
 	}
+
+	m_Size = D3DXVECTOR3(sizeMax.x + fabsf(sizeMin.x), sizeMax.y + fabsf(sizeMin.y), sizeMax.z + fabsf(sizeMin.z));
 
 
 	if (sc != 0)
