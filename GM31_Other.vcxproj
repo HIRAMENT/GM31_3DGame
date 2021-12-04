@@ -162,6 +162,7 @@
     <ClCompile Include="ADX2\adxSound.cpp" />
     <ClCompile Include="animationModel.cpp" />
     <ClCompile Include="astar.cpp" />
+    <ClCompile Include="attack.cpp" />
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="billboard.cpp" />
     <ClCompile Include="boids.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="ADX2\GMSummer.h" />
     <ClInclude Include="animationModel.h" />
     <ClInclude Include="astar.h" />
+    <ClInclude Include="attack.h" />
     <ClInclude Include="audio.h" />
     <ClInclude Include="billboard.h" />
     <ClInclude Include="boids.h" />

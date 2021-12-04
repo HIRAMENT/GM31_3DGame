@@ -20,6 +20,7 @@ Camera::Camera(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	m_Transform.SetPosition(pos);
 	D3DXVECTOR3 position = m_Transform.GetPosition();
 	m_Target = { 0.0f,0.0f,0.0f };
+	m_TargetEnemy = { 0.0f,0.0f,0.0f };
 	m_Angle = -90;
 	m_Angle3D = { -90,60 };
 	scene->Add(this);
@@ -59,6 +60,9 @@ void Camera::Update()
 	Player* player = GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
 	m_Target = player->GetPosition();
 
+	// Fキー(仮)を押したら一番近い敵をターゲットする
+	// (ターゲット中は)
+
 	if (Keyboard_IsPress(DIK_F)) {
 		std::vector<Enemy*> enemys = GetScene()->GetGameObjects<Enemy>(ObjectType::eObSmallEnemy);
 		float dist, nearest = 1000.0f;
@@ -72,8 +76,7 @@ void Camera::Update()
 		}
 
 		// プレイヤーとエネミーを通る直線を見る
-		m_Target = ene->GetPosition();
-
+		m_TargetEnemy = ene->GetPosition();
 	}
 
 	D3DXVECTOR2 mouseMove;

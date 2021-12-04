@@ -24,6 +24,8 @@ public:
 
 	void SetTarget(D3DXVECTOR3 pos) { m_Target = pos; }
 
+	void Detour(void);
+
 	void FlockIt(void);
 
 

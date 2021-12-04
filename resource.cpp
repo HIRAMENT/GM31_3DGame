@@ -37,7 +37,7 @@ void ResourceData::InitModel()
 
 void ResourceData::InitTexture()
 {
-	m_TextureResource[ResourceTag::tGround]		       = new Texture("asset/texture/ground.jpg", 1, 1);
+	m_TextureResource[ResourceTag::tGround]		       = new Texture("asset/texture/ground.dds", 1, 1);
 	m_TextureResource[ResourceTag::tShadow]            = new Texture("asset/texture/shadow.png", 1, 1);
 	m_TextureResource[ResourceTag::tTitleBG]           = new Texture("asset/texture/titleBG.png", 1, 1);
 	m_TextureResource[ResourceTag::tPlane]             = new Texture("asset/texture/plane.png", 1, 1);

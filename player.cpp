@@ -26,18 +26,22 @@
 #include "experiencePoint.h" 
 #include "status.h"
 #include "hitPoint.h"
+#include "attack.h"
 #include "meshField.h"
 #include "bullet.h"
+#include "billboard.h"
 #include <math.h>
 
 #define BLENDRATE (0.1f)
+#define ATTACK_RANGE   (50.0f)
+#define ATTACK_LENGTH (100.0f)
 
 Player::Player(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	:GameObject(scene,ObjectType::eObPlayer,drawPriority)
 {
 	SetPosition(pos);
 	m_Transform.SetPosition(pos);
-	SetRotation({ 0.0f, degToRad(180), 0.0f });
+	SetRotation({ 0.0f, 0.0f, 0.0f });
 	SetScale({ 0.015f, 0.015f, 0.015f });
 
 	m_Model = ResourceData::GetInstance()->GetAnimationModel(ResourceTag::fPlayer);
@@ -131,20 +135,18 @@ void Player::Update()
 	}
 
 	if (Mouse_IsLeftTrigger()) {
-		animation[0] = AnimationTag::Idle;
-		animation[1] = AnimationTag::Attack;
-		std::vector<Enemy*> enemys = GetScene()->GetGameObjects<Enemy>(ObjectType::eObSmallEnemy);
-		float eangle = 0.0f;
-		for (auto enemy : enemys) {
-			eangle = Movement::GetInstance()->GetTwoVecAngle({ -m_Forward.x, -m_Forward.z }, {enemy->GetPosition().x - m_Position.x, enemy->GetPosition().z - m_Position.z});
-			eangle = fabs(radToDeg(eangle));
-			if (eangle < 15) {
-				enemy->GetStatus()->GetHitPoint()->Damage(10);
+		if (m_Status->GetAttack()->CheckCoolTime()) {
+			animation[0] = AnimationTag::Idle;
+			animation[1] = AnimationTag::Attack;
+			m_Status->GetAttack()->GetCoolTime(36);
+			std::vector<Enemy*> enemys = GetScene()->GetGameObjects<Enemy>(ObjectType::eObSmallEnemy);
+			for (auto enemy : enemys) {
+				if (m_Status->GetAttack()->CheckHit({ m_Position - enemy->GetPosition() }, -m_Forward, ATTACK_RANGE, ATTACK_LENGTH)) {
+					enemy->GetStatus()->GetHitPoint()->Damage(m_Status->GetAttack()->GetPower());
+					new Billboard(GetScene(), enemy->GetPosition(), D3DXVECTOR2(10, 10), ResourceTag::tSlash, true, 100);
+				}
 			}
-			
 		}
-		//new Bullet(GetScene(), m_Position, D3DXVECTOR3(forward.x, 1.0f, forward.y), 2);
-		//m_Sword->SetAttack({m_Forward.x, m_Forward.z}); 
 	}
 
 	Animation(animation[0], animation[1], isMove);
@@ -158,13 +160,13 @@ void Player::Update()
 		{
 			if (enemy && enemy->GetAttack() && Collision::GetInstance()->ObbToObb(enemy->GetObb(), m_Obb))
 			{
-				m_Status->GetHitPoint()->Damage(enemy->GetStatus()->GetAttack());
+				m_Status->GetHitPoint()->Damage(enemy->GetStatus()->GetAttack()->GetPower());
 				ADXSound::GetInstance()->Play(7);
 			}
 		}
 		if (bossEnemy && bossEnemy->GetAttack() && Collision::GetInstance()->ObbToObb(bossEnemy->GetObb(), m_Obb))
 		{
-			m_Status->GetHitPoint()->Damage(bossEnemy->GetStatus()->GetAttack());
+			m_Status->GetHitPoint()->Damage(bossEnemy->GetStatus()->GetAttack()->GetPower());
 			ADXSound::GetInstance()->Play(7);
 		}
 	}
@@ -236,6 +238,8 @@ void Player::ImGui()
 {
 	ImGui::Begin("Status");
 	//ImGui::SliderInt("Attack",m_Status->, 0, 10);
+
+	ImGui::Text("%d", m_Status->GetAttack()->GetCoolTime());
 
 	ImGui::End();
 }

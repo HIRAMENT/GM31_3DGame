@@ -26,6 +26,7 @@
 #include "status.h"
 #include "hitPoint.h"
 
+#define RECT_
 
 void GameScene::Init()
 {
@@ -83,24 +84,11 @@ void GameScene::Update()
 {
 	Scene::Update();
 
-
-	if (!Keyboard_IsPress(DIK_LMENU)){
-		POINT ScreenPoint;
-		GetCursorPos(&ScreenPoint);
-		ScreenToClient(GetWindow(), &ScreenPoint);
-		ScreenPoint = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
-		SetCursorPos(ScreenPoint.x, ScreenPoint.y);
-		ShowCursor(false);
+	if (GetGameObjects<Enemy>(ObjectType::eObSmallEnemy).size() == 0)
+	{
+		Fade::GetInstance()->FadeIn(SceneTag::eResult);
+		ResultScene::SetClear(true);
 	}
-	else {
-		ShowCursor(true);
-	}
-
-	//if (!GetGameObject<Enemy>(ObjectType::eObBossEnemy))
-	//{
-	//	Fade::GetInstance()->FadeIn(SceneTag::eResult);
-	//	ResultScene::SetClear(true);
-	//}
 	if (GetGameObject<Player>(ObjectType::eObPlayer)->GetStatus()->GetHitPoint()->GetHitPoint() <= 0)
 	{
 		Fade::GetInstance()->FadeIn(SceneTag::eResult);
@@ -108,6 +96,40 @@ void GameScene::Update()
 		ResultScene::SetClear(false);
 	}
 }
+
+
+void GameScene::Draw()
+{
+	std::list<GameObject*> obj = m_GameObject;
+	D3DXVECTOR3 cpos = GetGameObject<Camera>(ObjectType::eObCamera)->GetPosition();
+	obj.sort([cpos](GameObject* obj1, GameObject* obj2)
+	{
+		if (obj1->GetDrawPriority() > 100){
+			return false;
+		}
+		else if (obj2->GetDrawPriority() > 100) {
+			return true;
+		}
+
+		D3DXVECTOR3 vec1 = obj1->GetPosition() - cpos;
+		float len1 = D3DXVec3Length(&vec1);
+
+		D3DXVECTOR3 vec2 = obj2->GetPosition() - cpos;
+		float len2 = D3DXVec3Length(&vec2);
+
+		if (len1 < len2) {
+			return true;
+		}
+
+		return false;
+	});
+
+	for (GameObject* object : obj)
+	{
+		object->Draw();
+	}
+}
+
 
 void GameScene::Uninit()
 {

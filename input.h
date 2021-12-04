@@ -64,4 +64,6 @@ long Mouse_GetMoveZ(void);         // マウスホイールが動いた相対値
 BOOL GamePad_IsButtonPress(int padNo,DWORD button);
 BOOL GamePad_IsButtonTrigger(int padNo,DWORD button);
 
+void UpdateMouseCursor(bool vaild);
+
 

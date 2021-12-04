@@ -243,6 +243,9 @@
     <ClCompile Include="targetMark.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="attack.cpp">
+      <Filter>ソース ファイル\GameObject\Status</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -484,6 +487,9 @@
     </ClInclude>
     <ClInclude Include="targetMark.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="attack.h">
+      <Filter>ヘッダー ファイル\GameObject\Status</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

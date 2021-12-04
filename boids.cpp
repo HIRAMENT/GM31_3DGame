@@ -1,6 +1,8 @@
 #include "main.h"
 #include "renderer.h"
 #include "manager.h"
+#include "scene.h"
+#include "rock.h"
 #include "movement.h"
 #include "obb.h"
 #include "collision.h"
@@ -179,6 +181,27 @@ D3DXVECTOR3 Boids::FollowTarget(void)
 	}
 
 	return D3DXVECTOR3(change);
+}
+
+void Boids::Detour(void)
+{
+	// è·äQï®Ç…ìñÇΩÇ¡ÇΩÇÁ
+	std::vector<Rock*> rocks = Manager::GetInstance()->GetScene()->GetGameObjects<Rock>(ObjectType::eObRock);
+	Rock* nearobj = nullptr;
+	float dist = 1000.0;
+	for (Rock* rock : rocks) {
+		D3DXVECTOR3 d = rock->GetPosition() - m_Position;
+		float length = D3DXVec3Length(&d);
+		if (dist > length) {
+			dist = length;
+			nearobj = rock;
+		}
+			
+
+		//if(Collision::GetInstance().)
+	}
+
+	//âIâÒ
 }
 
 void Boids::FlockIt(void)

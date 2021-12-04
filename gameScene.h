@@ -6,6 +6,7 @@ class GameScene : public Scene
 public:
 	void Init() override;
 	void Update() override;
+	void Draw() override;
 	void Uninit() override;
 
 	void SetGameOver() { m_GameOver = true; }

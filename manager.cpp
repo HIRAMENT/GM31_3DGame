@@ -1,6 +1,7 @@
 #include "main.h"
 #include "manager.h"
 #include "renderer.h"
+#include "input.h"
 #include "audio.h"
 #include "fade.h"
 #include "scene.h"
@@ -44,6 +45,19 @@ void Manager::Uninit()
 void Manager::Update()
 {
 	MyImGui::GetInstance()->UpdateStart();
+
+	// マウス関連
+	if (Keyboard_IsPress(DIK_2)) {
+		m_CursorEnable = (m_CursorEnable + 1) % 2;
+	}
+
+	HWND hWnd = GetActiveWindow();
+	if (GetWindow() != hWnd) {
+		m_CursorEnable = false;
+	}
+
+	UpdateMouseCursor(m_CursorEnable);
+	
 
 	m_Scene->Update();
 	Fade::GetInstance()->Update();

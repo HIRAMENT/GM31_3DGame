@@ -12,50 +12,31 @@ Billboard::Billboard(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR2 size, ResourceT
 	, m_TextureTag(tag)
 	, m_Size(size)
 {
-	if (centered)
-	{
+	if (centered){
 		m_Vertex[0].Position = D3DXVECTOR3(-size.x * 0.5f, size.y * 0.5f, 0.0f);
-		m_Vertex[0].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_Vertex[0].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-		m_Vertex[0].TexCoord = D3DXVECTOR2(0.0f, 0.0f);
-
 		m_Vertex[1].Position = D3DXVECTOR3(size.x * 0.5f, size.y * 0.5f, 0.0f);
-		m_Vertex[1].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_Vertex[1].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-		m_Vertex[1].TexCoord = D3DXVECTOR2(1.0f, 0.0f);
-
 		m_Vertex[2].Position = D3DXVECTOR3(-size.x * 0.5f, -size.y * 0.5f, 0.0f);
-		m_Vertex[2].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_Vertex[2].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-		m_Vertex[2].TexCoord = D3DXVECTOR2(0.0f, 1.0f);
-
 		m_Vertex[3].Position = D3DXVECTOR3(size.x * 0.5f, -size.y * 0.5f, 0.0f);
-		m_Vertex[3].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_Vertex[3].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-		m_Vertex[3].TexCoord = D3DXVECTOR2(1.0f, 1.0f);
 	}
-	else
-	{
+	else{
 		m_Vertex[0].Position = D3DXVECTOR3(0.0f, size.y, 0.0f);
-		m_Vertex[0].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_Vertex[0].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-		m_Vertex[0].TexCoord = D3DXVECTOR2(0.0f, 0.0f);
-
 		m_Vertex[1].Position = D3DXVECTOR3(size.x, size.y, 0.0f);
-		m_Vertex[1].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_Vertex[1].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-		m_Vertex[1].TexCoord = D3DXVECTOR2(1.0f, 0.0f);
-
 		m_Vertex[2].Position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_Vertex[2].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_Vertex[2].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-		m_Vertex[2].TexCoord = D3DXVECTOR2(0.0f, 1.0f);
-
 		m_Vertex[3].Position = D3DXVECTOR3(size.x, 0.0f, 0.0f);
-		m_Vertex[3].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_Vertex[3].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-		m_Vertex[3].TexCoord = D3DXVECTOR2(1.0f, 1.0f);
 	}
+
+	m_Vertex[0].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_Vertex[0].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Vertex[0].TexCoord = D3DXVECTOR2(0.0f, 0.0f);
+	m_Vertex[1].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_Vertex[1].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Vertex[1].TexCoord = D3DXVECTOR2(1.0f, 0.0f);
+	m_Vertex[2].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_Vertex[2].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Vertex[2].TexCoord = D3DXVECTOR2(0.0f, 1.0f);
+	m_Vertex[3].Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_Vertex[3].Diffuse = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Vertex[3].TexCoord = D3DXVECTOR2(1.0f, 1.0f);
 
 
 	// 頂点バッファ作成
@@ -249,11 +230,7 @@ bool Billboard::Slide()
 	m_Vertex[3].TexCoord = D3DXVECTOR2(1.0f * (1.0f - m_SliddValue), 1.0f);
 
 	if (m_SliddValue == m_VariaRatio)
-	{
 		return true;
-	}
-	else
-	{
-		return false;
-	}
+	
+	return false;
 }

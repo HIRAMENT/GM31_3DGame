@@ -9,6 +9,7 @@ private:
 	Transform m_Transform;
 
 	D3DXVECTOR3 m_Target;
+	D3DXVECTOR3 m_TargetEnemy;
 
 	D3DXMATRIX m_ViewMatrix;
 	D3DXMATRIX m_ProjectionMatrix;

@@ -41,5 +41,7 @@ void Information::Display()
 	ImGui::Text("MEMORY"); ImGui::SameLine();
 	ImGui::Text("%f", GetMemory());
 
+	ImGui::Text("2Key MouseCursor ON/OFF");
+
 	ImGui::End();
 }

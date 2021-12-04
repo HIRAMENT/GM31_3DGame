@@ -17,6 +17,8 @@
 #define RANGE_MAX		1000			// 有効範囲の最大値
 #define RANGE_MIN		-1000			// 有効範囲の最小値
 
+#define RECT_MARGIN     35.0f           // カーソルの可動領域の余白
+
 
 //*****************************************************************************
 // プロトタイプ宣言
@@ -61,6 +63,8 @@ static LPDIRECTINPUTDEVICE8	pGamePad[GAMEPADMAX] = {NULL,NULL,NULL,NULL};// パッ
 static DWORD	padState[GAMEPADMAX];	// パッド情報（複数対応）
 static DWORD	padTrigger[GAMEPADMAX];
 static int		padCount = 0;			// 検出したパッドの数
+
+static RECT g_CursorRect;
 
 
 //=============================================================================
@@ -539,6 +543,34 @@ BOOL GamePad_IsButtonPress(int padNo,DWORD button)
 BOOL GamePad_IsButtonTrigger(int padNo,DWORD button)
 {
 	return (button & padTrigger[padNo]);
+}
+
+void UpdateMouseCursor(bool vaild)
+{
+	RECT cr;
+
+	// マウス処理
+	if (vaild == true) {
+		GetWindowRect(GetWindow(), &cr);
+		cr.top += RECT_MARGIN;
+		cr.bottom -= RECT_MARGIN;
+		cr.right -= RECT_MARGIN;
+		cr.left += RECT_MARGIN;
+		int x = (cr.left + cr.right) / 2;
+		int y = (cr.top + cr.bottom) / 2;
+		SetCursorPos(x, y);
+		ShowCursor(false);
+	}
+	else if(vaild == false) {
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &cr, 0);
+		ShowCursor(true);
+	}
+
+	if (g_CursorRect != cr) {
+		g_CursorRect = cr;
+		ClipCursor(&g_CursorRect);
+	}
+
 }
 
 
