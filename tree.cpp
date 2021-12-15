@@ -17,3 +17,9 @@ tree::tree(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 scale, int drawPriority)
 
 	scene->Add(this);
 }
+
+void tree::Uninit()
+{
+	m_TreeUI->SetDestroy();
+	m_Shadow->SetDestroy();
+}

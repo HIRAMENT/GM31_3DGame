@@ -16,24 +16,50 @@ void ResultScene::Init()
 	{
 		m_BG = new Polygon2D(this, { SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f }, { SCREEN_WIDTH,SCREEN_HEIGHT }, ResourceTag::tGameClear, 10);
 		m_TitleName = new Polygon2D(this, { SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.25f }, { 640.f,128.f }, ResourceTag::tGameClearLetter, 11);
-		m_ReturnButton = new Button(this, { SCREEN_WIDTH * 0.5f ,SCREEN_HEIGHT * 0.7f }, { 256, 64 }, ResourceTag::tReturnTitleLetter, 11);
-		m_ExitButton = new Button(this, { SCREEN_WIDTH * 0.5f ,SCREEN_HEIGHT * 0.9f }, { 256, 64 }, ResourceTag::tEndLetter, 11);
 		m_BGMID = ADXSound::GetInstance()->Play(2);
 	}
 	else if(!m_Clear)
 	{
 		m_BG = new Polygon2D(this, { SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f }, { SCREEN_WIDTH,SCREEN_HEIGHT }, ResourceTag::tGameOver, 10);
 		m_TitleName = new Polygon2D(this, { SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.25f }, { 640.f,128.f }, ResourceTag::tGameOverLetter, 11);
-		m_ReturnButton = new Button(this, { SCREEN_WIDTH * 0.5f ,SCREEN_HEIGHT * 0.7f }, { 256, 64 }, ResourceTag::tReturnTitleLetter, 11);
-		m_ExitButton = new Button(this, { SCREEN_WIDTH * 0.5f ,SCREEN_HEIGHT * 0.9f }, { 256, 64 }, ResourceTag::tEndLetter, 11);
 		m_BGMID = ADXSound::GetInstance()->Play(3);
 	}
+	m_ReturnButton = new Button(this, { SCREEN_WIDTH * 0.5f ,SCREEN_HEIGHT * 0.7f }, { 256, 64 }, ResourceTag::tReturnTitleLetter, 11);
+	m_ExitButton = new Button(this, { SCREEN_WIDTH * 0.5f ,SCREEN_HEIGHT * 0.9f }, { 256, 64 }, ResourceTag::tEndLetter, 11);
+
 	m_Select = 0;
+	m_CursorEnter = false;
+
+	Manager::GetInstance()->SetCursorEnable(false);
 }
 
 void ResultScene::Update()
 {
 	Scene::Update();
+
+	POINT mouse = {};
+	GetCursorPos(&mouse);
+	ScreenToClient(GetWindow(), &mouse);
+	if (m_ReturnButton->CursorEnter(mouse))
+	{
+		if (m_Select != 0) {
+			m_Select = 0;
+			ADXSound::GetInstance()->Play(4);
+		}
+		m_CursorEnter = true;
+	}
+	else if (m_ExitButton->CursorEnter(mouse))
+	{
+		if (m_Select != 1) {
+			m_Select = 1;
+			ADXSound::GetInstance()->Play(4);
+		}
+		m_CursorEnter = true;
+	}
+	else
+	{
+		m_CursorEnter = false;
+	}
 
 	if (Keyboard_IsTrigger(DIK_DOWN))
 	{
@@ -60,7 +86,7 @@ void ResultScene::Update()
 		break;
 	}
 
-	if (Keyboard_IsTrigger(DIK_SPACE))
+	if (Keyboard_IsTrigger(DIK_SPACE) || m_CursorEnter && Mouse_IsLeftTrigger())
 	{
 		ADXSound::GetInstance()->Play(5);
 		switch (m_Select)

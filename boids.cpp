@@ -6,6 +6,8 @@
 #include "movement.h"
 #include "obb.h"
 #include "collision.h"
+#include "viewSensor.h"
+#include "obb.h"
 #include "boids.h"
 
 #include <algorithm>
@@ -32,38 +34,19 @@ Boids::Boids(D3DXVECTOR3 pos)
 	m_NearMate = nullptr;
 	m_Perception = PERCEPTION_RANGE;
 	m_SeenNum = 0;
-	m_IsKeep = false;
-	m_IsChase = false;
+	m_ViewRange = 10;
+	m_ViewLenght = 10;
+	m_OutLook = new ViewSensor(Manager::GetInstance()->GetScene(), pos, m_ViewRange, m_ViewLenght, 5);
+	m_OutLook->SetDisplay(false);
 }
 
 D3DXVECTOR3 Boids::KeepDistance(void)
 {
-	m_IsKeep = false;
-
 	//  距離によって速さを調整する
 	if (m_NearMate == nullptr)
 		return D3DXVECTOR3({ 0.0f,0.0f,0.0f });
 
-	D3DXVECTOR3 nearvec = m_NearMate->GetPosition() - m_Position;
-	float near_distance = D3DXVec3Length(&nearvec);
-	float ratio = near_distance / SEPARATION_DIST;
-	if (ratio < MIN_URGENCY) ratio = MIN_URGENCY;
-	if (ratio > MAX_URGENCY) ratio = MAX_URGENCY;
-
-	// もっとも近い仲間の方向を求める
-	D3DXVECTOR3 change = nearvec;
-	D3DXVec3Normalize(&change, &change);
-
-	if (near_distance < SEPARATION_DIST) {	// 近かったら遠くへ
-		change *= -ratio;
-	}
-	//else if (near_distance > SEPARATION_DIST) {
-	//	change *= ratio;
-	//}
-	else {	// いい感じなら動かさない
-		change = { 0.0f,0.0f,0.0f };
-		m_IsKeep = true;
-	}
+	D3DXVECTOR3 change = SalculatingRatio(m_NearMate->GetPosition(), m_Position, false);
 
 	return D3DXVECTOR3(change);
 }
@@ -122,89 +105,98 @@ void Boids::ClearVisibleList(void)
 
 void Boids::ComputeRPY(void)
 {
-	float roll, pitch, yaw;
+	float angle = Movement::GetInstance()->GetTwoVecAngle({ 0,1 }, { m_Target.x - m_Position.x, m_Target.z - m_Position.z });
+	if (m_Target.x - m_Position.x < 0.0f) angle *= -1;
+	m_Angle.y = angle;
 
-	// 受けた力の計算
-	D3DXVECTOR3 d = m_Velocity - m_OldVelocity;
-	D3DXVECTOR3 lateralDir;
-	D3DXVec3Cross(&lateralDir, &m_Velocity, &d);
-	D3DXVec3Cross(&lateralDir, &lateralDir, &m_Velocity);	// 受けた力の速度に直交する成分
-	D3DXVec3Normalize(&lateralDir, &lateralDir);
+	//float roll, pitch, yaw;
 
-	// トルク計算
-	float lateralMag = D3DXVec3Dot(&d, &lateralDir);
+	//// 受けた力の計算
+	//D3DXVECTOR3 d = m_Velocity - m_OldVelocity;
+	//D3DXVECTOR3 lateralDir;
+	//D3DXVec3Cross(&lateralDir, &m_Velocity, &d);
+	//D3DXVec3Cross(&lateralDir, &lateralDir, &m_Velocity);	// 受けた力の速度に直交する成分
+	//D3DXVec3Normalize(&lateralDir, &lateralDir);
 
-	// roll
-	if (lateralMag == 0) {
-		roll = 0.0f;
-	}
-	else {
-		roll = static_cast<float>(-atan2(GRAVITY, lateralMag) + 3.14159f / 2.0f);
-	}
+	//// トルク計算
+	//float lateralMag = D3DXVec3Dot(&d, &lateralDir);
 
-	//pitch
-	pitch = static_cast<float>(-atan(m_Velocity.y / sqrt((m_Velocity.z * m_Velocity.z) + (m_Velocity.x * m_Velocity.x))));
+	//// roll
+	//if (lateralMag == 0) {
+	//	roll = 0.0f;
+	//}
+	//else {
+	//	roll = static_cast<float>(-atan2(GRAVITY, lateralMag) + 3.14159f / 2.0f);
+	//}
 
-	// yaw
-	yaw = static_cast<float>(atan2(-m_Velocity.x, -m_Velocity.z));
+	////pitch
+	//pitch = static_cast<float>(-atan(m_Velocity.y / sqrt((m_Velocity.z * m_Velocity.z) + (m_Velocity.x * m_Velocity.x))));
 
-	//出力
-	m_Angle.x = pitch;
-	m_Angle.y = yaw;
-	m_Angle.z = roll;
+	//// yaw
+	//yaw = static_cast<float>(atan2(-m_Velocity.x, -m_Velocity.z));
+
+	////出力
+	//m_Angle.x = pitch;
+	//m_Angle.y = yaw;
+	//m_Angle.z = roll;
 }
 
 D3DXVECTOR3 Boids::FollowTarget(void)
 {
-	m_IsChase = false;
-
-	D3DXVECTOR3 targetvec = m_Target - m_Position;
-	targetvec.y = 0.0f;
-	float target_distance = D3DXVec3Length(&targetvec);
-	float ratio = target_distance / SEPARATION_DIST;
-	if (ratio < MIN_URGENCY) ratio = MIN_URGENCY;
-	if (ratio > MAX_URGENCY) ratio = MAX_URGENCY;
-
-	// もっとも近い仲間の方向を求める
-	D3DXVECTOR3 change = targetvec;
-	D3DXVec3Normalize(&change, &change);
-
-	if (target_distance < SEPARATION_DIST) {	// 近かったら遠くへ
-		change *= -ratio;
-	}
-	else if (target_distance > SEPARATION_DIST) {
-		change *= ratio;
-	}
-	else {	// いい感じなら動かさない
-		change = { 0.0f,0.0f,0.0f };
-		m_IsChase = true;
-	}
+	D3DXVECTOR3 change = SalculatingRatio(m_Target, m_Position);
 
 	return D3DXVECTOR3(change);
 }
 
-void Boids::Detour(void)
+D3DXVECTOR3 Boids::Detour(OBB* obb)
 {
+	m_OutLook->SetInfo(m_Position, m_Target - m_Position, m_ViewRange, m_ViewLenght, false);
+
 	// 障害物に当たったら
 	std::vector<Rock*> rocks = Manager::GetInstance()->GetScene()->GetGameObjects<Rock>(ObjectType::eObRock);
 	Rock* nearobj = nullptr;
 	float dist = 1000.0;
+	float length = 0.0f;
+	D3DXVECTOR3 d = { 0.0f,0.0f,0.0f };
 	for (Rock* rock : rocks) {
-		D3DXVECTOR3 d = rock->GetPosition() - m_Position;
-		float length = D3DXVec3Length(&d);
-		if (dist > length) {
+		d = rock->GetPosition() - m_Position;
+		length = D3DXVec3Length(&d);
+		if (length < m_ViewLenght && dist > length) {
 			dist = length;
 			nearobj = rock;
 		}
-			
-
-		//if(Collision::GetInstance().)
 	}
 
-	//迂回
+	if (nearobj && !Collision::GetInstance()->ObbToObb(nearobj->GetObb(), obb)) {
+		nearobj = nullptr;
+	}
+
+	if (nearobj == nullptr) {
+		return D3DXVECTOR3(0, 0, 0);
+	}
+
+	//角の座標が欲しいならライトのベクトルからフォワードのベクトル文を引くなりすれば出る
+	// 右と左の二点を求めて近いほうを取る
+	D3DXVECTOR3 direction[4] = {};
+	D3DXVECTOR3 nearvec = {};
+	D3DXVECTOR3 right   = nearobj->GetObb()->GetDirection(Direction::eRight) * nearobj->GetObb()->GetLength(Direction::eRight);
+	D3DXVECTOR3 forward = nearobj->GetObb()->GetDirection(Direction::eForward) * nearobj->GetObb()->GetLength(Direction::eForward);
+	direction[0] =  right * 1.5f + forward * 1.5f;
+	direction[1] =  right * 1.5f - forward * 1.5f;
+	direction[2] = -right * 1.5f + forward * 1.5f;
+	direction[3] = -right * 1.5f - forward * 1.5f;
+	for (int i = 1; i < 4; i++) 
+	{
+		nearvec = std::min((direction[i - 1] - m_Position), (direction[i] - m_Position));
+	}
+	D3DXVec3Normalize(&nearvec, &nearvec);
+
+	D3DXVECTOR3 change = SalculatingRatio(nearvec) + SalculatingRatio(nearobj->GetPosition() - m_Position, false);
+
+	return D3DXVECTOR3(change);
 }
 
-void Boids::FlockIt(void)
+void Boids::FlockIt(OBB* obb)
 {
 	// 前の状態の保存
 	m_OldPosition = m_Position;
@@ -221,8 +213,14 @@ void Boids::FlockIt(void)
 		acc += KeepDistance();
 	}
 
+	// 障害物をよける
+	D3DXVECTOR3 det = Detour(obb);
+	acc += det;
+
 	// ターゲットに向かって動く
-	acc += FollowTarget();
+	if (det == D3DXVECTOR3(0.0f, 0.0f, 0.0f)) {
+		acc += FollowTarget();
+	}
 
 	// y軸は動かない
 	acc.y = 0.0f;
@@ -232,10 +230,6 @@ void Boids::FlockIt(void)
 		D3DXVec3Normalize(&acc, &acc);
 		acc *= MAX_CHANGE;
 	}
-
-	//if (m_IsChase && m_IsKeep) {
-	//	acc = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	//}
 
 	m_Movement = acc;
 
@@ -251,6 +245,39 @@ void Boids::FlockIt(void)
 	}
 
 	// 回転の計算
-	//this->ComputeRPY();
+	this->ComputeRPY();
 
+}
+
+D3DXVECTOR3 Boids::SalculatingRatio(D3DXVECTOR3 vec1, D3DXVECTOR3 vec2, bool approach)
+{
+	D3DXVECTOR3 vector = vec1 - vec2;
+
+	D3DXVECTOR3 change = SalculatingRatio(vector, approach);
+
+	return D3DXVECTOR3(change);
+}
+
+D3DXVECTOR3 Boids::SalculatingRatio(D3DXVECTOR3 vec, bool approach)
+{
+	vec.y = 0.0f;
+	float distance = D3DXVec3Length(&vec);
+	float ratio = distance / SEPARATION_DIST;
+	if (ratio < MIN_URGENCY) ratio = MIN_URGENCY;
+	if (ratio > MAX_URGENCY) ratio = MAX_URGENCY;
+
+	D3DXVECTOR3 change = vec;
+	D3DXVec3Normalize(&change, &change);
+
+	if (distance < SEPARATION_DIST) {	// 近かったら遠くへ
+		change *= -ratio;
+	}
+	else if (approach && distance > SEPARATION_DIST) {
+		change *= ratio;
+	}
+	else {	// いい感じなら動かさない
+		change = { 0.0f,0.0f,0.0f };
+	}
+
+	return D3DXVECTOR3(change);
 }

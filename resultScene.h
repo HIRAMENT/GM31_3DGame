@@ -14,6 +14,7 @@ private:
 	const int m_SelectMax = 2;
 	static bool m_Clear;
 	unsigned int m_BGMID;
+	bool m_CursorEnter;
 
 public:
 	void Init() override;

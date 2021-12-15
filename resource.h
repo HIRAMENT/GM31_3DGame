@@ -40,6 +40,7 @@ enum class ResourceTag
 	mTestEnemy,
 
 	fPlayer,
+	fTest,
 
 };
 

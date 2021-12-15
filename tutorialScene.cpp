@@ -18,7 +18,7 @@ void TutorialScene::Update()
 {
 	Scene::Update();
 
-	if (Keyboard_IsTrigger(DIK_SPACE))
+	if (Keyboard_IsTrigger(DIK_SPACE) || Mouse_IsLeftTrigger())
 	{
 		ADXSound::GetInstance()->Play(5);
 		Fade::GetInstance()->FadeIn(SceneTag::eGame);

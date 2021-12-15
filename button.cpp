@@ -16,7 +16,7 @@ Button::Button(Scene * scene, D3DXVECTOR2 pos, D3DXVECTOR2 size, ResourceTag tag
 	m_ButtonClickUI  = new Polygon2D(scene, pos, size, ResourceTag::tButtonClick,  drawPriority);
 
 	m_SelectAlpha = 0.0f;
-	m_SelectMoveValue = 0.05f;
+	m_SelectMoveValue = 0.03f;
 	m_ClickAlpha = 0.0f;
 	m_ClickMoveValue = 0.1f;
 	m_isClick = false;
@@ -34,6 +34,10 @@ void Button::Init()
 
 void Button::Uninit()
 {
+	m_ButtonUI->SetDestroy();
+	m_ButtonFrameUI->SetDestroy();
+	m_ButtonSelectUI->SetDestroy();
+	m_ButtonClickUI->SetDestroy();
 }
 
 void Button::Update()
@@ -56,6 +60,20 @@ void Button::Update()
 
 void Button::Draw()
 {
+}
+
+bool Button::CursorEnter(POINT pos)
+{
+	float right   = m_ButtonUI->GetPosition().x + m_ButtonUI->GetSize().x / 2;
+	float left    = m_ButtonUI->GetPosition().x - m_ButtonUI->GetSize().x / 2;
+	float top     = m_ButtonUI->GetPosition().y + m_ButtonUI->GetSize().y / 2;
+	float bottom  = m_ButtonUI->GetPosition().y - m_ButtonUI->GetSize().y / 2;
+	if (pos.x < right && pos.x > left && pos.y < top && pos.y > bottom) 
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void Button::HaveSelect(bool select)

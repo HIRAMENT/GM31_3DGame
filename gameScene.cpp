@@ -26,8 +26,6 @@
 #include "status.h"
 #include "hitPoint.h"
 
-#define RECT_
-
 void GameScene::Init()
 {
 	new Camera(this, { 0.0f,5.0f,-20.0f }, 0);
@@ -35,25 +33,26 @@ void GameScene::Init()
 	new Skydome(this, { 0.0f,0.0f,0.0f }, 1);
 	new Player(this, { 0.0f,0.0f,-10.0f }, 2);
 
-	new SmallEnemy(this, { -20.0f,1.0f,5.0f }, 2);
-	new SmallEnemy(this, { 0.0f,1.0f,5.0f }, 2);
-	new SmallEnemy(this, { 20.0f,1.0f,5.0f }, 2);
-	new SmallEnemy(this, { -20.0f,1.0f,-5.0f }, 2);
-	new SmallEnemy(this, { 0.0f,1.0f,-5.0f }, 2);
-	new SmallEnemy(this, { 20.0f,1.0f,-5.0f }, 2);
-
-	//new BossEnemy(this, { 0.0f, 3.0f,20.0f }, 2);
+	new Rock(this, { 0.0f,1.0f,0.0f }, { 0.0f,0.0f,0.0f }, { 5.0f,3.0f,2.0f }, 2);
 
 	srand(time(NULL));
 
 	D3DXVECTOR3 pos;
 	D3DXVECTOR3 rot;
 	D3DXVECTOR3 sca;
+
+	for (int i = 0; i < 15; i++)
+	{
+		pos.x = rand() % 60 - 30;
+		pos.z = rand() % 60 - 30;
+		new SmallEnemy(this, { pos.x,1.0f,pos.z }, 2);
+	}
+
 	for (int i = 0; i < 50; i++)
 	{
 		pos.x = rand() % 150 - 75;
 		pos.z = rand() % 150 - 75;
-		if (pos.x <= 2.0f && pos.x >= -2.0f)
+		if (pos.x <= 5.0f && pos.x >= -5.0f)
 		{
 			if (pos.z >= -12.0f && pos.z <= -8.0f)
 			{
@@ -67,7 +66,7 @@ void GameScene::Init()
 		sca.x    = rand() % 5 + 1;
 		sca.y    = rand() % 5 + 1;
 		sca.z    = rand() % 5 + 1;
-		//new Rock(this, { pos.x,0.f,pos.z }, { rot.x,rot.y,rot.z }, { sca.x, sca.y, sca.z }, 2);
+		new Rock(this, { pos.x,1.f,pos.z }, { rot.x,rot.y,rot.z }, { sca.x, sca.y, sca.z }, 2);
 	}
 
 	for (int i = 0; i < 100; i++)
@@ -77,6 +76,10 @@ void GameScene::Init()
 		//new tree(this, { pos.x,9.5f,pos.z }, { 20.0f,20.0f,20.0f }, 2);
 	}
 
+	m_PhaseCount = 0;
+
+	Manager::GetInstance()->SetCursorEnable(true);
+
 	m_BGMID = ADXSound::GetInstance()->Play(1);
 }
 
@@ -84,8 +87,24 @@ void GameScene::Update()
 {
 	Scene::Update();
 
-	if (GetGameObjects<Enemy>(ObjectType::eObSmallEnemy).size() == 0)
+	if (m_PhaseCount < 2 && GetGameObjects<Enemy>(ObjectType::eObSmallEnemy).size() == 0)
 	{
+		D3DXVECTOR3 pos;
+		m_PhaseCount++;
+		if (m_PhaseCount < 2) {
+			for (int i = 0; i < 15; i++)
+			{
+				pos.x = rand() % 60 - 30;
+				pos.z = rand() % 60 - 30;
+				new SmallEnemy(this, { pos.x,1.0f,pos.z }, 2);
+			}
+		}
+		else if (m_PhaseCount == 2) {
+			new BossEnemy(this, { 0.0f, 3.0f,20.0f }, 2);
+		}
+		
+	}
+	if (m_PhaseCount == 2 && !GetGameObject<Enemy>(ObjectType::eObBossEnemy)) {
 		Fade::GetInstance()->FadeIn(SceneTag::eResult);
 		ResultScene::SetClear(true);
 	}

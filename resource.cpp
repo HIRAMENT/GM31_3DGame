@@ -66,6 +66,7 @@ void ResourceData::InitTexture()
 void ResourceData::InitAnimationModel()
 {
 	m_AnimationModelResource[ResourceTag::fPlayer] = new AnimationModel("asset\\model\\character\\JapanPlayer.fbx");
+	//m_AnimationModelResource[ResourceTag::fTest] = new AnimationModel("asset\\model\\test\\nyan.fbx");
 }
 
 void ResourceData::InitAnimation()

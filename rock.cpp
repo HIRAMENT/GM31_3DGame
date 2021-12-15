@@ -8,6 +8,7 @@
 #include "shadow.h"
 #include "obb.h"
 #include "camera.h"
+#include "ImGUI/imgui.h"
 
 
 Rock::Rock(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scale, int drawPriority)
@@ -20,6 +21,8 @@ Rock::Rock(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scale, i
 	m_Obb = new OBB(m_Position, {1.5f * scale.x,1.5f* scale.y,1.5f* scale.z }, m_Rotation);
 	m_Shadow = new Shadow(scene, { pos.x, 0.f,pos.z }, { 1.0f * scale.x,1.0f * scale.z }, 2);
 
+	m_Visble = true;
+
 	scene->Add(this);
 }
 
@@ -29,17 +32,31 @@ void Rock::Init()
 
 void Rock::Uninit()
 {
+	m_Shadow->SetDestroy();
+	delete m_Obb;
 }
 
 void Rock::Update()
 {
+	//ImGui::Begin("RockState");
+
+	//ImGui::Text("Visible");
+	//ImGui::SameLine;
+	//ImGui::Text("%d", m_Visble);
+	//ImGui::End();
 }
 
 void Rock::Draw()
 {
 	Camera* camera = GetScene()->GetGameObject<Camera>(ObjectType::eObCamera);
-	if (!camera->CheckView(m_Position, m_Scale))
+	if (!camera->CheckView(m_Position, GetRight(), m_Scale)) {
+		//m_Visble = true;
 		return;
+	}
+	else
+	{
+		//m_Visble = false;
+	}
 
 	
 	// 入力レイアウト設定 fvfs

@@ -24,6 +24,7 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	bool CursorEnter(POINT pos);
 	void HaveSelect(bool select);
 	void HaveClick(bool click);
 };

@@ -25,7 +25,7 @@ void Manager::Init()
 
 	Fade::GetInstance();
 
-	SetScene(SceneTag::eGame);
+	SetScene(SceneTag::eTitle);
 }
 
 // I—¹ˆ—
@@ -62,7 +62,7 @@ void Manager::Update()
 	m_Scene->Update();
 	Fade::GetInstance()->Update();
 
-	Information::GetInstance()->Display();
+	//nformation::GetInstance()->Display();
 
 	MyImGui::GetInstance()->UpdateEnd();
 }

@@ -16,7 +16,7 @@ private:
 	D3DXVECTOR3 m_Up = Vec3::Up;
 	D3DXVECTOR3 m_Forward = Vec3::Forward;
 	D3DXVECTOR3 m_Right = Vec3::Right;
-	const float m_Distance = 10;
+	const float m_Distance = 15;
 	int m_Angle;
 	D3DXVECTOR2 m_Angle3D;
 
@@ -34,5 +34,5 @@ public:
 	D3DXMATRIX GetViewMatrix() const { return m_ViewMatrix; }
 	D3DXVECTOR3 GetForwardVec() const;
 	D3DXVECTOR3 GetRightVec() const;
-	bool CheckView(D3DXVECTOR3 position, D3DXVECTOR3 size);
+	bool CheckView(D3DXVECTOR3 position, D3DXVECTOR3 right, D3DXVECTOR3 size);
 };

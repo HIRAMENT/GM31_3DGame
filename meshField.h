@@ -2,8 +2,8 @@
 
 #include "gameObject.h"
 
-#define MESH_NUM_X   (20 + 1)
-#define MESH_NUM_Y   (20 + 1)
+#define MESH_NUM_X   (100 + 1)
+#define MESH_NUM_Y   (100 + 1)
 #define MESH_SIZE_X  5.0f
 #define MESH_SIZE_Y  5.0f
 #define INDEX_NUM   ((MESH_NUM_Y + 1) * 2) * (MESH_NUM_X - 1) - 2

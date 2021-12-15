@@ -394,7 +394,7 @@ void AnimationModel::Update(AnimationTag animationTag1, AnimationTag animationTa
 			deformVertex->Normal *= outMatrix;
 
 			// 頂点バッファへの書き込み
-			vertex[v].Position.x = deformVertex->Position.x;
+			vertex[v].Position.x = deformVertex->Position.x + m;
 			vertex[v].Position.y = deformVertex->Position.y;
 			vertex[v].Position.z = deformVertex->Position.z;
 

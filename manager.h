@@ -26,6 +26,7 @@ public:
 
 	void SetScene(SceneTag tag);
 	Scene* GetScene()const { return m_Scene; }
+	void SetCursorEnable(bool ena) { m_CursorEnable = ena; }
 
 protected:
 	Manager() {}

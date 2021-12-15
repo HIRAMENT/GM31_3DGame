@@ -13,7 +13,7 @@ public:
 	int GetPower()const { return m_Power; }
 	int GetCoolTime() const { return m_CoolTime; }
 	void SetPower(const int pow) { m_Power = pow; }
-	void GetCoolTime(const int time) { m_CoolTime = time; }
+	void SetCoolTime(const int time) { m_CoolTime = time; }
 
 private:
 	int m_Power;

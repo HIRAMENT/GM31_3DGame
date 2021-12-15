@@ -14,6 +14,7 @@ public:
 	bool CheckCollTime();
 	void SetHitPoint(const int hp) { m_HitPoint = hp; }
 	void SetHitPointMax(const int hp) { m_HitPointMax = hp; }
+	void SetCoolTime(const int time) { m_CoolTime = time; }
 	void SetCollTimeMax(const int time) { m_CoolTimeMax = time; }
 
 	void SetNumberDisplay(const bool dis);

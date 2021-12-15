@@ -12,6 +12,7 @@
 #include "enemy.h"
 #include "skydome.h"
 #include "movement.h"
+#include <algorithm>
 
 Camera::Camera(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	:GameObject(scene, ObjectType::eObCamera,drawPriority)
@@ -58,7 +59,9 @@ void Camera::Update()
 	}
 
 	Player* player = GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
-	m_Target = player->GetPosition();
+	D3DXVECTOR3 cpv = player->GetPosition() - m_Position;
+	D3DXVec3Normalize(&cpv, &cpv);
+	m_Target = player->GetPosition() + D3DXVECTOR3(cpv.x, 0.0f, cpv.z) * 5.0f;
 
 	// Fキー(仮)を押したら一番近い敵をターゲットする
 	// (ターゲット中は)
@@ -148,7 +151,7 @@ D3DXVECTOR3 Camera::GetRightVec() const
 	return right;
 }
 
-bool Camera::CheckView(D3DXVECTOR3 position, D3DXVECTOR3 size)
+bool Camera::CheckView(D3DXVECTOR3 position, D3DXVECTOR3 right, D3DXVECTOR3 size)
 {
 	D3DXMATRIX vp, invvp;
 
@@ -170,25 +173,29 @@ bool Camera::CheckView(D3DXVECTOR3 position, D3DXVECTOR3 size)
 	D3DXVec3TransformCoord(&wpos[2], &vpos[2], &invvp);
 	D3DXVec3TransformCoord(&wpos[3], &vpos[3], &invvp);
 
-	D3DXVECTOR3 v, v1, v2, n;
+	D3DXVECTOR3 v, v1, v2, n, nv;
+	float mostsize = std::max(size.x, size.y);
+	mostsize = std::max(mostsize, size.z);
 	D3DXVECTOR3 ts = { size.x / 2, size.y / 2, size.z / 2 };
 	float dot = 0.0f;
 
 	// 左の壁
 	// カメラから対象のベクトル
-	v = D3DXVECTOR3(position.x + ts.x, position.y, position.z) - m_Position;
 	v1 = wpos[0] - m_Position;
 	v2 = wpos[2] - m_Position;
 	D3DXVec3Cross(&n, &v1, &v2);
+	D3DXVec3Normalize(&nv, &n);
+	v = D3DXVECTOR3(position.x, position.y, position.z) + (nv * mostsize) - m_Position;
 
 	if (dot = D3DXVec3Dot(&n, &v) < 0.0f)
 		return false;
 
 	// 右の壁
-	v = D3DXVECTOR3(position.x - ts.x, position.y, position.z) - m_Position;
 	v1 = wpos[1] - m_Position;
 	v2 = wpos[3] - m_Position;
 	D3DXVec3Cross(&n, &v1, &v2);
+	D3DXVec3Normalize(&nv, &n);
+	v = D3DXVECTOR3(position.x, position.y, position.z) - (nv * mostsize) - m_Position;
 
 	if (D3DXVec3Dot(&n, &v) > 0.0f)
 		return false;

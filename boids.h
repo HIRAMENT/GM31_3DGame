@@ -3,6 +3,8 @@
 #include <list>
 #include "singleton.h"
 
+class OBB;
+
 class Boids
 {
 public:
@@ -24,10 +26,13 @@ public:
 
 	void SetTarget(D3DXVECTOR3 pos) { m_Target = pos; }
 
-	void Detour(void);
+	D3DXVECTOR3 Detour(OBB* obb);
 
-	void FlockIt(void);
+	void FlockIt(OBB* obb);
 
+private:
+	D3DXVECTOR3 SalculatingRatio(D3DXVECTOR3 vec1, D3DXVECTOR3 vec2, bool approach = true);
+	D3DXVECTOR3 SalculatingRatio(D3DXVECTOR3 vec, bool approach = true);
 
 public:
 	Boids* m_NearMate;
@@ -45,8 +50,9 @@ private:
 	float m_NearDistance;
 	int m_SeenNum;
 
-	bool m_IsKeep;
-	bool m_IsChase;
+	class ViewSensor* m_OutLook = nullptr;
+	float m_ViewRange;
+	float m_ViewLenght;
 };
 
 class BoidsData : public Singleton<BoidsData> {

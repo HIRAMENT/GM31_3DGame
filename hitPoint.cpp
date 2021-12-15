@@ -13,7 +13,7 @@ HitPoint::HitPoint(class Scene* scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int hp
 	m_HitPoint = hp;
 	m_HitPointMax = hp;
 	m_CoolTime = 0;
-	m_CoolTimeMax = 100;
+	m_CoolTimeMax = 36;
 
 	if (dim == 2){
 		m_HitPointGauge = new Gauge(scene, { pos.x, pos.y }, { size.x, size.y }, m_HitPointMax, 100);
@@ -51,6 +51,7 @@ void HitPoint::Damage(int dam)
 	{
 		m_HitPointNumber[i]->ChangeNumber(Calculation::GetInstance()->ExtractDigit(m_HitPoint, i + 1));
 	}
+	m_CoolTime = 0;
 }
 
 void HitPoint::Recover(int rec)

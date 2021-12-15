@@ -13,6 +13,8 @@ private:
 	int m_Select;
 	const int m_SelectMax = 2;
 
+	bool m_CursorEnter;
+
 	unsigned int m_BGMID;
 
 public:

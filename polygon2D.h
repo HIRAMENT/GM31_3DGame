@@ -8,7 +8,7 @@ class Polygon2D : public GameObject
 private:	
 	ID3D11Buffer*	m_VertexBuffer = NULL;	// 頂点バッファ
 	ResourceTag		m_TextureTag;
-	D3DXVECTOR3		m_Size;
+	D3DXVECTOR2		m_Size;
 	VERTEX_3D		m_Vertex[4];
 
 	int m_AnimationCount;
@@ -35,7 +35,8 @@ public:
 	void StartSlide(int maxcapa, int capa, float speed);
 	void SetPartition(int section);
 	void SetDisplay(bool display) { m_Display = display; }
-	bool GetDisplay() const { return m_Display; }
+	bool GetDisplay()const { return m_Display; }
+	D3DXVECTOR2 GetSize()const { return m_Size; }
 
 private:
 	bool Slide();

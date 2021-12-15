@@ -14,8 +14,8 @@ private:
 	float m_BlendRate;
 
 	class Shadow* m_Shadow = nullptr;
-	//class Sword* m_Sword = nullptr;
 	class OBB* m_Obb = nullptr;
+	class ViewSensor* m_ViewSensor = nullptr;
 	bool m_Dash;
 
 	class Status* m_Status = nullptr;
@@ -25,6 +25,11 @@ private:
 	int m_AnimeEndFrame;
 	AnimationTag m_BeforAnime;
 	AnimationTag m_AfterAnime;
+
+
+	int m_AttackRange;
+	int m_AttackLength;
+	bool m_SensorDisplay;
 
 private:
 	void ImGui();

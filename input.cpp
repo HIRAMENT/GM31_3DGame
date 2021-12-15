@@ -65,6 +65,7 @@ static DWORD	padTrigger[GAMEPADMAX];
 static int		padCount = 0;			// 検出したパッドの数
 
 static RECT g_CursorRect;
+static int g_CursorShowCount = 0;
 
 
 //=============================================================================
@@ -98,6 +99,16 @@ HRESULT InitInput(HINSTANCE hInst, HWND hWnd)
 //=============================================================================
 void UninitInput(void)
 {
+	int count = ShowCursor(false);
+	while (count == 0) {
+		if (count < 0) {
+			count = ShowCursor(true);
+		}
+		else if (count > 0) {
+			count = ShowCursor(false);
+		}
+	}
+
 	// キーボードの終了処理
 	UninitKeyboard();
 
@@ -559,11 +570,15 @@ void UpdateMouseCursor(bool vaild)
 		int x = (cr.left + cr.right) / 2;
 		int y = (cr.top + cr.bottom) / 2;
 		SetCursorPos(x, y);
-		ShowCursor(false);
+		do{
+			g_CursorShowCount = ShowCursor(false);
+		} while (g_CursorShowCount >= 0);
 	}
 	else if(vaild == false) {
 		SystemParametersInfo(SPI_GETWORKAREA, 0, &cr, 0);
-		ShowCursor(true);
+		do {
+			g_CursorShowCount = ShowCursor(true);
+		} while (g_CursorShowCount < 0);
 	}
 
 	if (g_CursorRect != cr) {

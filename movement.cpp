@@ -5,6 +5,7 @@
 #include "scene.h"
 #include "camera.h"
 #include "movement.h"
+#include <math.h>
 
 D3DXVECTOR2 Movement::CirclualMotion(D3DXVECTOR3 pos, float rad, int angle)
 {
@@ -18,9 +19,9 @@ D3DXVECTOR2 Movement::CirclualMotion(D3DXVECTOR3 pos, float rad, int angle)
 D3DXVECTOR3 Movement::CirclualMotion3D(D3DXVECTOR3 pos, float rad, D3DXVECTOR2 angle)
 {
 	D3DXVECTOR3 rotpos = { 0.0f,0.0f,0.0f };
-	rotpos.x = pos.x + rad * std::cosf(degToRad(angle.x));
-	rotpos.z = pos.z + rad * std::sinf(degToRad(angle.x));
-	rotpos.y = pos.y + rad * std::cosf(degToRad(angle.y));
+	rotpos.x = pos.x + rad * std::cosf(D3DXToRadian(angle.x));
+	rotpos.z = pos.z + rad * std::sinf(D3DXToRadian(angle.x));
+	rotpos.y = pos.y + rad * std::cosf(D3DXToRadian(angle.y));
 	//rotpos.z = pos.z + rad * sin(degToRad(angle.y));
 
 	return rotpos;

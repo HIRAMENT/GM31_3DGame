@@ -26,8 +26,9 @@ bool Attack::CheckHit(D3DXVECTOR3 vec, D3DXVECTOR3 forward, float ang, float len
 	D3DXVECTOR2 vpe;
 	vpe = { vec.x, vec.z};
 	angle = Movement::GetInstance()->GetTwoVecAngle({ -forward.x, -forward.z }, { vpe.x, vpe.y });
+	angle = fabs(angle * 180 / 3.14159);
 	length = D3DXVec2Length(&vpe);
-	if (fabs(angle * 180 / 3.14159) < ang && length < len - ang) {
+	if (angle < ang && length < len) {
 		return true;
 	}
 

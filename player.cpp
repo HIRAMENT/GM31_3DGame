@@ -30,11 +30,11 @@
 #include "meshField.h"
 #include "bullet.h"
 #include "billboard.h"
+#include "polygon3D.h"
+#include "viewSensor.h"
 #include <math.h>
 
 #define BLENDRATE (0.1f)
-#define ATTACK_RANGE   (50.0f)
-#define ATTACK_LENGTH (100.0f)
 
 Player::Player(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	:GameObject(scene,ObjectType::eObPlayer,drawPriority)
@@ -43,13 +43,18 @@ Player::Player(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	m_Transform.SetPosition(pos);
 	SetRotation({ 0.0f, 0.0f, 0.0f });
 	SetScale({ 0.015f, 0.015f, 0.015f });
+	//SetScale({ 10.0f, 10.0f, 10.0f });
 
 	m_Model = ResourceData::GetInstance()->GetAnimationModel(ResourceTag::fPlayer);
 	m_Size = m_Model->GetSize() * m_Scale;
 
 	m_Shadow = new Shadow(scene, { pos.x, 0.f,pos.z }, {2.0f,2.0f}, 2);
-	//m_Sword = new Sword(scene, { pos.x ,pos.y, pos.z }, 2);
 	m_Obb = new OBB(m_Position, m_Size, m_Rotation);
+
+	m_AttackRange = 50;
+	m_AttackLength = 10;
+	m_ViewSensor = new ViewSensor(scene, m_Position, 5, m_AttackLength, m_AttackRange);
+	m_ViewSensor->SetDisplay(m_SensorDisplay = true);
 
 	m_Dash = false;
 
@@ -76,8 +81,8 @@ void Player::Uninit()
 	m_Shadow->SetDestroy();
 	//m_Sword->SetDestroy();
 	m_Status->SetDestroy();
+	m_ViewSensor->SetDestroy();
 	delete m_Obb;
-	delete m_Model;
 }
 
 void Player::Update()
@@ -93,7 +98,7 @@ void Player::Update()
 	D3DXVECTOR2 right = { camera->GetRightVec().x, camera->GetRightVec().z };
 
 	angle = Movement::GetInstance()->GetTwoVecAngle({ Vec3::Forward.x,Vec3::Forward.z }, forward);
-	if (forward.x <= -0.01f) angle *= -1;
+	if (forward.x < 0.0f) angle *= -1;
 
 
 	if (Keyboard_IsPress(DIK_A)){
@@ -138,13 +143,20 @@ void Player::Update()
 		if (m_Status->GetAttack()->CheckCoolTime()) {
 			animation[0] = AnimationTag::Idle;
 			animation[1] = AnimationTag::Attack;
-			m_Status->GetAttack()->GetCoolTime(36);
+			m_Status->GetAttack()->SetCoolTime(36);
 			std::vector<Enemy*> enemys = GetScene()->GetGameObjects<Enemy>(ObjectType::eObSmallEnemy);
 			for (auto enemy : enemys) {
-				if (m_Status->GetAttack()->CheckHit({ m_Position - enemy->GetPosition() }, -m_Forward, ATTACK_RANGE, ATTACK_LENGTH)) {
+				if (m_ViewSensor->WithinRange(m_Position, enemy->GetPosition(), { m_Forward.x, m_Forward.y, -m_Forward.z }, enemy->GetScale())) {
 					enemy->GetStatus()->GetHitPoint()->Damage(m_Status->GetAttack()->GetPower());
 					new Billboard(GetScene(), enemy->GetPosition(), D3DXVECTOR2(10, 10), ResourceTag::tSlash, true, 100);
+					ADXSound::GetInstance()->Play(9);
 				}
+			}
+			Enemy* bossEnemy = GetScene()->GetGameObject<Enemy>(ObjectType::eObBossEnemy);
+			if (bossEnemy && m_ViewSensor->WithinRange(m_Position, bossEnemy->GetPosition(), { m_Forward.x, m_Forward.y, -m_Forward.z }, bossEnemy->GetScale())) {
+				bossEnemy->GetStatus()->GetHitPoint()->Damage(m_Status->GetAttack()->GetPower());
+				new Billboard(GetScene(), bossEnemy->GetPosition(), D3DXVECTOR2(10, 10), ResourceTag::tSlash, true, 100);
+				ADXSound::GetInstance()->Play(9);
 			}
 		}
 	}
@@ -179,6 +191,10 @@ void Player::Update()
 	std::vector<Rock*>rockList = GetScene()->GetGameObjects<Rock>(ObjectType::eObRock);
 	for (Rock* rock : rockList)
 	{
+		//if (rock->GetPosition().x - 1.0f <= m_Position.x && rock->GetPosition().x + 1.0f >= m_Position.x &&
+		//	rock->GetPosition().z - 1.0f <= m_Position.z && rock->GetPosition().z + 1.0f >= m_Position.z) {
+		//	m_Transform.Translate({ -move.x, 0.0f, -move.y });
+		//}
 		if (Collision::GetInstance()->ObbToObb(m_Obb, rock->GetObb()))
 		{
 			m_Transform.Translate({ -move.x, 0.0f, -move.y });
@@ -192,11 +208,8 @@ void Player::Update()
 void Player::Draw()
 {
 	Camera* camera = GetScene()->GetGameObject<Camera>(ObjectType::eObCamera);
-	if (!camera->CheckView(m_Position, m_Size))
-	{
-		m_Position = m_Position;
+	if (!camera->CheckView(m_Position, m_Right, m_Size))
 		return;
-	}
 
 
 	// 入力レイアウト設定 fvfs
@@ -225,6 +238,7 @@ void Player::SetPlayer()
 	SetPlayerRotation(m_Transform.GetQuaternion());
 	m_Shadow->SetPosition({ m_Position.x, 0.f,m_Position.z });
 	m_Obb->SetObb(m_Position, m_Size, m_Rotation);
+	m_ViewSensor->SetInfo(m_Position, { m_Forward.x, m_Forward.y, -m_Forward.z }, m_AttackRange, m_AttackLength, m_SensorDisplay);
 }
 
 void Player::SetPlayerRotation(const Quaternion & qua)
@@ -239,7 +253,20 @@ void Player::ImGui()
 	ImGui::Begin("Status");
 	//ImGui::SliderInt("Attack",m_Status->, 0, 10);
 
+	ImGui::Text("AttackCoolTime");
+	ImGui::SameLine;
 	ImGui::Text("%d", m_Status->GetAttack()->GetCoolTime());
+
+	ImGui::SetNextTreeNodeOpen(true, ImGuiTreeNodeFlags_None);
+	if (ImGui::TreeNode("ViewSensore")) {
+		ImGui::SliderInt("Range", &m_AttackRange, 0, 90);
+		ImGui::SliderInt("Length", &m_AttackLength, 0, 100);
+		ImGui::Checkbox("Display", &m_SensorDisplay);
+
+		ImGui::TreePop();
+	}
+
+
 
 	ImGui::End();
 }
@@ -256,7 +283,7 @@ void Player::Animation(AnimationTag anime1, AnimationTag anime2, bool isMove)
 	}
 
 	// アニメーション関連の初期化
-	if (m_AnimeFrame == m_AnimeEndFrame) {
+	if (m_AnimeFrame >= m_AnimeEndFrame) {
 		m_AnimeFrame = 0;
 		m_AnimeEndFrame = 1000;
 		m_BeforAnime = AnimationTag::Idle;

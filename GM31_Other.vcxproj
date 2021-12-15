@@ -219,6 +219,7 @@
     <ClCompile Include="tutorialScene.cpp" />
     <ClCompile Include="vector2.cpp" />
     <ClCompile Include="vector3.cpp" />
+    <ClCompile Include="viewSensor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ADX2\ADX2_samples_acf.h" />
@@ -302,6 +303,7 @@
     <ClInclude Include="vector2.h" />
     <ClInclude Include="vector3.h" />
     <ClInclude Include="gamepad.h" />
+    <ClInclude Include="viewSensor.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="common.hlsl">

@@ -22,6 +22,8 @@
 #include "status.h"
 #include "hitPoint.h"
 #include "boids.h"
+#include "meshField.h"
+#include "attack.h"
 
 Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjust, int hp, ObjectType type, int drawPriority)
 	:GameObject(scene, type,drawPriority)
@@ -31,8 +33,7 @@ Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjus
 	SetRotation({ 0.0f, degToRad(180), 0.0f });
 	SetScale(size * 1.5f);
 
-	m_Status = new Status(scene, pos, adjust, 10, 0, 100, 0, hp, 3);
-	m_Status->GetHitPoint()->GetGauge()->ChangeColor(255, 0, 0);
+	m_StartPosY = pos.y;
 
 	m_Size = size;
 	m_SensorSize = { 15.0f,15.0f,15.0f };
@@ -43,17 +44,19 @@ Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjus
 	m_AttackTarget = { 0.0f,0.0f,0.0f };
 	m_AttackCount = 0;
 
-	m_Sensor = new Sensor(scene, m_Position, m_SensorSize, 50);
 	m_Obb = new OBB(m_Position, size, m_Rotation);
 	m_Shadow = new Shadow(scene, { pos.x, 0.f,pos.z }, {1.0f,1.0f}, 2);
 	if (type == ObjectType::eObSmallEnemy)
 	{
-		m_ModelTag = ResourceTag::mTestEnemy;
-		//m_HPGauge = new Gauge(scene, pos, adjust, m_HP, 50);
+		m_ModelTag = ResourceTag::mSmallEnemy;
+		m_Status = new Status(scene, pos, adjust, 10, 0, 100, 0, hp, 3);
+		m_Status->GetHitPoint()->GetGauge()->ChangeColor(255, 0, 0);
 	}
 	else if (type == ObjectType::eObBossEnemy)
 	{
 		m_ModelTag = ResourceTag::mBossEnemy;
+		m_Status = new Status(scene, { SCREEN_WIDTH / 2, 32,0 }, { 100,50,0 }, 10, 0, 100, 0, hp, 2);
+		m_Status->GetHitPoint()->GetGauge()->ChangeColor(255, 0, 0);
 		//m_HPGauge = new Gauge(scene, { SCREEN_WIDTH / 2, 32 }, {100,50}, m_HP, 100);
 	}
 
@@ -70,10 +73,10 @@ void Enemy::Init()
 
 void Enemy::Uninit()
 {
-	m_Sensor->SetDestroy();
 	m_Shadow->SetDestroy();
 	m_Status->SetDestroy();
 	delete m_Obb;
+	delete m_Boids;
 }
 
 void Enemy::Update()
@@ -135,10 +138,10 @@ void Enemy::Update()
 			m_Status->GetHitPoint()->Damage(sword->GetDamageValue());
 			ADXSound::GetInstance()->Play(9);
 		}
-	}
+	}*/
 
-
-	if (!m_Attack && m_AttackCollTime >= 30)
+	Player* player = GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
+	if (m_Status->GetAttack()->CheckCoolTime())
 	{
 		m_Attack = true;
 	}
@@ -153,26 +156,15 @@ void Enemy::Update()
 			RushAttack(player->GetPosition());
 		}
 		
-	}*/
+	}
 
-	m_Boids->FlockIt();
-
+	m_Boids->FlockIt(m_Obb);
 
 	SetEnemy();
 
 
 	if (m_Status->GetHitPoint()->GetHitPoint() <= 0) 
 		SetDestroy();
-
-	//std::vector<Rock*>rockList = GetScene()->GetGameObjects<Rock>(ObjectType::eObRock);
-	//for (Rock* rock : rockList)
-	//{
-	//	if (Collision::GetInstance()->ObbToObb(m_Obb, rock->GetObb()))
-	//	{
-	//		m_Position -= m_MoveVlaue;
-	//		SetEnemy();
-	//	}
-	//}
 }
 
 void Enemy::Draw()
@@ -197,13 +189,13 @@ void Enemy::Draw()
 
 void Enemy::SetEnemy()
 {
-	//m_Position += m_MoveVlaue;
-	m_Position = m_Boids->GetPosition();
+	MeshField* meshField = GetScene()->GetGameObject<MeshField>(ObjectType::eObField);
+	m_Position = m_Boids->GetPosition() + m_MoveVlaue;
+	m_Position.y = meshField->GetHeight(m_Position) + m_StartPosY;
 	m_Rotation = m_Boids->GetRotation();
 	Player* player = GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
 	m_Boids->SetTarget(player->GetPosition());
 
-	m_Sensor->SetSensorPosition(m_Position, m_SensorSize, m_Rotation);
 	m_Shadow->SetPosition({ m_Position.x, 0.f,m_Position.z });
 	m_Obb->SetObb(m_Position, m_Size, m_Rotation);
 	//m_HPGauge->SetGaugePos(m_Position);
@@ -233,7 +225,7 @@ void Enemy::RushAttack(D3DXVECTOR3 ppos)
 	{
 		m_AttackMotionCount = 0;
 		m_Attack = false;
-		m_AttackCollTime = 0;
+		m_Status->GetAttack()->SetCoolTime(50);
 		m_AttackCount++;
 	}
 }
@@ -258,7 +250,7 @@ void Enemy::JumpAttack(D3DXVECTOR3 ppos)
 	{
 		m_AttackMotionCount = 0;
 		m_Attack = false;
-		m_AttackCollTime = 0;
+		m_Status->GetAttack()->SetCoolTime(50);
 		m_AttackCount = 0;
 	}
 }

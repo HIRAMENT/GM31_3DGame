@@ -14,4 +14,5 @@ public:
 private:
 	bool m_GameOver;
 	unsigned int m_BGMID;
+	int m_PhaseCount;
 };

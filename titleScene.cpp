@@ -11,12 +11,14 @@
 
 void TitleScene::Init()
 {
-	m_BG = new Polygon2D(this, { SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f}, { SCREEN_WIDTH,SCREEN_HEIGHT }, ResourceTag::tTitleBG, 10);
-	m_TitleName  = new Polygon2D(this, { SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.25f }, { 640.f,128.f }, ResourceTag::tTitleName, 11);
-	m_StartButton = new Button(this, { SCREEN_WIDTH * 0.5f ,SCREEN_HEIGHT * 0.7f }, { 256, 64 }, ResourceTag::tStartLetter, 11);
-	m_ExitButton  = new Button(this, { SCREEN_WIDTH * 0.5f ,SCREEN_HEIGHT * 0.9f }, { 256, 64 }, ResourceTag::tEndLetter, 11);
+	m_BG = new Polygon2D(this, { SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f}, { SCREEN_WIDTH,SCREEN_HEIGHT }, ResourceTag::tTitleBG, 100);
+	m_TitleName  = new Polygon2D(this, { SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.25f }, { 640.f,128.f }, ResourceTag::tTitleName, 101);
+	m_StartButton = new Button(this, { SCREEN_WIDTH * 0.5f ,SCREEN_HEIGHT * 0.7f }, { 256, 64 }, ResourceTag::tStartLetter, 101);
+	m_ExitButton  = new Button(this, { SCREEN_WIDTH * 0.5f ,SCREEN_HEIGHT * 0.9f }, { 256, 64 }, ResourceTag::tEndLetter, 101);
 
 	m_Select = 0;
+
+	m_CursorEnter = false;
 
 	m_BGMID = ADXSound::GetInstance()->Play(0);
 }
@@ -24,6 +26,30 @@ void TitleScene::Init()
 void TitleScene::Update()
 {
 	Scene::Update();
+
+	POINT mouse = {};
+	GetCursorPos(&mouse);
+	ScreenToClient(GetWindow(), &mouse);
+	if (m_StartButton->CursorEnter(mouse)) 
+	{
+		if (m_Select != 0) {
+			m_Select = 0;
+			ADXSound::GetInstance()->Play(4);
+		}
+		m_CursorEnter = true;
+	}
+	else if (m_ExitButton->CursorEnter(mouse)) 
+	{
+		if (m_Select != 1) {
+			m_Select = 1;
+			ADXSound::GetInstance()->Play(4);
+		}
+		m_CursorEnter = true;
+	}
+	else
+	{
+		m_CursorEnter = false;
+	}
 
 	if (Keyboard_IsTrigger(DIK_DOWN))
 	{
@@ -50,7 +76,7 @@ void TitleScene::Update()
 		break;
 	}
 
-	if (Keyboard_IsTrigger(DIK_SPACE))
+	if (Keyboard_IsTrigger(DIK_SPACE) || m_CursorEnter && Mouse_IsLeftTrigger())
 	{
 		ADXSound::GetInstance()->Play(5);
 		switch (m_Select)

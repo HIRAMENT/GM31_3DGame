@@ -11,7 +11,6 @@ protected:
 	D3DXVECTOR3 m_Right = Vec3::Right;
 
 	D3DXVECTOR3 m_Target;
-	class Sensor* m_Sensor = nullptr;
 	class OBB* m_Obb = nullptr;
 	class Billboard* m_Exclamation = nullptr;
 	float m_ExcScale;
@@ -25,6 +24,8 @@ protected:
 	int m_AttackCount;
 	int m_SloppyTime;
 	const float m_FollowRange;
+
+	float m_StartPosY;
 
 private:
 	class Shadow* m_Shadow = nullptr;

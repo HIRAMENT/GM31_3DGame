@@ -36,9 +36,9 @@ void OBB::SetObb(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 rot)
 
 	// •ûŒüƒxƒNƒgƒ‹‚ÌŽæ“¾
 	D3DXMatrixRotationYawPitchRoll(&matRot, rot.y, rot.x, rot.z);
-	m_Direction[0] = D3DXVECTOR3(matRot._11, matRot._12, matRot._13);
-	m_Direction[1] = D3DXVECTOR3(matRot._21, matRot._22, matRot._23);
-	m_Direction[2] = D3DXVECTOR3(matRot._31, matRot._32, matRot._33);
+	m_Direction[Direction::eRight]   = D3DXVECTOR3(matRot._11, matRot._12, matRot._13);
+	m_Direction[Direction::eUp]      = D3DXVECTOR3(matRot._21, matRot._22, matRot._23);
+	m_Direction[Direction::eForward] = D3DXVECTOR3(matRot._31, matRot._32, matRot._33);
 
 	// ’·‚³‚ÌŽæ“¾
 	m_Length[0] = fabsf(max.x - min.x) * 0.5f;

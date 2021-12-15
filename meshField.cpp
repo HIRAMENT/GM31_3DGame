@@ -16,8 +16,8 @@ MeshField::MeshField(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 
 	std::ifstream input_file(filename);
 	if (!input_file.is_open()) {
-		for (int y = 0; y < 20; y++) {
-			for (int x = 0; x < 20; x++) {
+		for (int y = 0; y < MESH_NUM_Y - 1; y++) {
+			for (int x = 0; x < MESH_NUM_X - 1; x++) {
 				m_FieldHeight[y][x] = 0;
 			}
 		}
@@ -27,7 +27,7 @@ MeshField::MeshField(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 		while (input_file.get(c)) {
 			if (c != ',' && c != '\n') {
 				m_FieldHeight[y][x] = atoi(&c);
-				if (x == 20) {
+				if (x == MESH_NUM_X - 1) {
 					x = 0;
 					y++;
 				}
@@ -39,6 +39,8 @@ MeshField::MeshField(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	}
 
 	input_file.close();
+
+
 
 
 	{//頂点バッファの中身を埋める
