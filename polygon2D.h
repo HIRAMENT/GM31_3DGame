@@ -2,6 +2,7 @@
 
 #include "gameObject.h"
 #include "resource.h"
+#include "shader.h" 
 
 class Polygon2D : public GameObject
 {
@@ -10,6 +11,7 @@ private:
 	ResourceTag		m_TextureTag;
 	D3DXVECTOR2		m_Size;
 	VERTEX_3D		m_Vertex[4];
+	ShaderType      m_ShaderType;
 
 	int m_AnimationCount;
 	int m_TexHorCount, m_TexVerCount;
@@ -29,6 +31,7 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void SetVertex(D3DXVECTOR2 pos);
 	void SetAlpha(float alpha);
 	void SetColor(float r, float g, float b);
 	void SlideTexture();
@@ -36,6 +39,7 @@ public:
 	void SetPartition(int section);
 	void SetDisplay(bool display) { m_Display = display; }
 	bool GetDisplay()const { return m_Display; }
+	void SetShaderType(ShaderType type) { m_ShaderType = type; }
 	D3DXVECTOR2 GetSize()const { return m_Size; }
 
 private:

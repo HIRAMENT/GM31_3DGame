@@ -1,6 +1,7 @@
 #pragma once
 
 #include "singleton.h"
+#include <unordered_map>
 
 
 
@@ -35,6 +36,15 @@ struct LIGHT
 	D3DXCOLOR	Ambient;
 };
 
+enum class BlendMode {
+	NONE,
+	NORMAL,			// アルファブレンド
+	ADDITION,		// 加算合成
+	ADDITIONALPHA,	// 加算合成(透過)
+	SUBTRACTION,	// 減算合成
+	MULTIPLE,		// 乗算合成
+	BLENDMODE_MAX
+};
 
 // 描画の部分のみを管理するクラス
 class Renderer : public Singleton<Renderer>
@@ -58,10 +68,14 @@ private:
 	static ID3D11Buffer*			m_ProjectionBuffer;
 	static ID3D11Buffer*			m_MaterialBuffer;
 	static ID3D11Buffer*			m_LightBuffer;
+	ID3D11Buffer*					m_CameraBuffer;
+	ID3D11Buffer*					m_ParameterBuffer;
 
 
 	static ID3D11DepthStencilState* m_DepthStateEnable;
 	static ID3D11DepthStencilState* m_DepthStateDisable;
+
+	std::unordered_map<BlendMode, ID3D11BlendState*> m_BlendState;
 
 
 
@@ -81,11 +95,12 @@ public:
 	void SetProjectionMatrix(D3DXMATRIX* ProjectionMatrix);
 	void SetMaterial(MATERIAL Material);
 	void SetLight(LIGHT Light);
+	void SetCameraPosition(D3DXVECTOR3 pos);
+	void SetParameter(D3DXVECTOR4 parameter);
+	void SetRenderBlend(BlendMode mode);
 
 	ID3D11Device* GetDevice( void ){ return m_Device; }
 	ID3D11DeviceContext* GetDeviceContext( void ){ return m_DeviceContext; }
-
-
 
 	void CreateVertexShader(ID3D11VertexShader** VertexShader, ID3D11InputLayout** VertexLayout, const char* FileName);
 	void CreatePixelShader(ID3D11PixelShader** PixelShader, const char* FileName);

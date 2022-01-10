@@ -179,3 +179,51 @@ bool Collision::TriangleHit(float rad, float len, D3DXVECTOR3 forw, D3DXVECTOR3 
 
 	return false;
 }
+
+bool Collision::BoundingBox2D(D3DXVECTOR2 pos1, D3DXVECTOR2 size1, D3DXVECTOR2 pos2, D3DXVECTOR2 size2)
+{
+	float left_1   = pos1.x - size1.x / 2;
+	float right_1  = pos1.x + size1.x / 2;
+	float top_1    = pos1.y - size1.y / 2;
+	float buttom_1 = pos1.y + size1.y / 2;
+
+	float left_2   = pos2.x - size2.x / 2;
+	float right_2  = pos2.x + size2.x / 2;
+	float top_2    = pos2.y - size2.y / 2;
+	float buttom_2 = pos2.y + size2.y / 2;
+
+	if (left_1 < right_2)
+		if (right_1 > left_2)
+			if (top_1 < buttom_2)
+				if (buttom_1 > top_2)
+					return true;
+
+	return false;
+}
+
+bool Collision::BoundingBox3D(D3DXVECTOR3 pos1, D3DXVECTOR3 size1, D3DXVECTOR3 pos2, D3DXVECTOR3 size2)
+{
+	float left_1   = pos1.x - size1.x / 2;
+	float right_1  = pos1.x + size1.x / 2;
+	float top_1    = pos1.y + size1.y / 2;
+	float buttom_1 = pos1.y - size1.y / 2;
+	float front_1  = pos1.z - size1.z / 2;
+	float back_1   = pos1.z + size1.z / 2;
+
+	float left_2   = pos2.x - size2.x / 2;
+	float right_2  = pos2.x + size2.x / 2;
+	float top_2    = pos2.y - size2.y / 2;
+	float buttom_2 = pos2.y + size2.y / 2;	
+	float front_2  = pos2.z - size2.z / 2;
+	float back_2   = pos2.z + size2.z / 2;
+
+	if (left_1 > right_2)
+		if (right_1 < left_2)
+			if (top_1 < buttom_2)
+				if (buttom_1 > top_2)
+					if(front_1 > back_2)
+						if(back_1 < front_2)
+					return false;
+
+	return true;
+}

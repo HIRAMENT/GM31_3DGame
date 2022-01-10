@@ -10,7 +10,6 @@
 #include "obb.h"
 #include "collision.h"
 #include "sword.h"
-#include "billboard.h"
 #include "gauge.h"
 
 BossEnemy::BossEnemy(Scene * scene, D3DXVECTOR3 pos, int drawPriority)

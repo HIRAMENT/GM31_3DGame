@@ -5,9 +5,9 @@
 class Gauge : public GameObject
 {
 private:
-	class Billboard* m_BGaugeUI;
-	Billboard* m_BGaugeFrameUI;
-	Billboard* m_BGaugeDecUI;
+	class Polygon3D* m_BGaugeUI;
+	Polygon3D* m_BGaugeFrameUI;
+	Polygon3D* m_BGaugeDecUI;
 	class Polygon2D* m_PGaugeUI;
 	Polygon2D* m_PGaugeFrameUI;
 	Polygon2D* m_PGaugeDecUI;

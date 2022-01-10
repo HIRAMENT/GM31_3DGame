@@ -10,7 +10,7 @@
 #include "polygon2D.h"
 #include "field.h"
 #include "meshField.h"
-#include "camera.h"
+#include "gameCamera.h"
 #include "animationModel.h"
 #include "model.h"
 #include "player.h"
@@ -28,7 +28,7 @@
 
 void GameScene::Init()
 {
-	new Camera(this, { 0.0f,5.0f,-20.0f }, 0);
+	new GameCamera(this, { 0.0f,5.0f,-20.0f }, 2);
 	new MeshField({ this, {0.0f,0.0f,0.0f}, 1 });
 	new Skydome(this, { 0.0f,0.0f,0.0f }, 1);
 	new Player(this, { 0.0f,0.0f,-10.0f }, 2);
@@ -69,12 +69,12 @@ void GameScene::Init()
 		new Rock(this, { pos.x,1.f,pos.z }, { rot.x,rot.y,rot.z }, { sca.x, sca.y, sca.z }, 2);
 	}
 
-	for (int i = 0; i < 100; i++)
-	{
-		pos.x = rand() % 150 - 75;
-		pos.z = rand() % 150 - 75;
-		//new tree(this, { pos.x,9.5f,pos.z }, { 20.0f,20.0f,20.0f }, 2);
-	}
+	//for (int i = 0; i < 50; i++)
+	//{
+	//	pos.x = rand() % 150 - 75;
+	//	pos.z = rand() % 150 - 75;
+	//	new tree(this, { pos.x,9.5f,pos.z }, { 20.0f,20.0f,20.0f }, 2);
+	//}
 
 	m_PhaseCount = 0;
 

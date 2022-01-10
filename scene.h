@@ -36,8 +36,6 @@ public:
 
 		// ƒ‰ƒ€ƒ_®
 		m_GameObject.remove_if([](GameObject* object) {return object->Destroy(); });
-
-
 	}
 
 	// •`‰æˆ—

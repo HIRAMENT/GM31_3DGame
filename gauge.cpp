@@ -4,8 +4,8 @@
 #include "shader.h"
 #include "resource.h"
 #include "input.h"
-#include "billboard.h"
 #include "polygon2D.h"
+#include "polygon3D.h"
 #include "scene.h"
 #include "gauge.h"
 
@@ -22,9 +22,9 @@ Gauge::Gauge(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 adjust, int capa, int d
 	m_DiffCapacity = capa;
 	m_MaxCapacity = capa;
 
-	m_BGaugeFrameUI = new Billboard(scene, { pos.x + adjust.x, pos.y + adjust.y, pos.z + adjust.z }, { m_Aspect.x, m_Aspect.y }, ResourceTag::tGaugeFrame, false, drawPriority);
-	m_BGaugeDecUI   = new Billboard(scene, { pos.x + adjust.x, pos.y + adjust.y, pos.z + adjust.z }, { m_Aspect.x, m_Aspect.y }, ResourceTag::tGaugeBase, false, drawPriority + 1);
-	m_BGaugeUI      = new Billboard(scene, { pos.x + adjust.x, pos.y + adjust.y, pos.z + adjust.z }, { m_Aspect.x, m_Aspect.y }, ResourceTag::tGaugeBase, false, drawPriority + 2);
+	m_BGaugeFrameUI = new Polygon3D(scene, { pos.x + adjust.x, pos.y + adjust.y, pos.z + adjust.z }, { m_Aspect.x, m_Aspect.y, 0.0f }, ResourceTag::tGaugeFrame, false, true ,drawPriority);
+	m_BGaugeDecUI   = new Polygon3D(scene, { pos.x + adjust.x, pos.y + adjust.y, pos.z + adjust.z }, { m_Aspect.x, m_Aspect.y, 0.0f }, ResourceTag::tGaugeBase,  false, true ,drawPriority + 1);
+	m_BGaugeUI      = new Polygon3D(scene, { pos.x + adjust.x, pos.y + adjust.y, pos.z + adjust.z }, { m_Aspect.x, m_Aspect.y, 0.0f }, ResourceTag::tGaugeBase,  false, true ,drawPriority + 2);
 	m_BGaugeDecUI->SetColor(255, 165, 0);
 
 	scene->Add(this);

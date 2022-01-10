@@ -4,7 +4,7 @@
 class tree : public GameObject
 {
 private:
-	class Billboard* m_TreeUI = nullptr;
+	class Polygon3D* m_TreeUI = nullptr;
 	class Shadow* m_Shadow = nullptr;
 
 public:

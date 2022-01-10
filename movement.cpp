@@ -69,3 +69,24 @@ float Movement::GetTwoVecAngle(D3DXVECTOR2 mvec, D3DXVECTOR2 tvec)
 
 	return sita;
 }
+
+D3DXVECTOR3 Movement::BezierCurve(BezierCurveInfo info)
+{
+	D3DXVECTOR3 point;
+	float timeRate = (1.0f - info.Time);
+
+	point.x = std::powf(timeRate, 3.0f)                                 * info.ControlPoint[0].x +
+		  3 * std::powf(timeRate, 2.0f) *           info.Time           * info.ControlPoint[1].x +
+		  3 *           timeRate        * std::powf(info.Time, 2.0f)    * info.ControlPoint[2].x +
+		                                  std::powf(info.Time, 3.0f)    * info.ControlPoint[3].x;
+	point.y = std::powf(timeRate, 3.0f)                                 * info.ControlPoint[0].y +
+		  3 * std::powf(timeRate, 2.0f) *           info.Time           * info.ControlPoint[1].y +
+		  3 *           timeRate        * std::powf(info.Time, 2.0f)    * info.ControlPoint[2].y +
+		                                  std::powf(info.Time, 3.0f)    * info.ControlPoint[3].y;
+	point.z = std::powf(timeRate, 3.0f)                                 * info.ControlPoint[0].z +
+		  3 * std::powf(timeRate, 2.0f) *           info.Time           * info.ControlPoint[1].z +
+		  3 *           timeRate        * std::powf(info.Time, 2.0f)    * info.ControlPoint[2].z +
+		                                  std::powf(info.Time, 3.0f)    * info.ControlPoint[3].z;
+
+	return point;
+}

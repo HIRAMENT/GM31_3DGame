@@ -22,8 +22,6 @@
 #define GRAVITY (0.98f)
 #define PERCEPTION_RANGE (5.0f)
 
-#define RAND() ((float)rand()/RAND_MAX)
-
 
 Boids::Boids(D3DXVECTOR3 pos)
 {
@@ -208,17 +206,16 @@ void Boids::FlockIt(OBB* obb)
 
 	D3DXVECTOR3 acc = { 0.0f, 0.0f, 0.0f };
 
-	// 群れの動作
-	if (m_SeenNum) {
-		acc += KeepDistance();
-	}
-
 	// 障害物をよける
 	D3DXVECTOR3 det = Detour(obb);
 	acc += det;
 
-	// ターゲットに向かって動く
 	if (det == D3DXVECTOR3(0.0f, 0.0f, 0.0f)) {
+		// 群れの動作
+		if (m_SeenNum) {
+			acc += KeepDistance();
+		}
+		// ターゲットに向かって動く
 		acc += FollowTarget();
 	}
 

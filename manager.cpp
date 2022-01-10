@@ -47,7 +47,7 @@ void Manager::Update()
 	MyImGui::GetInstance()->UpdateStart();
 
 	// マウス関連
-	if (Keyboard_IsPress(DIK_2)) {
+	if (Keyboard_IsTrigger(DIK_2)) {
 		m_CursorEnable = (m_CursorEnable + 1) % 2;
 	}
 

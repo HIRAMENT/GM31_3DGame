@@ -61,6 +61,13 @@ void ResourceData::InitTexture()
 	m_TextureResource[ResourceTag::tTree0]             = new Texture("asset/texture/tree0.png", 1, 1);
 	m_TextureResource[ResourceTag::tTree1]             = new Texture("asset/texture/tree1.png", 1, 1);
 	m_TextureResource[ResourceTag::tTutorial]          = new Texture("asset/texture/tutorial.png", 1, 1);
+	m_TextureResource[ResourceTag::tTitleTemp]         = new Texture("asset/texture/titletemp.png", 1, 1);
+	m_TextureResource[ResourceTag::tTitleSphare]       = new Texture("asset/texture/fireSphere2.png", 1, 1);
+	m_TextureResource[ResourceTag::tParticleStar]      = new Texture("asset/texture/particle/star.png", 1, 1);
+	m_TextureResource[ResourceTag::tParticleHeart]     = new Texture("asset/texture/particle/particleHeart.png", 1, 1);
+	m_TextureResource[ResourceTag::tParticleCircle]    = new Texture("asset/texture/particle/particleCircle.png", 1, 1);
+	m_TextureResource[ResourceTag::tParticleFire]      = new Texture("asset/texture/particle/particleFire.png", 1, 1);
+
 }
 
 void ResourceData::InitAnimationModel()

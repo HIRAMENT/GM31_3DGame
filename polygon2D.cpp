@@ -7,9 +7,9 @@
 
 
 Polygon2D::Polygon2D(Scene * scene, D3DXVECTOR2 pos, D3DXVECTOR2 size, ResourceTag tag,int drawPriority)
-:GameObject(scene, ObjectType::eObPolygon,drawPriority)
-,m_Size(size)
-,m_TextureTag(tag)
+	: GameObject(scene, ObjectType::eObPolygon2D,drawPriority)
+	, m_Size(size)
+	, m_TextureTag(tag)
 {
 	m_Vertex[0].Position = D3DXVECTOR3(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f, 0.0f);
 	m_Vertex[0].Normal   = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -55,6 +55,8 @@ Polygon2D::Polygon2D(Scene * scene, D3DXVECTOR2 pos, D3DXVECTOR2 size, ResourceT
 
 	m_SlideOn = false;
 	m_Display = true;
+
+	m_ShaderType = ShaderType::UNLIT;
 
 	SetPosition({ pos.x,pos.y,0.0f });
 	scene->Add(this);
@@ -125,11 +127,11 @@ void Polygon2D::Draw()
 		Renderer::GetInstance()->GetDeviceContext()->Unmap(m_VertexBuffer, 0);
 
 		// 入力レイアウト設定 fvfs
-		Renderer::GetInstance()->GetDeviceContext()->IASetInputLayout(Shader::GetInstance()->GetVertexLayputUnlit());
+		Renderer::GetInstance()->GetDeviceContext()->IASetInputLayout(Shader::GetInstance()->GetVertexLayout(m_ShaderType));
 
 		// シェーダー設定
-		Renderer::GetInstance()->GetDeviceContext()->VSSetShader(Shader::GetInstance()->GetVertexShaderUnlit(), NULL, 0);		// 描画するものごとに変えられる
-		Renderer::GetInstance()->GetDeviceContext()->PSSetShader(Shader::GetInstance()->GetPixelShaderUnlit(), NULL, 0);
+		Renderer::GetInstance()->GetDeviceContext()->VSSetShader(Shader::GetInstance()->GetVertexShader(m_ShaderType), NULL, 0);		// 描画するものごとに変えられる
+		Renderer::GetInstance()->GetDeviceContext()->PSSetShader(Shader::GetInstance()->GetPixelShader(m_ShaderType), NULL, 0);
 
 		// マトリクス設定
 		Renderer::GetInstance()->SetWorldViewProjection2D();	// 前まではいらなかったけど11からは必要になった
@@ -141,6 +143,7 @@ void Polygon2D::Draw()
 
 		// テクスチャ設定
 		Renderer::GetInstance()->GetDeviceContext()->PSSetShaderResources(0, 1, ResourceData::GetInstance()->GetTextureResource(m_TextureTag)->GetTexture());	// テクスチャなどをリソースト読んでいる
+		Renderer::GetInstance()->GetDeviceContext()->PSSetShaderResources(1, 1, ResourceData::GetInstance()->GetTextureResource(ResourceTag::tTitleBG)->GetTexture());
 
 		// プリミティブトポロジ設定
 		Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);	// 難しい名前に変わっているが、描画の方法を設定しているだけ
@@ -149,6 +152,15 @@ void Polygon2D::Draw()
 		Renderer::GetInstance()->GetDeviceContext()->Draw(4, 0);	// 第一引数が頂点数になっているので注意
 	}
 
+}
+
+void Polygon2D::SetVertex(D3DXVECTOR2 pos)
+{
+	SetPosition({pos.x, pos.y, 0.0f});
+	m_Vertex[0].Position = D3DXVECTOR3(pos.x - m_Size.x * 0.5f, pos.y - m_Size.y * 0.5f, 0.0f);
+	m_Vertex[1].Position = D3DXVECTOR3(pos.x + m_Size.x * 0.5f, pos.y - m_Size.y * 0.5f, 0.0f);
+	m_Vertex[2].Position = D3DXVECTOR3(pos.x - m_Size.x * 0.5f, pos.y + m_Size.y * 0.5f, 0.0f);
+	m_Vertex[3].Position = D3DXVECTOR3(pos.x + m_Size.x * 0.5f, pos.y + m_Size.y * 0.5f, 0.0f);
 }
 
 void Polygon2D::SetAlpha(float alpha)

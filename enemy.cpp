@@ -13,7 +13,6 @@
 #include "obb.h"
 #include "collision.h"
 #include "sword.h"
-#include "billboard.h"
 #include "gauge.h"
 #include "shadow.h"
 #include "movement.h"
@@ -24,6 +23,8 @@
 #include "boids.h"
 #include "meshField.h"
 #include "attack.h"
+#include "particle.h"
+#include "particleManager.h"
 
 Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjust, int hp, ObjectType type, int drawPriority)
 	:GameObject(scene, type,drawPriority)
@@ -170,11 +171,11 @@ void Enemy::Update()
 void Enemy::Draw()
 {
 	// 入力レイアウト設定 fvfs
-	Renderer::GetInstance()->GetDeviceContext()->IASetInputLayout(Shader::GetInstance()->GetVertexLayputLighting());
+	Renderer::GetInstance()->GetDeviceContext()->IASetInputLayout(Shader::GetInstance()->GetVertexLayout(ShaderType::LIGHTING));
 
 	// シェーダー設定
-	Renderer::GetInstance()->GetDeviceContext()->VSSetShader(Shader::GetInstance()->GetVertexShaderLighting(), NULL, 0);		// 描画するものごとに変えられる
-	Renderer::GetInstance()->GetDeviceContext()->PSSetShader(Shader::GetInstance()->GetPixelShaderLighting(), NULL, 0);
+	Renderer::GetInstance()->GetDeviceContext()->VSSetShader(Shader::GetInstance()->GetVertexShader(ShaderType::LIGHTING), NULL, 0);		// 描画するものごとに変えられる
+	Renderer::GetInstance()->GetDeviceContext()->PSSetShader(Shader::GetInstance()->GetPixelShader(ShaderType::LIGHTING), NULL, 0);
 
 	// マトリクス設定
 	D3DXMATRIX world, scale, rot, trans;
@@ -200,6 +201,10 @@ void Enemy::SetEnemy()
 	m_Obb->SetObb(m_Position, m_Size, m_Rotation);
 	//m_HPGauge->SetGaugePos(m_Position);
 	m_Status->GetHitPoint()->GetGauge()->SetGaugePos(m_Position);
+}
+
+void Enemy::CreateParticle()
+{
 }
 
 void Enemy::Attack(D3DXVECTOR3 ppos)
@@ -289,6 +294,35 @@ void Enemy::SloppyMove()
 
 void Enemy::FreeMove()
 {
-	
+	ParticleInfo info;
+	info.m_Position = { 0.0f,-5.0f,0.0f };
+	info.m_TextureTag = ResourceTag::tParticleCircle;
+	info.m_DrawPriority = 2;
+	info.m_ProductionInterval = 5.0f;
+	info.m_BlendMode = BlendMode::ADDITION;
+	info.m_ProductionType = ProductionType::Point;
+	info.m_is2Dimension = false;
+	info.m_isCurve = true;
+	info.m_AngleMin = 0;
+	info.m_AngleMax = 360;
+	info.m_LifeSpanMin = 3.0f;
+	info.m_LifeSpanMax = 6.0f;
+	info.m_ProductionMin = 25;
+	info.m_ProductionMax = 50;
+	info.m_ScaleMin = 0.1f;
+	info.m_ScaleMax = 0.5f;
+	info.m_SpeedMin = 0.01f;
+	info.m_SpeedMax = 0.03f;
+	info.m_RotationMin = 0.01f;
+	info.m_RotationMax = 0.05f;
+	info.m_RedMin = 1.0f;
+	info.m_RedMax = 1.0f;
+	info.m_GreenMin = 1.0f;
+	info.m_GreenMax = 1.0f;
+	info.m_BlueMin = 1.0f;
+	info.m_BlueMax = 1.0f;
+	info.m_GravityUse = false;
+	info.m_Gravity = D3DXVECTOR3(0.0f, -0.001f, 0.0f);
+	new ParticleManager(GetScene(), &info);
 }
 

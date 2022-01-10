@@ -59,4 +59,5 @@ public:
 	OBB* GetObb() const { return m_Obb; }
 	Status* GetStatus() const { return m_Status; }
 	virtual int GetDamageValue() const = 0;
+	void CreateParticle();
 };

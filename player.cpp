@@ -29,7 +29,6 @@
 #include "attack.h"
 #include "meshField.h"
 #include "bullet.h"
-#include "billboard.h"
 #include "polygon3D.h"
 #include "viewSensor.h"
 #include <math.h>
@@ -148,14 +147,14 @@ void Player::Update()
 			for (auto enemy : enemys) {
 				if (m_ViewSensor->WithinRange(m_Position, enemy->GetPosition(), { m_Forward.x, m_Forward.y, -m_Forward.z }, enemy->GetScale())) {
 					enemy->GetStatus()->GetHitPoint()->Damage(m_Status->GetAttack()->GetPower());
-					new Billboard(GetScene(), enemy->GetPosition(), D3DXVECTOR2(10, 10), ResourceTag::tSlash, true, 100);
+					new Polygon3D(GetScene(), enemy->GetPosition(), D3DXVECTOR3(10, 10, 0), ResourceTag::tSlash, true, true, 100);
 					ADXSound::GetInstance()->Play(9);
 				}
 			}
 			Enemy* bossEnemy = GetScene()->GetGameObject<Enemy>(ObjectType::eObBossEnemy);
 			if (bossEnemy && m_ViewSensor->WithinRange(m_Position, bossEnemy->GetPosition(), { m_Forward.x, m_Forward.y, -m_Forward.z }, bossEnemy->GetScale())) {
 				bossEnemy->GetStatus()->GetHitPoint()->Damage(m_Status->GetAttack()->GetPower());
-				new Billboard(GetScene(), bossEnemy->GetPosition(), D3DXVECTOR2(10, 10), ResourceTag::tSlash, true, 100);
+				new Polygon3D(GetScene(), bossEnemy->GetPosition(), D3DXVECTOR3(10, 10, 0), ResourceTag::tSlash, true, true, 100);
 				ADXSound::GetInstance()->Play(9);
 			}
 		}
@@ -202,7 +201,7 @@ void Player::Update()
 		}
 	}
 
-	ImGui();
+	//ImGui();
 }
 
 void Player::Draw()
@@ -213,11 +212,11 @@ void Player::Draw()
 
 
 	// 入力レイアウト設定 fvfs
-	Renderer::GetInstance()->GetDeviceContext()->IASetInputLayout(Shader::GetInstance()->GetVertexLayputLighting());
+	Renderer::GetInstance()->GetDeviceContext()->IASetInputLayout(Shader::GetInstance()->GetVertexLayout(ShaderType::LIGHTING));
 
 	// シェーダー設定
-	Renderer::GetInstance()->GetDeviceContext()->VSSetShader(Shader::GetInstance()->GetVertexShaderLighting(), NULL, 0);		// 描画するものごとに変えられる
-	Renderer::GetInstance()->GetDeviceContext()->PSSetShader(Shader::GetInstance()->GetPixelShaderLighting(), NULL, 0);
+	Renderer::GetInstance()->GetDeviceContext()->VSSetShader(Shader::GetInstance()->GetVertexShader(ShaderType::LIGHTING), NULL, 0);		// 描画するものごとに変えられる
+	Renderer::GetInstance()->GetDeviceContext()->PSSetShader(Shader::GetInstance()->GetPixelShader(ShaderType::LIGHTING), NULL, 0);
 
 	// マトリクス設定
 	D3DXMATRIX world, scale, rot, trans;

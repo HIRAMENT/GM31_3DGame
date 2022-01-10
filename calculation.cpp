@@ -24,3 +24,8 @@ float Calculation::RoundTrip(float now, float value, D3DXVECTOR2 limit)
 	
 	return num;
 }
+
+float Calculation::RandomRange(float min, float max)
+{
+	return ((float)rand() / RAND_MAX) * (max - min) + min;
+}

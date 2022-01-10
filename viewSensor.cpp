@@ -13,7 +13,7 @@
 ViewSensor::ViewSensor(Scene * scene, D3DXVECTOR3 pos, float length, float radius, int drawPriority)
 	: Sensor(scene, pos, drawPriority)
 {
-	m_OutLookUI = new Polygon3D(scene, pos, { 1.0f,1.0f,1.0f }, ResourceTag::tPlane, 5);
+	m_OutLookUI = new Polygon3D(scene, pos, { 1.0f,0.0f,1.0f }, ResourceTag::tPlane, true, false, 5);
 	SetRange(radius);
 	SetLength(length);
 

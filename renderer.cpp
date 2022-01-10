@@ -23,9 +23,6 @@ ID3D11DepthStencilState* Renderer::m_DepthStateEnable = NULL;
 ID3D11DepthStencilState* Renderer::m_DepthStateDisable = NULL;
 
 
-
-
-
 void Renderer::Init()
 {
 	HRESULT hr = S_OK;
@@ -137,22 +134,60 @@ void Renderer::Init()
 
 	// ブレンドステート設定
 	// ブレンドステート … 半透明合成、加算合成の設定をするもの
+	ID3D11BlendState* blendState;
 	D3D11_BLEND_DESC blendDesc{};
 	blendDesc.AlphaToCoverageEnable = TRUE;
 	blendDesc.IndependentBlendEnable = FALSE;
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
+	// 何もなし
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	m_Device->CreateBlendState(&blendDesc, &blendState);
+	m_BlendState[BlendMode::NONE] = blendState;
+
+	// 通常
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	m_Device->CreateBlendState(&blendDesc, &blendState);
+	m_BlendState[BlendMode::NORMAL] = blendState;
+
+	// 加算合成
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	m_Device->CreateBlendState(&blendDesc, &blendState);
+	m_BlendState[BlendMode::ADDITION] = blendState;
+
+	// 加算合成(透過)
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	m_Device->CreateBlendState(&blendDesc, &blendState);
+	m_BlendState[BlendMode::ADDITIONALPHA] = blendState;
+
+	// 減算合成
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_COLOR;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_SUBTRACT;
+	m_Device->CreateBlendState(&blendDesc, &blendState);
+	m_BlendState[BlendMode::SUBTRACTION] = blendState;
+
+	// 乗算合成
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_SRC_COLOR;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	m_Device->CreateBlendState(&blendDesc, &blendState);
+	m_BlendState[BlendMode::MULTIPLE] = blendState;
+
 	float blendFactor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-	ID3D11BlendState* blendState = NULL;
-	m_Device->CreateBlendState( &blendDesc, &blendState );
-	m_DeviceContext->OMSetBlendState( blendState, blendFactor, 0xffffffff );
+	m_DeviceContext->OMSetBlendState(m_BlendState[BlendMode::NORMAL], blendFactor, 0xffffffff );
 
 
 
@@ -225,8 +260,14 @@ void Renderer::Init()
 	m_DeviceContext->VSSetConstantBuffers( 4, 1, &m_LightBuffer );
 	m_DeviceContext->PSSetConstantBuffers(4, 1, &m_LightBuffer);
 
+	bufferDesc.ByteWidth = sizeof(D3DXVECTOR4);
+	m_Device->CreateBuffer(&bufferDesc, NULL, &m_CameraBuffer);
+	m_DeviceContext->PSSetConstantBuffers(5, 1, &m_CameraBuffer);
 
-
+	bufferDesc.ByteWidth = sizeof(D3DXVECTOR4);
+	m_Device->CreateBuffer(&bufferDesc, NULL, &m_ParameterBuffer);
+	m_DeviceContext->VSSetConstantBuffers(6, 1, &m_ParameterBuffer);
+	m_DeviceContext->PSSetConstantBuffers(6, 1, &m_ParameterBuffer);
 
 
 	// ライト初期化
@@ -263,13 +304,21 @@ void Renderer::Uninit()
 	m_ProjectionBuffer->Release();
 	m_LightBuffer->Release();
 	m_MaterialBuffer->Release();
-
+	m_CameraBuffer->Release();
+	m_ParameterBuffer->Release();
 
 	m_DeviceContext->ClearState();
 	m_RenderTargetView->Release();
 	m_SwapChain->Release();
 	m_DeviceContext->Release();
 	m_Device->Release();
+
+	for (auto it = m_BlendState.begin(); it != m_BlendState.end();)
+	{
+		(*it).second->Release();
+		it = m_BlendState.erase(it);
+	}
+	m_BlendState.clear();
 
 }
 
@@ -279,7 +328,7 @@ void Renderer::Uninit()
 void Renderer::Begin()
 {
 	// 諸々をクリアしている
-	float clearColor[4] = { 0.5f, 0.0f, 1.0f, 1.0f };
+	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	m_DeviceContext->ClearRenderTargetView( m_RenderTargetView, clearColor );
 	m_DeviceContext->ClearDepthStencilView( m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
@@ -355,6 +404,22 @@ void Renderer::SetMaterial( MATERIAL Material )
 void Renderer::SetLight( LIGHT Light )
 {
 	m_DeviceContext->UpdateSubresource(m_LightBuffer, 0, NULL, &Light, 0, 0);
+}
+
+void Renderer::SetCameraPosition(D3DXVECTOR3 pos)
+{
+	m_DeviceContext->UpdateSubresource(m_CameraBuffer, 0, NULL, &D3DXVECTOR4(pos.x, pos.y, pos.z, 0.0f), 0, 0);
+}
+
+void Renderer::SetParameter(D3DXVECTOR4 parameter)
+{
+	m_DeviceContext->UpdateSubresource(m_ParameterBuffer, 0, NULL, &parameter, 0, 0);
+}
+
+void Renderer::SetRenderBlend(BlendMode mode)
+{
+	float blendFactor[4] = { D3D11_BLEND_ZERO, D3D11_BLEND_ZERO, D3D11_BLEND_ZERO, D3D11_BLEND_ZERO };
+	m_DeviceContext->OMSetBlendState(m_BlendState[mode], blendFactor, 0xffffffff);
 }
 
 

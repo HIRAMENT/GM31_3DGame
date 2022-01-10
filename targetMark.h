@@ -11,8 +11,8 @@ public:
 	void Draw() override {}
 	void Uninit() override;
 
-	Billboard* GetMarker() const { return m_Marker; }
+	class Polygon3D* GetMarker() const { return m_Marker; }
 
 private:
-	class Billboard* m_Marker;
+	class Polygon3D* m_Marker;
 };

@@ -11,7 +11,8 @@ enum class ObjectType {
 	eObBossEnemy,
 	eObBullet,
 	eObCamera,
-	eObPolygon,
+	eObPolygon2D,
+	eObPolygon3D,
 	eObField,
 	eObExplosion,
 	eObSkydome,
@@ -26,6 +27,7 @@ enum class ObjectType {
 	eObTree,
 	eObStatus,
 	eObTargetMark,
+	eObParticle,
 };
 
 

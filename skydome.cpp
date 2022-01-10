@@ -34,11 +34,11 @@ void Skydome::Update()
 void Skydome::Draw()
 {
 	// 入力レイアウト設定 fvfs
-	Renderer::GetInstance()->GetDeviceContext()->IASetInputLayout(Shader::GetInstance()->GetVertexLayputUnlit());
+	Renderer::GetInstance()->GetDeviceContext()->IASetInputLayout(Shader::GetInstance()->GetVertexLayout(ShaderType::UNLIT));
 
 	// シェーダー設定
-	Renderer::GetInstance()->GetDeviceContext()->VSSetShader(Shader::GetInstance()->GetVertexShaderUnlit(), NULL, 0);		// 描画するものごとに変えられる
-	Renderer::GetInstance()->GetDeviceContext()->PSSetShader(Shader::GetInstance()->GetPixelShaderUnlit(), NULL, 0);
+	Renderer::GetInstance()->GetDeviceContext()->VSSetShader(Shader::GetInstance()->GetVertexShader(ShaderType::UNLIT), NULL, 0);		// 描画するものごとに変えられる
+	Renderer::GetInstance()->GetDeviceContext()->PSSetShader(Shader::GetInstance()->GetPixelShader(ShaderType::UNLIT), NULL, 0);
 
 	// マトリクス設定
 	D3DXMATRIX world, scale, rot, trans;

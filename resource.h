@@ -4,6 +4,8 @@
 
 enum class ResourceTag
 {
+	NONE,
+
 	tGround,
 	tShadow,
 	tTitleBG,
@@ -28,6 +30,13 @@ enum class ResourceTag
 	tTree0,
 	tTree1,
 	tTutorial,
+	tTitleTemp,
+	tTitleSphare,
+
+	tParticleStar,
+	tParticleHeart,
+	tParticleCircle,
+	tParticleFire,
 
 	mPlayer,
 	mSkydome,

@@ -9,7 +9,6 @@ enum class SceneTag {
 	eResult
 };
 
-// ‚±‚Ì•Ó‚Í‹Ž”N‚â‚Á‚½‚Ì‚Æ“¯‚¶
 class Manager : public Singleton<Manager>
 {
 private:
