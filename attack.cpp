@@ -3,20 +3,21 @@
 #include "movement.h"
 #include "attack.h"
 
+Attack::Attack(int pow, float time)
+	: m_Power(pow)
+	, m_CoolTime(time)
+{
+	m_CoolTime -= time;
+}
+
 void Attack::Update()
 {
-	if (m_CoolTime <= 0)
-		m_CoolTime = 0;
-	else
-		m_CoolTime--;
+	m_CoolTime -= 0.1f;
 }
 
 bool Attack::CheckCoolTime()
 {
-	if (m_CoolTime <= 0)
-		return true;
-
-	return false;
+	return m_CoolTime.GetIsFinish();
 }
 
 bool Attack::CheckHit(D3DXVECTOR3 vec, D3DXVECTOR3 forward, float ang, float len)

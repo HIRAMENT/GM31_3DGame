@@ -2,8 +2,37 @@
 
 #include "gameObject.h"
 
+class EnemyState;
+enum class EnemyStateType;
+enum class ResourceTag;
+
+enum class EnemyType {
+	Small,
+	Boss,
+};
+
 class Enemy : public GameObject
 {
+public:
+	Enemy(class Scene* scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int drawPriority);
+
+	void Init() override;
+	void Uninit() override;
+	void Update() override;
+	void Draw() override;
+
+	EnemyType GetEnemyType() const { return m_Type; }
+	bool GetAttack() const { return m_Attack; }
+	class OBB* GetObb() const { return m_Obb; }
+	class Status* GetStatus() const { return m_Status; }
+	virtual int GetDamageValue() const = 0;
+	void CreateParticle();
+	void ChangeState(EnemyState* next);
+	D3DXVECTOR3 GetTargetPosition() const { return m_Target; }
+
+private:
+	void SetEnemy();
+
 protected:
 	Transform m_Transform;
 	D3DXVECTOR3 m_Up = Vec3::Up;
@@ -11,21 +40,21 @@ protected:
 	D3DXVECTOR3 m_Right = Vec3::Right;
 
 	D3DXVECTOR3 m_Target;
-	class OBB* m_Obb = nullptr;
-	class Billboard* m_Exclamation = nullptr;
+	OBB* m_Obb = nullptr;
+	class Polygon3D* m_Exclamation = nullptr;
 	float m_ExcScale;
 	ResourceTag m_ModelTag;
+	EnemyType m_Type;
+	D3DXVECTOR3 m_Size;
 
-	class Status* m_Status = nullptr;
-
-	class Boids* m_Boids;
+	Status* m_Status;
 
 	bool m_SensorEnter;
 	int m_AttackCount;
 	int m_SloppyTime;
 	const float m_FollowRange;
 
-	float m_StartPosY;
+	EnemyState* m_EnemyState = nullptr;
 
 private:
 	class Shadow* m_Shadow = nullptr;
@@ -34,30 +63,9 @@ private:
 	int m_AttackMotionCount;
 	D3DXVECTOR3 m_AttackTarget;
 	void Attack(D3DXVECTOR3 ppos);
-	void RushAttack(D3DXVECTOR3 ppos);
-	void JumpAttack(D3DXVECTOR3 ppos);
-
-	void TargetMove(D3DXVECTOR3 pPos);
 	void SloppyMove();
-	void FreeMove();
 
 private:
-	D3DXVECTOR3 m_Size;
 	D3DXVECTOR3 m_SensorSize;
 	D3DXVECTOR3 m_MoveVlaue;
-
-public:
-	Enemy(class Scene* scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 adjust,int hp, ObjectType type, int drawPriority);
-
-	void Init() override;
-	void Uninit() override;
-	void Update() override;
-	void Draw() override;
-
-	void SetEnemy();
-	bool GetAttack() const { return m_Attack; }
-	OBB* GetObb() const { return m_Obb; }
-	Status* GetStatus() const { return m_Status; }
-	virtual int GetDamageValue() const = 0;
-	void CreateParticle();
 };

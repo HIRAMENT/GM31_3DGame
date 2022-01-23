@@ -26,14 +26,14 @@
 #include "status.h"
 #include "hitPoint.h"
 
+#define PHASE_MAX (1)
+
 void GameScene::Init()
 {
 	new GameCamera(this, { 0.0f,5.0f,-20.0f }, 2);
 	new MeshField({ this, {0.0f,0.0f,0.0f}, 1 });
 	new Skydome(this, { 0.0f,0.0f,0.0f }, 1);
 	new Player(this, { 0.0f,0.0f,-10.0f }, 2);
-
-	new Rock(this, { 0.0f,1.0f,0.0f }, { 0.0f,0.0f,0.0f }, { 5.0f,3.0f,2.0f }, 2);
 
 	srand(time(NULL));
 
@@ -48,16 +48,20 @@ void GameScene::Init()
 		new SmallEnemy(this, { pos.x,1.0f,pos.z }, 2);
 	}
 
+	//new SmallEnemy(this, { -6.0f,1.0f,0.0f }, 2);
+	//new SmallEnemy(this, { 6.0f,1.0f,0.0f }, 2);
+
+
 	for (int i = 0; i < 50; i++)
 	{
 		pos.x = rand() % 150 - 75;
 		pos.z = rand() % 150 - 75;
-		if (pos.x <= 5.0f && pos.x >= -5.0f)
+		if (pos.x <= 8.0f && pos.x >= -8.0f)
 		{
-			if (pos.z >= -12.0f && pos.z <= -8.0f)
+			if (pos.z >= -18.0f && pos.z <= -2.0f)
 			{
-				pos.x += 3.0f;
-				pos.z += 3.0f;
+				pos.x += 8.0f;
+				pos.z += 8.0f;
 			}
 		}
 		rot.x = degToRad(rand() % 360);
@@ -66,7 +70,7 @@ void GameScene::Init()
 		sca.x    = rand() % 5 + 1;
 		sca.y    = rand() % 5 + 1;
 		sca.z    = rand() % 5 + 1;
-		new Rock(this, { pos.x,1.f,pos.z }, { rot.x,rot.y,rot.z }, { sca.x, sca.y, sca.z }, 2);
+		//new Rock(this, { pos.x,1.f,pos.z }, { rot.x,rot.y,rot.z }, { sca.x, sca.y, sca.z }, 2);
 	}
 
 	//for (int i = 0; i < 50; i++)
@@ -87,24 +91,26 @@ void GameScene::Update()
 {
 	Scene::Update();
 
-	if (m_PhaseCount < 2 && GetGameObjects<Enemy>(ObjectType::eObSmallEnemy).size() == 0)
+	if (m_PhaseCount < PHASE_MAX && GetGameObjects<Enemy>(ObjectType::eObEnemy).size() == 0)
 	{
 		D3DXVECTOR3 pos;
 		m_PhaseCount++;
-		if (m_PhaseCount < 2) {
+		if (m_PhaseCount < PHASE_MAX) {
 			for (int i = 0; i < 15; i++)
 			{
 				pos.x = rand() % 60 - 30;
 				pos.z = rand() % 60 - 30;
-				new SmallEnemy(this, { pos.x,1.0f,pos.z }, 2);
+				//new SmallEnemy(this, { pos.x,1.0f,pos.z }, 2);
 			}
 		}
-		else if (m_PhaseCount == 2) {
+		else if (m_PhaseCount == PHASE_MAX) {
 			new BossEnemy(this, { 0.0f, 3.0f,20.0f }, 2);
 		}
+
+		new SmallEnemy(this, { 0.0f,1.0f,0.0f }, 2);
 		
 	}
-	if (m_PhaseCount == 2 && !GetGameObject<Enemy>(ObjectType::eObBossEnemy)) {
+	if (m_PhaseCount == PHASE_MAX && !GetGameObject<Enemy>(ObjectType::eObEnemy)) {
 		Fade::GetInstance()->FadeIn(SceneTag::eResult);
 		ResultScene::SetClear(true);
 	}

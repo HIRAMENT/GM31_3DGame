@@ -113,7 +113,7 @@ public:
 	void SetDestroy() { m_Destroy = true; }
 	void SetDestroy(GameObject* object) { object->SetDestroy(); }
 	bool GetDestroy() const { return m_Destroy; }
-	void ReserDestroy() { m_Destroy = false; }
+	void ResetDestroy() { m_Destroy = false; }
 	bool Destroy()
 	{
 		if (m_Destroy)

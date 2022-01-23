@@ -10,6 +10,7 @@ public:
 
 private:
 	D3DXVECTOR2 m_Angle3D;
-	class Enemy* m_TargetEnemy;
+	class TargetMark* m_TargetMarker;
+	class Player* m_Player;
 	const float m_Distance = 15;
 };

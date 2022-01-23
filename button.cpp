@@ -16,7 +16,7 @@ Button::Button(Scene * scene, D3DXVECTOR2 pos, D3DXVECTOR2 size, ResourceTag tag
 	m_ButtonClickUI  = new Polygon2D(scene, pos, size, ResourceTag::tButtonClick,  drawPriority);
 
 	m_SelectAlpha = 0.0f;
-	m_SelectMoveValue = 0.03f;
+	m_SelectMoveValue = 0.05f;
 	m_ClickAlpha = 0.0f;
 	m_ClickMoveValue = 0.1f;
 	m_isClick = false;

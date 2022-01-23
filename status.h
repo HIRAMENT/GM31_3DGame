@@ -10,7 +10,7 @@ class Attack;
 class Status : public GameObject
 {
 public:
-	Status(class Scene* scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int atk, int dfe, int exp, int level, int hp, int dim);
+	Status(class Scene* scene, class StatusInfo* info);
 
 	void SetDiffence(const int dfe) { m_Difence = dfe; }
 
@@ -31,4 +31,28 @@ protected:
 	ExperiencePoint* m_Exp;
 	Level* m_Level;
 	HitPoint* m_HitPoint;
+};
+
+class StatusInfo
+{
+public:
+	// 攻撃関連
+	int m_AttackPower;
+	float m_AttackCoolTime;
+
+	// 防御関連
+	int m_DifenceValue;
+
+	// 体力関連
+	int m_HitPointValue;
+	float m_HitPointCoolTime;
+	int m_HitPointDimention;
+	D3DXVECTOR3 m_HitPointPos;
+	D3DXVECTOR3 m_HitPointSize;
+
+	// 経験値関連
+	int m_ExpValue;
+
+	// レベル関連
+	int m_LevelValue;
 };

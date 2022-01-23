@@ -23,6 +23,7 @@ Particle::Particle(Scene * scene, ParticleInfo* info)
 	, m_RedRate(Calculation::GetInstance()->RandomRange(info->m_RedMin, info->m_RedMax))
 	, m_GreenRate(Calculation::GetInstance()->RandomRange(info->m_GreenMin, info->m_GreenMax))
 	, m_BlueRate(Calculation::GetInstance()->RandomRange(info->m_BlueMin, info->m_BlueMax))
+	, m_AlphaRate(Calculation::GetInstance()->RandomRange(info->m_AlphaMin, info->m_AlphaMax))
 	, m_RotationRate(Calculation::GetInstance()->RandomRange(info->m_RotationMin, info->m_RotationMax))
 	, m_BlendMode(info->m_BlendMode)
 {
@@ -81,10 +82,14 @@ void Particle2D::Update()
 Particle3D::Particle3D(Scene * scene, ParticleInfo * info)
 	: Particle(scene, info)
 	, m_BasePosition(info->m_Position)
-	, m_Velocity(D3DXVECTOR3( cosf(m_Angle) * m_Speed, sinf(m_Angle) * m_Speed, 0.0f))
 	, m_Gravity(D3DXVECTOR3(0.0f, 0.0f, 0.0f))
 
 {
+	int indec = 1;
+	int ran = rand() % 2;
+	if (ran == 0)indec *= -1;
+	m_Velocity = D3DXVECTOR3(cosf(m_Angle) * m_Speed, sinf(m_Angle) * m_Speed, cosf(m_Angle) * indec * m_Speed);
+
 	if (info->m_ProductionType == ProductionType::Region)
 	{
 		D3DXVECTOR3 amount;
@@ -94,8 +99,9 @@ Particle3D::Particle3D(Scene * scene, ParticleInfo * info)
 		m_BasePosition = m_BasePosition + amount;
 	}
 
-	m_SpriteFront = new Polygon3D(scene, m_BasePosition, D3DXVECTOR3(m_Size, m_Size, 0.0f), info->m_TextureTag, true, false, info->m_DrawPriority);
+	m_SpriteFront = new Polygon3D(scene, m_BasePosition, D3DXVECTOR3(m_Size, m_Size, 0.0f), info->m_TextureTag, true, info->m_isBillboard, info->m_DrawPriority);
 	m_SpriteFront->SetColor(m_RedRate, m_GreenRate, m_BlueRate);
+	m_SpriteFront->SetAlpha(m_AlphaRate);
 	m_SpriteFront->SetBlendMode(m_BlendMode);
 	m_SpriteFront->SetShaderType(ShaderType::UNLIT);
 
@@ -147,10 +153,12 @@ void Particle3D::Update()
 	m_LifeSpan -= 0.01f;
 
 	// ™X‚É”–‚­‚È‚é
-	m_SpriteFront->SetAlpha(std::min(1.0f, m_LifeSpan.GetRest()));
+	if ((m_LifeSpan.GetMax() * 0.2f) * m_AlphaRate >= m_LifeSpan.GetRest())
+	{
+		m_SpriteFront->SetAlpha(m_LifeSpan.GetRest() / (m_LifeSpan.GetMax() * 0.2f));
+	}
 
-	Camera* camera = GetScene()->GetGameObject<Camera>(ObjectType::eObCamera);
-	if (m_LifeSpan.GetIsFinish()/* || !camera->CheckView(m_SpriteFront->GetPosition(), m_SpriteFront->GetRight(), m_SpriteFront->GetScale())*/) {
+	if (m_LifeSpan.GetIsFinish()) {
 		SetDestroy();
 	}
 }

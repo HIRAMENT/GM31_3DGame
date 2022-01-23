@@ -13,7 +13,9 @@ Counter & Counter::operator+=(float num)
 
 Counter & Counter::operator-=(float num)
 {
-	m_Rest -= num;
+	if (!m_isFinish){
+		m_Rest -= num;
+	}
 
 	if (m_Rest <= 0.0f) {
 		m_isFinish = true;

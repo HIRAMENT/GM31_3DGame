@@ -7,14 +7,20 @@
 #include "attack.h"
 #include "status.h"
 
-Status::Status(class Scene* scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int atk, int dfe, int exp, int level, int hp, int dim)
-	:GameObject(scene, ObjectType::eObStatus, 1000)
-	, m_Difence(dfe)
+Status::Status(Scene * scene, StatusInfo * info)
+	: GameObject(scene, ObjectType::eObStatus, 100)
 {
-	m_Attack = new Attack(atk);
-	m_Exp = new ExperiencePoint(exp);
-	m_Level = new Level(level);
-	m_HitPoint = new HitPoint(scene, pos, size, hp, dim);
+	m_Attack = new Attack(info->m_AttackPower, info->m_AttackCoolTime);
+	m_Exp = new ExperiencePoint(info->m_ExpValue);
+	m_Level = new Level(info->m_LevelValue);
+	if (info->m_HitPointDimention == 2) 
+	{
+		m_HitPoint = new HitPoint2D(scene, info->m_HitPointPos, info->m_HitPointSize, info->m_HitPointValue);
+	}
+	else if (info->m_HitPointDimention == 3)
+	{
+		m_HitPoint = new HitPoint3D(scene, info->m_HitPointPos, info->m_HitPointSize, info->m_HitPointValue);
+	}
 
 	scene->Add(this);
 }
@@ -27,7 +33,7 @@ void Status::Update()
 
 void Status::Uninit()
 {
-	m_HitPoint->Unitit();
+	m_HitPoint->Uninit();
 	delete m_Attack;
 	delete m_Exp;
 	delete m_Level;

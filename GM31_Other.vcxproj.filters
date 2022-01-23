@@ -76,6 +76,18 @@
     <Filter Include="ヘッダー ファイル\GameObject\Particle">
       <UniqueIdentifier>{a2bfca27-36b0-4a35-888c-136b05c1d3ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameObject\Enemy">
+      <UniqueIdentifier>{1f16dd2f-20be-4089-be95-fab6205f2259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\Enemy">
+      <UniqueIdentifier>{6a1fe05d-8531-4610-9440-a132f30481f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\Enemy\State">
+      <UniqueIdentifier>{ea384c9a-1699-4929-9cd5-dae4c3fd2473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameObject\Enemy\State">
+      <UniqueIdentifier>{0c615c0d-79f7-4397-89ec-8fd156ba0094}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="input.cpp">
@@ -106,9 +118,6 @@
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="polygon2D.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="enemy.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="player.cpp">
@@ -162,16 +171,10 @@
     <ClCompile Include="sensor.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="bossEnemy.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="gauge.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="number.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="smallEnemy.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="calculation.cpp">
@@ -194,9 +197,6 @@
     </ClCompile>
     <ClCompile Include="fileManager.cpp">
       <Filter>ソース ファイル\System</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="ImGUI\imgui.cpp">
       <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
@@ -231,9 +231,6 @@
     <ClCompile Include="information.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="astar.cpp">
-      <Filter>ソース ファイル\System\AI</Filter>
-    </ClCompile>
     <ClCompile Include="ADX2\adxSound.cpp">
       <Filter>ソース ファイル\System\Sound</Filter>
     </ClCompile>
@@ -242,12 +239,6 @@
     </ClCompile>
     <ClCompile Include="boids.cpp">
       <Filter>ソース ファイル\System\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="bullet.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="targetMark.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="attack.cpp">
       <Filter>ソース ファイル\GameObject\Status</Filter>
@@ -273,13 +264,43 @@
     <ClCompile Include="viewSensor.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
+    <ClCompile Include="targetMark.cpp">
+      <Filter>ソース ファイル\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="bossEnemy.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="smallEnemy.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="enemyAttack.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy\State</Filter>
+    </ClCompile>
+    <ClCompile Include="enemyAttackRush.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy\State</Filter>
+    </ClCompile>
+    <ClCompile Include="enemyDamage.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy\State</Filter>
+    </ClCompile>
+    <ClCompile Include="enemyIdol.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy\State</Filter>
+    </ClCompile>
+    <ClCompile Include="enemyMove.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy\State</Filter>
+    </ClCompile>
+    <ClCompile Include="enemyAttackJump.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy\State</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
       <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="enemy.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="field.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
@@ -416,16 +437,10 @@
     <ClInclude Include="calculation.h">
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
-    <ClInclude Include="bossEnemy.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="gauge.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="number.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="smallEnemy.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="button.h">
@@ -494,14 +509,8 @@
     <ClInclude Include="status.h">
       <Filter>ヘッダー ファイル\GameObject\Status</Filter>
     </ClInclude>
-    <ClInclude Include="astar.h">
-      <Filter>ヘッダー ファイル\System\AI</Filter>
-    </ClInclude>
     <ClInclude Include="boids.h">
       <Filter>ヘッダー ファイル\System\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="bullet.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="targetMark.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
@@ -511,12 +520,6 @@
     </ClInclude>
     <ClInclude Include="sensor.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="viewSensor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="counter.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>ヘッダー ファイル\GameObject\Camera</Filter>
@@ -532,6 +535,42 @@
     </ClInclude>
     <ClInclude Include="particleManager.h">
       <Filter>ヘッダー ファイル\GameObject\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="bossEnemy.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="smallEnemy.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="counter.h">
+      <Filter>ヘッダー ファイル\System</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyDamage.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyIdol.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyMove.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyState.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyAttack.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyAttackRush.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyAttackJump.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="viewSensor.h">
+      <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

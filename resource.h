@@ -32,6 +32,7 @@ enum class ResourceTag
 	tTutorial,
 	tTitleTemp,
 	tTitleSphare,
+	tTargetMarker,
 
 	tParticleStar,
 	tParticleHeart,

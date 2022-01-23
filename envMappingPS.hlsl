@@ -22,8 +22,8 @@ void main(in PS_IN In, out float4 outDiffuse : SV_Target)
 
 	// 4.反射ベクトルから環境マッピング用のテクスチャ座標を作成
 	float2 envTexCood = float2(0,0);
-	envTexCood.x = -refv.x * 0.5f + 0.5f;
-	envTexCood.y = -refv.y * 0.5f + 0.5f;
+	envTexCood.x = -refv.x * 0.5f + 0.5f + Parameter.x;
+	envTexCood.y = -refv.y * 0.5f + 0.5f + Parameter.y;
 
 	// 5.スフィアマップとベーステクスチャを加算して出力
 	float4 EnvTex = g_TextureEnv.SampleBias(g_SamplerState, envTexCood, 1.0f);

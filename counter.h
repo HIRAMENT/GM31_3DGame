@@ -14,6 +14,7 @@ public:
 	float GetMax() const { return m_Max; }
 	float GetRest() const { return m_Rest; }
 	bool GetIsFinish() const { return m_isFinish; }
+	float GetRatio() const { return (1.0f - (m_Rest / m_Max)); }
 
 private:
 	float m_Max;

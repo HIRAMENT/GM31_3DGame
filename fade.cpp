@@ -44,7 +44,7 @@ void Fade::Init()
 	Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &sd, &m_VertexBuffer);
 
 	m_Diffuse = { 1.0f,1.0f,1.0f,0.0f };
-	m_Speed = 0.3f;
+	m_Speed = 0.45f;
 	m_FadeTag = FadeTag::eNone;
 	m_SceneTag = SceneTag::eTitle;
 	m_FadeConduct = false;

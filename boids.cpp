@@ -9,11 +9,12 @@
 #include "viewSensor.h"
 #include "obb.h"
 #include "boids.h"
+#include "enemy.h"
 
 #include <algorithm>
 #include <math.h>
 
-#define SEPARATION_DIST  (3)
+#define SEPARATION_DIST  (3.0f)
 #define MIN_URGENCY (0.01f)
 #define MAX_URGENCY (0.05f)
 #define MAX_CHANGE (10.0f)
@@ -23,19 +24,19 @@
 #define PERCEPTION_RANGE (5.0f)
 
 
-Boids::Boids(D3DXVECTOR3 pos)
+Boids::Boids()
 {
-	BoidsData::GetInstance()->boidsList.push_back(this);
-	m_Position = pos;
-
+	m_Position = D3DXVECTOR3(0.0f,0.0f,0.0f);
 	m_NearDistance = INFINITY;
 	m_NearMate = nullptr;
 	m_Perception = PERCEPTION_RANGE;
 	m_SeenNum = 0;
 	m_ViewRange = 10;
 	m_ViewLenght = 10;
-	m_OutLook = new ViewSensor(Manager::GetInstance()->GetScene(), pos, m_ViewRange, m_ViewLenght, 5);
+	m_OutLook = new ViewSensor(Manager::GetInstance()->GetScene(), m_Position, m_ViewRange, m_ViewLenght, 5);
 	m_OutLook->SetDisplay(false);
+
+	BoidsData::GetInstance()->Add(this);
 }
 
 D3DXVECTOR3 Boids::KeepDistance(void)
@@ -141,8 +142,12 @@ void Boids::ComputeRPY(void)
 
 D3DXVECTOR3 Boids::FollowTarget(void)
 {
+	m_JustDistance = false;
 	D3DXVECTOR3 change = SalculatingRatio(m_Target, m_Position);
-
+	if (change == D3DXVECTOR3(0.0f, 0.0f, 0.0f))
+	{ 
+		m_JustDistance = true;
+	}
 	return D3DXVECTOR3(change);
 }
 
@@ -194,11 +199,11 @@ D3DXVECTOR3 Boids::Detour(OBB* obb)
 	return D3DXVECTOR3(change);
 }
 
-void Boids::FlockIt(OBB* obb)
+void Boids::FlockIt(Enemy* enemy)
 {
-	// 前の状態の保存
-	m_OldPosition = m_Position;
-	m_Position += m_Movement;
+	//if (m_Position == D3DXVECTOR3(0.0f, 0.0f, 0.0f))
+	m_Position = enemy->GetPosition();
+	//m_OldPosition = m_Position;
 	m_Movement = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	
 	// 仲間を探す
@@ -207,7 +212,7 @@ void Boids::FlockIt(OBB* obb)
 	D3DXVECTOR3 acc = { 0.0f, 0.0f, 0.0f };
 
 	// 障害物をよける
-	D3DXVECTOR3 det = Detour(obb);
+	D3DXVECTOR3 det = Detour(enemy->GetObb());
 	acc += det;
 
 	if (det == D3DXVECTOR3(0.0f, 0.0f, 0.0f)) {
@@ -244,6 +249,10 @@ void Boids::FlockIt(OBB* obb)
 	// 回転の計算
 	this->ComputeRPY();
 
+	// 位置の更新
+	m_Position += m_Movement;
+
+	BoidsData::GetInstance()->Organize();
 }
 
 D3DXVECTOR3 Boids::SalculatingRatio(D3DXVECTOR3 vec1, D3DXVECTOR3 vec2, bool approach)
@@ -266,10 +275,10 @@ D3DXVECTOR3 Boids::SalculatingRatio(D3DXVECTOR3 vec, bool approach)
 	D3DXVECTOR3 change = vec;
 	D3DXVec3Normalize(&change, &change);
 
-	if (distance < SEPARATION_DIST) {	// 近かったら遠くへ
+	if (static_cast<int>(distance) < SEPARATION_DIST) {	// 近かったら遠くへ
 		change *= -ratio;
 	}
-	else if (approach && distance > SEPARATION_DIST) {
+	else if (approach && static_cast<int>(distance) > SEPARATION_DIST) {
 		change *= ratio;
 	}
 	else {	// いい感じなら動かさない
@@ -277,4 +286,27 @@ D3DXVECTOR3 Boids::SalculatingRatio(D3DXVECTOR3 vec, bool approach)
 	}
 
 	return D3DXVECTOR3(change);
+}
+
+void BoidsData::Add(Boids * boids)
+{
+	// 要素が無ければただ入れる
+	if (boidsList.empty())
+	{
+		boidsList.push_back(boids);
+	}
+	else // 要素があれば重複してるか確認して入れる
+	{
+		auto it = std::find(boidsList.begin(), boidsList.end(), boids);
+		auto end = boidsList.end();
+		if (it == end)
+		{
+			boidsList.push_back(boids);
+		}
+	}
+}
+
+void BoidsData::Organize()
+{
+	boidsList.remove_if([](Boids* boids) {return boids == nullptr; });
 }

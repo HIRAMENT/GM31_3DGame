@@ -98,7 +98,7 @@ Polygon3D::Polygon3D(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, ResourceT
 	 m_SlideMove = 0.0f;
 	 m_VariaRatio = 0.0f;
 	 m_BlendMode = BlendMode::NONE;
-	 m_ShaderType = ShaderType::LIGHTING;
+	 m_ShaderType = ShaderType::UNLIT;
 	 m_TextureTagSecond = ResourceTag::NONE;
 
 	scene->Add(this);
@@ -124,8 +124,8 @@ void Polygon3D::Update()
 
 	if (m_TextureCountMax > 1)
 	{
-		m_AnimationCount++;
 		AnimationTexture();
+		m_AnimationCount++;
 	}
 	if (m_AnimationCount >= m_TextureCountMax)
 	{
@@ -176,6 +176,10 @@ void Polygon3D::Draw()
 
 		if(m_isBillboard)
 		{
+			if (m_TextureTag == ResourceTag::tParticleCircle)
+			{
+				int sla = 0;
+			}
 			// カメラのビューマトリクスの取得
 			Camera* camera = GetScene()->GetGameObject<Camera>(ObjectType::eObCamera);
 			D3DXMATRIX view = camera->GetViewMatrix();
@@ -230,7 +234,6 @@ void Polygon3D::Draw()
 
 		// ポリゴン描画
 		Renderer::GetInstance()->GetDeviceContext()->Draw(4, 0);	// 第一引数が頂点数になっているので注意
-		//Renderer::GetInstance()->GetDeviceContext()->DrawInstanced(4,100,0,0);
 
 		Renderer::GetInstance()->SetRenderBlend(BlendMode::NONE);
 	}
@@ -262,13 +265,13 @@ void Polygon3D::SetColor(float r, float g, float b)
 
 void Polygon3D::AnimationTexture()
 {
-	float x = (1.0f / m_TextureCount.x) * (m_AnimationCount % (int)m_TextureCount.x);
-	float y = (1.0f / m_TextureCount.y) * (m_AnimationCount / m_TextureCount.x);
+	float x = (1.0f / (int)m_TextureCount.x) * (m_AnimationCount % (int)m_TextureCount.x);
+	float y = (1.0f / (int)m_TextureCount.y) * (m_AnimationCount / (int)m_TextureCount.x);
 
-	m_Vertex[0].TexCoord = D3DXVECTOR2(x,                             y);
-	m_Vertex[1].TexCoord = D3DXVECTOR2(x + (1.0f / m_TextureCount.x), y);
-	m_Vertex[2].TexCoord = D3DXVECTOR2(x,                             y + (1.0f / m_TextureCount.y));
-	m_Vertex[3].TexCoord = D3DXVECTOR2(x + (1.0f / m_TextureCount.x), y + (1.0f / m_TextureCount.y));
+	m_Vertex[0].TexCoord = D3DXVECTOR2(x,                                  y);
+	m_Vertex[1].TexCoord = D3DXVECTOR2(x + (1.0f / (int)m_TextureCount.x), y);
+	m_Vertex[2].TexCoord = D3DXVECTOR2(x,                                  y + (1.0f / (int)m_TextureCount.y));
+	m_Vertex[3].TexCoord = D3DXVECTOR2(x + (1.0f / (int)m_TextureCount.x), y + (1.0f / (int)m_TextureCount.y));
 }
 
 void Polygon3D::StartSlide(int maxcapa, int capa, int speed)

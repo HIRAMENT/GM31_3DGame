@@ -7,7 +7,6 @@ public:
 	SmallEnemy(class Scene* scene, D3DXVECTOR3 pos, int drawPriority);
 
 private:
-	const D3DXVECTOR3 m_Size;
 	const D3DXVECTOR3 m_Adjust;
 	const int m_HPValue = 500;
 	const int m_DamageValue = 50;

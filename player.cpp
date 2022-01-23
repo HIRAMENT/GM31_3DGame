@@ -28,12 +28,12 @@
 #include "hitPoint.h"
 #include "attack.h"
 #include "meshField.h"
-#include "bullet.h"
 #include "polygon3D.h"
 #include "viewSensor.h"
 #include <math.h>
 
 #define BLENDRATE (0.1f)
+#define ATTACK_COOLTIME (64)
 
 Player::Player(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	:GameObject(scene,ObjectType::eObPlayer,drawPriority)
@@ -42,7 +42,6 @@ Player::Player(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	m_Transform.SetPosition(pos);
 	SetRotation({ 0.0f, 0.0f, 0.0f });
 	SetScale({ 0.015f, 0.015f, 0.015f });
-	//SetScale({ 10.0f, 10.0f, 10.0f });
 
 	m_Model = ResourceData::GetInstance()->GetAnimationModel(ResourceTag::fPlayer);
 	m_Size = m_Model->GetSize() * m_Scale;
@@ -53,16 +52,16 @@ Player::Player(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 	m_AttackRange = 50;
 	m_AttackLength = 10;
 	m_ViewSensor = new ViewSensor(scene, m_Position, 5, m_AttackLength, m_AttackRange);
-	m_ViewSensor->SetDisplay(m_SensorDisplay = true);
+	m_ViewSensor->SetDisplay(m_SensorDisplay = false);
 
 	m_Dash = false;
 
-	m_Status = new Status(scene, { SCREEN_WIDTH / 2, SCREEN_HEIGHT - 64, 0 }, {100,100,0}, 100, 0, 0, 0, 1234, 2);
+	CreateStatusInfo(scene);
 	m_Status->GetHitPoint()->GetGauge()->ChangeColor(0, 255, 0);
-	m_Status->GetHitPoint()->SetNumberDisplay(true);
 	
 	m_AnimeFrame = 0;
 	m_AnimeEndFrame = 100000;
+	m_AnimeFrameRiseValue = 1;
 	m_BlendRate = 0.0f;
 
 	m_BeforAnime = AnimationTag::Idle;
@@ -142,31 +141,38 @@ void Player::Update()
 		if (m_Status->GetAttack()->CheckCoolTime()) {
 			animation[0] = AnimationTag::Idle;
 			animation[1] = AnimationTag::Attack;
-			m_Status->GetAttack()->SetCoolTime(36);
-			std::vector<Enemy*> enemys = GetScene()->GetGameObjects<Enemy>(ObjectType::eObSmallEnemy);
+			m_Status->GetAttack()->SetCoolTime(ATTACK_COOLTIME);
+			std::vector<Enemy*> enemys = GetScene()->GetGameObjects<Enemy>(ObjectType::eObEnemy);
+			bool isHit = false;
 			for (auto enemy : enemys) {
-				if (m_ViewSensor->WithinRange(m_Position, enemy->GetPosition(), { m_Forward.x, m_Forward.y, -m_Forward.z }, enemy->GetScale())) {
+				isHit = false;
+
+				if (Mouse_IsRightPress()) {
+					if (D3DXVec3Length(&(enemy->GetPosition() - m_Position)) < 10){
+						isHit = true;
+					}
+				}
+				else	{
+					if (m_ViewSensor->WithinRange(m_Position, enemy->GetPosition(), { m_Forward.x, m_Forward.y, -m_Forward.z }, enemy->GetScale())) {
+						isHit = true;
+					}
+				}
+
+				if(isHit)
+				{
 					enemy->GetStatus()->GetHitPoint()->Damage(m_Status->GetAttack()->GetPower());
 					new Polygon3D(GetScene(), enemy->GetPosition(), D3DXVECTOR3(10, 10, 0), ResourceTag::tSlash, true, true, 100);
 					ADXSound::GetInstance()->Play(9);
 				}
-			}
-			Enemy* bossEnemy = GetScene()->GetGameObject<Enemy>(ObjectType::eObBossEnemy);
-			if (bossEnemy && m_ViewSensor->WithinRange(m_Position, bossEnemy->GetPosition(), { m_Forward.x, m_Forward.y, -m_Forward.z }, bossEnemy->GetScale())) {
-				bossEnemy->GetStatus()->GetHitPoint()->Damage(m_Status->GetAttack()->GetPower());
-				new Polygon3D(GetScene(), bossEnemy->GetPosition(), D3DXVECTOR3(10, 10, 0), ResourceTag::tSlash, true, true, 100);
-				ADXSound::GetInstance()->Play(9);
 			}
 		}
 	}
 
 	Animation(animation[0], animation[1], isMove);
 
-
 	if (m_Status->GetHitPoint()->CheckCollTime())
 	{
-		std::vector<Enemy*> enemyList = GetScene()->GetGameObjects<Enemy>(ObjectType::eObSmallEnemy);
-		Enemy* bossEnemy = GetScene()->GetGameObject<Enemy>(ObjectType::eObBossEnemy);
+		std::vector<Enemy*> enemyList = GetScene()->GetGameObjects<Enemy>(ObjectType::eObEnemy);
 		for (Enemy* enemy : enemyList)
 		{
 			if (enemy && enemy->GetAttack() && Collision::GetInstance()->ObbToObb(enemy->GetObb(), m_Obb))
@@ -175,25 +181,15 @@ void Player::Update()
 				ADXSound::GetInstance()->Play(7);
 			}
 		}
-		if (bossEnemy && bossEnemy->GetAttack() && Collision::GetInstance()->ObbToObb(bossEnemy->GetObb(), m_Obb))
-		{
-			m_Status->GetHitPoint()->Damage(bossEnemy->GetStatus()->GetAttack()->GetPower());
-			ADXSound::GetInstance()->Play(7);
-		}
 	}
 
 	SetPlayer();
 
-	MeshField* meshField = GetScene()->GetGameObject<MeshField>(ObjectType::eObField);
-	m_Position.y = meshField->GetHeight(m_Position);
+
 
 	std::vector<Rock*>rockList = GetScene()->GetGameObjects<Rock>(ObjectType::eObRock);
 	for (Rock* rock : rockList)
 	{
-		//if (rock->GetPosition().x - 1.0f <= m_Position.x && rock->GetPosition().x + 1.0f >= m_Position.x &&
-		//	rock->GetPosition().z - 1.0f <= m_Position.z && rock->GetPosition().z + 1.0f >= m_Position.z) {
-		//	m_Transform.Translate({ -move.x, 0.0f, -move.y });
-		//}
 		if (Collision::GetInstance()->ObbToObb(m_Obb, rock->GetObb()))
 		{
 			m_Transform.Translate({ -move.x, 0.0f, -move.y });
@@ -233,6 +229,8 @@ void Player::Draw()
 
 void Player::SetPlayer()
 {
+	MeshField* meshField = GetScene()->GetGameObject<MeshField>(ObjectType::eObField);
+	m_Position.y = meshField->GetHeight(m_Position);
 	SetPosition(m_Transform.GetPosition());
 	SetPlayerRotation(m_Transform.GetQuaternion());
 	m_Shadow->SetPosition({ m_Position.x, 0.f,m_Position.z });
@@ -279,29 +277,39 @@ void Player::Animation(AnimationTag anime1, AnimationTag anime2, bool isMove)
 		m_AnimeFrame = 0;
 		m_AnimeEndFrame = ResourceData::GetInstance()->GetAnimationResource(m_AfterAnime)->GetAnimationCount();
 		m_BlendRate = 0.0f;
+		if (m_AfterAnime == AnimationTag::Attack) { 
+			m_AnimeFrameRiseValue = 2; 
+		}
 	}
 
 	// アニメーション関連の初期化
 	if (m_AnimeFrame >= m_AnimeEndFrame) {
 		m_AnimeFrame = 0;
 		m_AnimeEndFrame = 1000;
+		m_AnimeFrameRiseValue = 1;
 		m_BeforAnime = AnimationTag::Idle;
 		m_AfterAnime = AnimationTag::Run;
 		m_BlendRate = 0.0f;
 	}
 
 	// ブレンドレートの変更
-	if (isMove)	{
-		if (m_BlendRate < 1.0f) { m_BlendRate += BLENDRATE; }
+	if (m_AfterAnime == AnimationTag::Run)
+	{
+		if (isMove)
+		{
+			if (m_BlendRate < 1.0f) { m_BlendRate += BLENDRATE; }	// 動き出したらブレンドレートを上げる
+		}
+		else if (!isMove)
+		{
+			if (m_BlendRate > 0.0f) { m_BlendRate -= BLENDRATE; }	// 動いてないときにブレンドレートを下げる
+		}
 	}
-	else if (!isMove && m_AfterAnime == AnimationTag::Run) {
-		if (m_BlendRate > 0.0f) { m_BlendRate -= BLENDRATE; }
-	}
-	else{
-		if (m_AnimeFrame >= 0 && m_AnimeFrame < 1.0f / BLENDRATE) {
+	else
+	{
+		if (m_AnimeFrame >= 0.0f && m_AnimeFrame < m_AnimeFrameRiseValue / BLENDRATE) {
 			m_BlendRate += BLENDRATE;
 		}
-		else if (m_AnimeEndFrame - (1.0f / BLENDRATE) <= m_AnimeFrame && m_AnimeEndFrame > m_AnimeFrame) {
+		else if (m_AnimeEndFrame - (m_AnimeFrameRiseValue / BLENDRATE) <= m_AnimeFrame && m_AnimeEndFrame > m_AnimeFrame) {
 			m_BlendRate -= BLENDRATE;
 		}
 	}
@@ -310,5 +318,21 @@ void Player::Animation(AnimationTag anime1, AnimationTag anime2, bool isMove)
 	// アニメーションの更新
 	m_Model->Update(m_BeforAnime, m_AfterAnime, m_AnimeFrame, m_BlendRate);
 
-	m_AnimeFrame++;
+	m_AnimeFrame += m_AnimeFrameRiseValue;
+}
+
+void Player::CreateStatusInfo(Scene* scene)
+{
+	StatusInfo info;
+	info.m_AttackCoolTime = 50.0f;
+	info.m_AttackPower = 100;
+	info.m_DifenceValue = 10;
+	info.m_ExpValue = 0;
+	info.m_HitPointCoolTime = 30.0f;
+	info.m_HitPointDimention = 2;
+	info.m_HitPointPos = D3DXVECTOR3(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 64, 0);
+	info.m_HitPointSize = D3DXVECTOR3(100.0f, 100.0f, 0.0f);
+	info.m_HitPointValue = 1234;
+	info.m_LevelValue = 1;
+	m_Status = new Status(scene, &info);
 }

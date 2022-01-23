@@ -2,6 +2,8 @@
 
 #include "gameObject.h"
 
+enum class AnimationTag;
+
 class Player : public GameObject 
 {
 private:
@@ -11,7 +13,6 @@ private:
 	D3DXVECTOR3 m_Right = Vec3::Right;
 
 	D3DXVECTOR3 m_Size;
-	float m_BlendRate;
 
 	class Shadow* m_Shadow = nullptr;
 	class OBB* m_Obb = nullptr;
@@ -23,9 +24,10 @@ private:
 	class AnimationModel* m_Model = nullptr;
 	int m_AnimeFrame;
 	int m_AnimeEndFrame;
+	int m_AnimeFrameRiseValue;
 	AnimationTag m_BeforAnime;
 	AnimationTag m_AfterAnime;
-
+	float m_BlendRate;
 
 	int m_AttackRange;
 	int m_AttackLength;
@@ -34,6 +36,7 @@ private:
 private:
 	void ImGui();
 	void Animation(AnimationTag anime1, AnimationTag anime2, bool isMove);
+	void CreateStatusInfo(Scene* scene);
 
 public:
 	Player(class Scene* scene,D3DXVECTOR3 pos,int drawPriority);

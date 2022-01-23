@@ -1,9 +1,11 @@
 #pragma once
 
+#include "counter.h"
+
 class Attack {
 
 public:
-	Attack(int pow) :m_Power(pow),m_CoolTime(0) {}
+	Attack(int pow,float time);
 
 	void Update();
 
@@ -11,11 +13,11 @@ public:
 	bool CheckHit(D3DXVECTOR3 vec, D3DXVECTOR3 forword, float ang, float len);
 
 	int GetPower()const { return m_Power; }
-	int GetCoolTime() const { return m_CoolTime; }
+	Counter GetCoolTime() const { return m_CoolTime; }
 	void SetPower(const int pow) { m_Power = pow; }
-	void SetCoolTime(const int time) { m_CoolTime = time; }
+	void SetCoolTime(float time) { m_CoolTime = time; }
 
 private:
 	int m_Power;
-	int m_CoolTime;
+	Counter m_CoolTime;
 };

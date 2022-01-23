@@ -26,6 +26,7 @@ protected:
 	float m_RedRate;
 	float m_GreenRate;
 	float m_BlueRate;
+	float m_AlphaRate;
 	float m_RotationRate;
 	BlendMode m_BlendMode;
 	BezierCurveInfo m_CurveInfo;

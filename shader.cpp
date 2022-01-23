@@ -6,20 +6,20 @@
 void Shader::Init()
 {
 	// UnlitTexture
-	Renderer::GetInstance()->CreateVertexShader(&m_VertexShader[ShaderType::UNLIT], &m_VertexLayout[ShaderType::UNLIT], "unlitTextureVS.cso");
-	Renderer::GetInstance()->CreatePixelShader(&m_PixelShader[ShaderType::UNLIT], "unlitTexturePS.cso");
+	Renderer::GetInstance()->CreateVertexShader(&m_VertexShader[ShaderType::UNLIT], &m_VertexLayout[ShaderType::UNLIT], "shader/unlitTextureVS.cso");
+	Renderer::GetInstance()->CreatePixelShader(&m_PixelShader[ShaderType::UNLIT], "shader/unlitTexturePS.cso");
 	// Lighting
-	Renderer::GetInstance()->CreateVertexShader(&m_VertexShader[ShaderType::LIGHTING], &m_VertexLayout[ShaderType::LIGHTING], "vertexLightingVS.cso");
-	Renderer::GetInstance()->CreatePixelShader(&m_PixelShader[ShaderType::LIGHTING], "vertexLightingPS.cso");
+	Renderer::GetInstance()->CreateVertexShader(&m_VertexShader[ShaderType::LIGHTING], &m_VertexLayout[ShaderType::LIGHTING], "shader/vertexLightingVS.cso");
+	Renderer::GetInstance()->CreatePixelShader(&m_PixelShader[ShaderType::LIGHTING], "shader/vertexLightingPS.cso");
 	// 環境マップ
-	Renderer::GetInstance()->CreateVertexShader(&m_VertexShader[ShaderType::ENVIROMENT], &m_VertexLayout[ShaderType::ENVIROMENT], "envMappingVS.cso");
-	Renderer::GetInstance()->CreatePixelShader(&m_PixelShader[ShaderType::ENVIROMENT], "envMappingPS.cso");
+	Renderer::GetInstance()->CreateVertexShader(&m_VertexShader[ShaderType::ENVIROMENT], &m_VertexLayout[ShaderType::ENVIROMENT], "shader/envMappingVS.cso");
+	Renderer::GetInstance()->CreatePixelShader(&m_PixelShader[ShaderType::ENVIROMENT], "shader/envMappingPS.cso");
 	// ブラー
-	Renderer::GetInstance()->CreateVertexShader(&m_VertexShader[ShaderType::DEPTHofFIELD], &m_VertexLayout[ShaderType::DEPTHofFIELD], "depthOfFieldVS.cso");
-	Renderer::GetInstance()->CreatePixelShader(&m_PixelShader[ShaderType::DEPTHofFIELD], "depthOfFieldPS.cso");
+	Renderer::GetInstance()->CreateVertexShader(&m_VertexShader[ShaderType::DEPTHofFIELD], &m_VertexLayout[ShaderType::DEPTHofFIELD], "shader/depthOfFieldVS.cso");
+	Renderer::GetInstance()->CreatePixelShader(&m_PixelShader[ShaderType::DEPTHofFIELD], "shader/depthOfFieldPS.cso");
 	// リムライティング
-	Renderer::GetInstance()->CreateVertexShader(&m_VertexShader[ShaderType::LIMLIGHTING], &m_VertexLayout[ShaderType::LIMLIGHTING], "pixelLimLightingVS.cso");
-	Renderer::GetInstance()->CreatePixelShader(&m_PixelShader[ShaderType::LIMLIGHTING], "pixelLimLightingPS.cso");
+	Renderer::GetInstance()->CreateVertexShader(&m_VertexShader[ShaderType::LIMLIGHTING], &m_VertexLayout[ShaderType::LIMLIGHTING], "shader/pixelLimLightingVS.cso");
+	Renderer::GetInstance()->CreatePixelShader(&m_PixelShader[ShaderType::LIMLIGHTING], "shader/pixelLimLightingPS.cso");
 }
 
 void Shader::Uninit()

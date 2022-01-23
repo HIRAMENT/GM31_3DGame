@@ -7,7 +7,7 @@
 #include "movement.h"
 #include <math.h>
 
-D3DXVECTOR2 Movement::CirclualMotion(D3DXVECTOR3 pos, float rad, int angle)
+D3DXVECTOR2 Movement::CirclualMotion(D3DXVECTOR3 pos, float rad, int angle) const
 {
 	D3DXVECTOR2 rotpos = { 0.0f,0.0f };
 	rotpos.x = pos.x + rad * cos(degToRad(angle));
@@ -16,7 +16,7 @@ D3DXVECTOR2 Movement::CirclualMotion(D3DXVECTOR3 pos, float rad, int angle)
 	return rotpos;
 }
 
-D3DXVECTOR3 Movement::CirclualMotion3D(D3DXVECTOR3 pos, float rad, D3DXVECTOR2 angle)
+D3DXVECTOR3 Movement::CirclualMotion3D(D3DXVECTOR3 pos, float rad, D3DXVECTOR2 angle) const
 {
 	D3DXVECTOR3 rotpos = { 0.0f,0.0f,0.0f };
 	rotpos.x = pos.x + rad * std::cosf(D3DXToRadian(angle.x));
@@ -27,14 +27,14 @@ D3DXVECTOR3 Movement::CirclualMotion3D(D3DXVECTOR3 pos, float rad, D3DXVECTOR2 a
 	return rotpos;
 }
 
-D3DXVECTOR3 Movement::TargetFollow(D3DXVECTOR3 mpos, D3DXVECTOR3 tpos, float speed)
+D3DXVECTOR3 Movement::TargetFollow(D3DXVECTOR3 mpos, D3DXVECTOR3 tpos, float speed) const
 {
 	D3DXVECTOR3 direction;
 	D3DXVec3Normalize(&direction, &(tpos - mpos));
 	return direction * speed;	// キャラの方向に移動
 }
 
-float Movement::GetTwoVecAngle(D3DXVECTOR3 mvec, D3DXVECTOR3 tvec)
+float Movement::GetTwoVecAngle(D3DXVECTOR3 mvec, D3DXVECTOR3 tvec) const
 {
 	//ベクトルAとBの長さを計算する
 	float length_M = D3DXVec3Length(&mvec);
@@ -52,7 +52,7 @@ float Movement::GetTwoVecAngle(D3DXVECTOR3 mvec, D3DXVECTOR3 tvec)
 	return sita;
 }
 
-float Movement::GetTwoVecAngle(D3DXVECTOR2 mvec, D3DXVECTOR2 tvec)
+float Movement::GetTwoVecAngle(D3DXVECTOR2 mvec, D3DXVECTOR2 tvec) const
 {
 	//ベクトルAとBの長さを計算する
 	float length_M = D3DXVec2Length(&mvec);
@@ -70,7 +70,7 @@ float Movement::GetTwoVecAngle(D3DXVECTOR2 mvec, D3DXVECTOR2 tvec)
 	return sita;
 }
 
-D3DXVECTOR3 Movement::BezierCurve(BezierCurveInfo info)
+D3DXVECTOR3 Movement::BezierCurve(BezierCurveInfo info) const
 {
 	D3DXVECTOR3 point;
 	float timeRate = (1.0f - info.Time);
@@ -89,4 +89,11 @@ D3DXVECTOR3 Movement::BezierCurve(BezierCurveInfo info)
 		                                  std::powf(info.Time, 3.0f)    * info.ControlPoint[3].z;
 
 	return point;
+}
+
+float Movement::TargetRotation(D3DXVECTOR3 mpos, D3DXVECTOR3 tpos) const
+{
+	float angle = Movement::GetInstance()->GetTwoVecAngle({ 0,1 }, { tpos.x - mpos.x, tpos.z - mpos.z });
+	if (tpos.x - mpos.x < 0.0f) angle *= -1;
+	return angle;
 }
