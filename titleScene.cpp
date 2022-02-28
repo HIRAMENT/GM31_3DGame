@@ -142,8 +142,8 @@ void TitleScene::CreateParticle()
 	info.m_CurveRateMax = 1.0f;
 	info.m_AngleMin = 90;
 	info.m_AngleMax = 90;
-	info.m_LifeSpanMin = 5.0f;
-	info.m_LifeSpanMax = 10.0f;
+	info.m_LifeSpanMin = 3.0f;
+	info.m_LifeSpanMax = 5.0f;
 	info.m_ProductionMin = 100;
 	info.m_ProductionMax = 150;
 	info.m_ScaleMin = 0.1f;

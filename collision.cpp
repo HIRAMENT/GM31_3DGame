@@ -1,14 +1,20 @@
 #include "main.h"
 #include "renderer.h"
 #include "manager.h"
+#include "resource.h"
 #include "shader.h"
 #include "scene.h"
 #include "camera.h"
 #include "collision.h"
 #include "obb.h"
+#include "box.h"
 
 bool Collision::ObbToObb(OBB * Obb1, OBB * Obb2)
 {
+	// デバッグボックスのテクスチャの初期化
+	Obb1->GetBox()->SetTexture(ResourceTag::tDebugLine);
+	Obb2->GetBox()->SetTexture(ResourceTag::tDebugLine);
+
 	// 各方向ベクトルの確保
 	// 標準化方向ベクトル
 	D3DXVECTOR3 NAe1 = Obb1->GetDirection(0), Ae1 = NAe1 * Obb1->GetLength(0);
@@ -23,6 +29,8 @@ bool Collision::ObbToObb(OBB * Obb1, OBB * Obb2)
 	float rA = D3DXVec3Length(&Ae1);
 	float rB = LenSegOnSeparateAxis(&NAe1, &Be1, &Be2, &Be3);
 	float le = fabs(D3DXVec3Dot(&Interval, &NAe1));
+	if (le > rA + rB)
+		return false; // 衝突していない
 
 	// 分離軸 : Ae2
 	rA = D3DXVec3Length(&Ae2);
@@ -133,6 +141,8 @@ bool Collision::ObbToObb(OBB * Obb1, OBB * Obb2)
 		return false;
 
 	// 分離平面が存在しないので「衝突している」
+	//Obb1->GetBox()->SetTexture(ResourceTag::tDebugLineHit);
+	//Obb2->GetBox()->SetTexture(ResourceTag::tDebugLineHit);
 	return true;
 }
 
@@ -165,17 +175,10 @@ bool Collision::ObbToPoint(OBB* obb, D3DXVECTOR3 pos2, D3DXVECTOR3 size2)
 	lenx = D3DXVec3Dot(&obbx, &direction);
 	lenz = D3DXVec3Dot(&obbz, &direction);
 
-	if (fabs(lenx) < obbLenx && fabs(lenz) < obbLenz) {
+	if (fabs(lenx) < obbLenx && fabs(lenz) < obbLenz) 
+	{
 		return true;
 	}
-
-	return false;
-}
-
-bool Collision::TriangleHit(float rad, float len, D3DXVECTOR3 forw, D3DXVECTOR3 pos1, D3DXVECTOR3 pos2)
-{
-	
-	
 
 	return false;
 }
@@ -226,4 +229,10 @@ bool Collision::BoundingBox3D(D3DXVECTOR3 pos1, D3DXVECTOR3 size1, D3DXVECTOR3 p
 					return false;
 
 	return true;
+}
+
+bool Collision::CheckCircle(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, float dist)
+{
+	float distance = D3DXVec3Length(&(pos2 - pos1));
+	return dist >= distance;
 }

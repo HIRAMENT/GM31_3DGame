@@ -16,11 +16,14 @@ HitPoint::HitPoint(class Scene* scene, int hp)
 {
 	m_CoolTimeCounter = COOLTIME;
 	m_CoolTimeCounter -= COOLTIME;
+	m_isHitDamage = false;
 }
 
 void HitPoint::Damage(int dam)
 {
 	m_HitPoint -= dam;
+	if (m_HitPoint <= 0) 
+		m_HitPoint = 0;
 	m_HitPointGauge->DegCapacity(dam);
 	m_CoolTimeCounter.Reset();
 }
@@ -34,6 +37,15 @@ void HitPoint::Recover(int rec)
 void HitPoint::Update()
 {
 	m_CoolTimeCounter -= 1.0f;
+
+	if (m_CoolTimeCounter.GetIsFinish())
+	{
+		m_isHitDamage = true;
+	}
+	else
+	{
+		m_isHitDamage = false;
+	}
 }
 
 void HitPoint::Uninit()
@@ -43,24 +55,27 @@ void HitPoint::Uninit()
 
 bool HitPoint::CheckCollTime()
 {
-	return m_CoolTimeCounter.GetIsFinish();
+	return m_isHitDamage;
 }
 
 
 
-HitPoint2D::HitPoint2D(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int hp)
+HitPoint2D::HitPoint2D(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int hp, bool isnum)
 	: HitPoint(scene, hp)
 {
 	m_HitPointGauge = new Gauge(scene, { pos.x, pos.y }, { size.x, size.y }, m_HitPointMax, 100);
+	float sizerate_x = size.x / 100;
+	float sizerate_y = size.y / 100;
+	float sizerate = std::fminf(sizerate_x, sizerate_y);
 	for (int i = 0; i < 4; i++)
 	{
-		m_HitPointNumber[i] = new Number(scene, { (float)SCREEN_WIDTH / 2 - (16 * (i + 1)),            (float)SCREEN_HEIGHT - 64,0 }, { 24,24,0 }, Calculation::GetInstance()->ExtractDigit(m_HitPoint, i + 1), 110);
-		m_HitPointNumber[i]->SetDisplay(true);
-		m_HitPointNumberMax[i] = new Number(scene, { (float)SCREEN_WIDTH / 2 + (16 * 5) - (16 * (i + 1)), (float)SCREEN_HEIGHT - 64,0 }, { 24,24,0 }, Calculation::GetInstance()->ExtractDigit(m_HitPointMax, i + 1), 110);
-		m_HitPointNumberMax[i]->SetDisplay(true);
+		m_HitPointNumber[i] = new Number(scene, { pos.x - (16 * (i + 1)),            pos.y, 0.0f }, { 24 * sizerate,24 * sizerate,0 }, Calculation::GetInstance()->ExtractDigit(m_HitPoint, i + 1), 110);
+		m_HitPointNumber[i]->SetDisplay(isnum);
+		m_HitPointNumberMax[i] = new Number(scene, { pos.x + (16 * 5) - (16 * (i + 1)), pos.y, 0.0f }, { 24 * sizerate,24 * sizerate,0 }, Calculation::GetInstance()->ExtractDigit(m_HitPointMax, i + 1), 110);
+		m_HitPointNumberMax[i]->SetDisplay(isnum);
 	}
-	m_HitPointSlash = new Number(scene, { (float)SCREEN_WIDTH / 2, (float)SCREEN_HEIGHT - 64 ,0 }, { 24, 24, 0 }, 12, 110);
-	m_HitPointSlash->SetDisplay(true);
+	m_HitPointSlash = new Number(scene, { pos.x, pos.y ,0 }, { 24 * sizerate, 24 * sizerate, 0 }, 12, 110);
+	m_HitPointSlash->SetDisplay(isnum);
 }
 
 void HitPoint2D::SetNumberDisplay(const bool dis)

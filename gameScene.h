@@ -15,4 +15,7 @@ private:
 	bool m_GameOver;
 	unsigned int m_BGMID;
 	int m_PhaseCount;
+	class GameCamera* m_GameCamera;
+	class DebugCamera* m_DebugCamera;
+	enum class ObjectType m_CameraType;
 };

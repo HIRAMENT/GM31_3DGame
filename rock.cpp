@@ -12,28 +12,19 @@
 
 
 Rock::Rock(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scale, int drawPriority)
-	: GameObject(scene, ObjectType::eObRock, drawPriority)
+	: Obstancle(scene, drawPriority)
 {
 	SetPosition(pos);
 	SetRotation(rot);
 	SetScale(scale);
 
-	m_Obb = new OBB(m_Position, {1.5f * scale.x,1.5f* scale.y,1.5f* scale.z }, m_Rotation);
+	m_Size = ResourceData::GetInstance()->GetModelResource(ResourceTag::mRock)->GetSize();
+	m_Adjust = D3DXVECTOR3(0.0f, -0.27, 0.0f) * m_Scale;
+
+	m_Obb = new OBB(m_Position, m_Size * m_Scale, m_Adjust, m_Rotation);
 	m_Shadow = new Shadow(scene, { pos.x, 0.f,pos.z }, { 1.0f * scale.x,1.0f * scale.z }, 2);
 
 	m_Visble = true;
-
-	scene->Add(this);
-}
-
-void Rock::Init()
-{
-}
-
-void Rock::Uninit()
-{
-	m_Shadow->SetDestroy();
-	delete m_Obb;
 }
 
 void Rock::Update()

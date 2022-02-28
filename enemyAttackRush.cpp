@@ -5,7 +5,10 @@
 #include "movement.h"
 #include "status.h"
 #include "attack.h"
-#include "enemyIdol.h"
+#include "enemyIdle.h"
+#include "player.h"
+#include "scene.h"
+#include "collision.h"
 
 EnemyAttackRush::EnemyAttackRush()
 {
@@ -19,6 +22,12 @@ StateResult EnemyAttackRush::Update(Enemy * enemy)
 
 	m_AttackCounter -= 0.1f;
 	int pom = 1;
+
+	Player* player = enemy->GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
+	if (Collision::GetInstance()->ObbToObb(enemy->GetObb(), player->GetObb()))
+	{
+		m_AttackCounter.Half();
+	}
 
 	if (m_AttackCounter.GetIsFinish())
 	{

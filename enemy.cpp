@@ -5,56 +5,34 @@
 #include "resource.h"
 #include "shader.h"
 #include "model.h"
-#include "ADX2/adxSound.h"
 #include "enemy.h"
 #include "player.h"
-#include "sensor.h"
 #include "scene.h"
 #include "obb.h"
 #include "collision.h"
-#include "sword.h"
 #include "gauge.h"
 #include "shadow.h"
-#include "movement.h"
-#include "rock.h"
-#include "experiencePoint.h"
 #include "status.h"
 #include "hitPoint.h"
-#include "boids.h"
 #include "meshField.h"
-#include "attack.h"
 #include "particle.h"
 #include "particleManager.h"
-#include "enemyIdol.h" 
-#include "enemyMove.h"
+#include "enemyIdle.h" 
 #include "enemyDamage.h" 
-#include "enemyAttackJump.h"
+#include "enemyDead.h"
 
 #define INITIAL_POS_Y (1.0f)
 
 Enemy::Enemy(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int drawPriority)
 	:GameObject(scene, ObjectType::eObEnemy,drawPriority)
-	, m_FollowRange(2.0f)
 {
 	SetPosition(pos);
 	SetRotation({ 0.0f, degToRad(180), 0.0f });
 	SetScale(size);
 
-	m_Size = size;
-	m_SensorSize = { 15.0f,15.0f,15.0f };
-
-	m_Attack = false;
-	m_AttackCollTime = 0;
-	m_AttackMotionCount = 0;
-	m_AttackTarget = { 0.0f,0.0f,0.0f };
-	m_AttackCount = 0;
-
-	m_Obb = new OBB(m_Position, size, m_Rotation);
 	m_Shadow = new Shadow(scene, { pos.x, 0.f,pos.z }, {1.0f,1.0f}, 2);
 
-	m_SensorEnter = false;
-
-	m_EnemyState = new EnemyMove();
+	m_EnemyState = new EnemyIdle();
 
 	scene->Add(this);
 }
@@ -72,81 +50,16 @@ void Enemy::Uninit()
 
 void Enemy::Update()
 {
-	/*m_MoveVlaue = { 0.0f,0.0f,0.0f };
-
-	if (m_Exclamation && m_Exclamation->GetDestroy())
-	{
-		m_Exclamation = nullptr;
-	}
-
-	Player* player = GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
-	if (m_Sensor->isDetection(player->GetObb()))
-	{
-		if (!m_SensorEnter && !m_Exclamation)
-		{
-		    m_Exclamation = new Billboard(GetScene(), { m_Position.x, m_Position.y + 2, m_Position.z }, { 2.0f,2.0f }, ResourceTag::tExclamation, true, 50);
-			ADXSound::GetInstance()->Play(8);
-			m_ExcScale = 0.0f;
-			m_Exclamation->SetScale(m_ExcScale);
-			m_SensorEnter = true;
-			m_AttackCollTime = 0;
-			m_Status->GetHitPoint()->GetGauge()->SetDisplay(true);
-		}
-
-		TargetMove(player->GetPosition());
-		m_AttackCollTime++;
-	}
-	else
-	{
-		SloppyMove();
-		m_SensorEnter = false;
-		m_Status->GetHitPoint()->GetGauge()->SetDisplay(false);
-	}
-
-	if(m_Exclamation)
-	{
-		if (m_ExcScale < 1.0f)
-		{
-			m_ExcScale += 0.1f;
-			m_Exclamation->SetScale(m_ExcScale);
-		}
-		else if (m_ExcScale >= 1.0f)
-		{
-			m_ExcScale += 0.1f;
-			if (m_ExcScale >= 2.0f)
-			{
-				m_Exclamation->SetDestroy();
-			}
-		} 
-	}
-
-	if (m_Status->GetHitPoint()->CheckCollTime())
-	{
-		Sword* sword = GetScene()->GetGameObject<Sword>(ObjectType::eObSword);
-		if (sword->GetAttack() && Collision::GetInstance()->ObbToObb(sword->GetObb(), m_Obb))
-		{
-			new Billboard(GetScene(), m_Position, { 5.0f, 5.0f }, ResourceTag::tSlash,true, 2);
-			m_Status->GetHitPoint()->Damage(sword->GetDamageValue());
-			ADXSound::GetInstance()->Play(9);
-		}
-	}*/
-
 	// ダメージを受けたらノックバック
 	/// カウンターの残りが最大値と同じなら攻撃を受けた直後
 	if (m_Status->GetHitPoint()->GetCoolTimeCounter().GetRest() == m_Status->GetHitPoint()->GetCoolTimeCounter().GetMax())
 	{
-		ChangeState(new EnemyDamage);
+		ChangeState(new EnemyDamage(this));
 	}
 
 	m_EnemyState->Update(this);
 
 	SetEnemy();
-
-	if (m_Status->GetHitPoint()->GetHitPoint() <= 0)
-	{
-		CreateParticle();
-		SetDestroy();
-	}
 }
 
 void Enemy::Draw()
@@ -172,12 +85,13 @@ void Enemy::Draw()
 void Enemy::SetEnemy()
 {
 	MeshField* meshField = GetScene()->GetGameObject<MeshField>(ObjectType::eObField);
-	m_Position.y = meshField->GetHeight(m_Position) + INITIAL_POS_Y;
+	m_FieldHeight = meshField->GetHeight(m_Position) + (INITIAL_POS_Y * m_Scale.y);
+	m_Position.y = m_FieldHeight + m_JumpValuse;
 	Player* player = GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
 	m_Target = player->GetPosition();
 
 	m_Shadow->SetPosition({ m_Position.x, 0.f,m_Position.z });
-	m_Obb->SetObb(m_Position, m_Size, m_Rotation);
+	m_Obb->SetObb(m_Position, m_Size, m_ObbAdjust, m_Rotation);
 	m_Status->GetHitPoint()->GetGauge()->SetGaugePos(m_Position);
 }
 
@@ -185,30 +99,6 @@ void Enemy::ChangeState(EnemyState* next)
 {
 	delete m_EnemyState;
 	m_EnemyState = next;
-}
-
-void Enemy::Attack(D3DXVECTOR3 ppos)
-{
-
-}
-
-void Enemy::SloppyMove()
-{
-	m_SloppyTime++;
-	srand(time(NULL));
-
-	if (m_SloppyTime >= 20 && m_SloppyTime < 40)
-	{
-		m_Rotation.y += rand() % 10 * 0.01f;
-	}
-	if (m_SloppyTime >= 60 && m_SloppyTime < 80)
-	{
-		m_Rotation.y -= rand() % 10 * 0.01f;
-	}
-	if (m_SloppyTime >= 80)
-	{
-		m_SloppyTime = 0;
-	}
 }
 
 void Enemy::CreateParticle()

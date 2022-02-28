@@ -18,4 +18,5 @@ public:
 	void Draw() override;
 
 	int GetDamageValue() const override { return m_DamageValue; }
+	void CreateStatus(Scene* scene) override;
 };

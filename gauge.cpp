@@ -100,8 +100,8 @@ void Gauge::DegCapacity(int deg)
 	}
 	else if (m_PGaugeUI)
 	{
-		m_PGaugeUI->StartSlide(m_MaxCapacity, m_Capacity, 1.0f);
-		m_PGaugeDecUI->StartSlide(m_MaxCapacity, m_Capacity, 0.5f);
+		m_PGaugeUI->StartSlide(m_MaxCapacity, m_Capacity, 0.5f);
+		m_PGaugeDecUI->StartSlide(m_MaxCapacity, m_Capacity, 0.05f);
 	}
 }
 
@@ -116,7 +116,7 @@ void Gauge::AddCapacity(int add)
 	}
 	else if (m_PGaugeUI)
 	{
-		m_PGaugeUI->StartSlide(m_MaxCapacity, m_Capacity, 1.0f);
+		m_PGaugeUI->StartSlide(m_MaxCapacity, m_Capacity, 0.05f);
 		m_PGaugeDecUI->StartSlide(m_MaxCapacity, m_Capacity, 0.5f);
 	}
 }

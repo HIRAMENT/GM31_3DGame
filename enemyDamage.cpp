@@ -6,32 +6,40 @@
 #include "input.h"
 #include "enemy.h"
 #include "enemyDamage.h"
-#include "enemyIdol.h"
+#include "enemyIdle.h"
 #include "player.h"
 #include "scene.h"
+#include "enemyDead.h"
+#include "status.h"
+#include "hitPoint.h"
 
-#define DECCOUNT  (0.05f)
 #define KNOCKBACK (2.0f)
 
-EnemyDamage::EnemyDamage()
+EnemyDamage::EnemyDamage(Enemy* enemy)
 {
 	m_FrameCount = 1.0f;
+
+	D3DXVECTOR2 normal = D3DXVECTOR2(enemy->GetPosition().x - enemy->GetTargetPosition().x, enemy->GetPosition().z - enemy->GetTargetPosition().z);
+	D3DXVec2Normalize(&normal, &normal);
+	m_Velocity = D3DXVECTOR3(normal.x * KNOCKBACK, 0.0f, normal.y * KNOCKBACK);
 }
 
 StateResult EnemyDamage::Update(Enemy* enemy)
 {
-	Player* player = Manager::GetInstance()->GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
-	D3DXVECTOR2 normal = D3DXVECTOR2(enemy->GetPosition().x - player->GetPosition().x, enemy->GetPosition().z - player->GetPosition().z);
-	D3DXVec2Normalize(&normal, &normal);
-	D3DXVECTOR3 velocity = D3DXVECTOR3(normal.x * KNOCKBACK, 0.0f, normal.y * KNOCKBACK);
+	m_FrameCount -= 0.05f;
 
-	m_FrameCount -= DECCOUNT;
+	enemy->SetPosition(enemy->GetPosition() + (m_Velocity * 0.05f));
 
-	enemy->SetPosition(enemy->GetPosition() + (velocity * DECCOUNT));
+	enemy->SetJumpValuse(enemy->GetJumpValue() * 0.05f);
+
+	if (enemy->GetStatus()->GetHitPoint()->GetHitPoint() <= 0)
+	{
+		enemy->ChangeState(new EnemyDead(enemy));
+	}
 
 	if (m_FrameCount.GetIsFinish())
 	{
-		enemy->ChangeState(new EnemyIdol);
+		enemy->ChangeState(new EnemyIdle);
 		return StateResult::Success;
 	}
 

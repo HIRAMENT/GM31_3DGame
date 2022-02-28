@@ -28,6 +28,9 @@ enum class ObjectType {
 	eObStatus,
 	eObTargetMark,
 	eObParticle,
+	eObBox, 
+	eObDebugCamera,
+	eObObstancle,
 };
 
 

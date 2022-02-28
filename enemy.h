@@ -22,50 +22,34 @@ public:
 	void Draw() override;
 
 	EnemyType GetEnemyType() const { return m_Type; }
-	bool GetAttack() const { return m_Attack; }
 	class OBB* GetObb() const { return m_Obb; }
 	class Status* GetStatus() const { return m_Status; }
 	virtual int GetDamageValue() const = 0;
+	float GetJumpValue() const { return m_JumpValuse; }
+	float GetFieldHeight() const { return m_FieldHeight; }
+	void SetJumpValuse(float val) { m_JumpValuse = val; }
 	void CreateParticle();
 	void ChangeState(EnemyState* next);
 	D3DXVECTOR3 GetTargetPosition() const { return m_Target; }
+	virtual void CreateStatus(Scene* scene) = 0;
 
 private:
 	void SetEnemy();
 
 protected:
-	Transform m_Transform;
-	D3DXVECTOR3 m_Up = Vec3::Up;
-	D3DXVECTOR3 m_Forward = Vec3::Forward;
-	D3DXVECTOR3 m_Right = Vec3::Right;
-
 	D3DXVECTOR3 m_Target;
 	OBB* m_Obb = nullptr;
-	class Polygon3D* m_Exclamation = nullptr;
-	float m_ExcScale;
 	ResourceTag m_ModelTag;
 	EnemyType m_Type;
 	D3DXVECTOR3 m_Size;
+	D3DXVECTOR3 m_ObbAdjust;
+	float m_JumpValuse;
+	float m_FieldHeight;
 
 	Status* m_Status;
-
-	bool m_SensorEnter;
-	int m_AttackCount;
-	int m_SloppyTime;
-	const float m_FollowRange;
 
 	EnemyState* m_EnemyState = nullptr;
 
 private:
 	class Shadow* m_Shadow = nullptr;
-	bool m_Attack;
-	int m_AttackCollTime;
-	int m_AttackMotionCount;
-	D3DXVECTOR3 m_AttackTarget;
-	void Attack(D3DXVECTOR3 ppos);
-	void SloppyMove();
-
-private:
-	D3DXVECTOR3 m_SensorSize;
-	D3DXVECTOR3 m_MoveVlaue;
 };

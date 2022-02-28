@@ -72,9 +72,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	ShowWindow(g_Window, nCmdShow);
 	UpdateWindow(g_Window);
 
-
-
-
 	DWORD dwExecLastTime;
 	DWORD dwCurrentTime;
 	timeBeginPeriod(1);

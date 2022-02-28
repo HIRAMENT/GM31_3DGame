@@ -5,6 +5,7 @@
 #include "texture.h"
 #include "camera.h"
 #include "polygon3D.h"
+#include "calculation.h"
 #include "scene.h"
 struct CONSTANT_BUFFER
 {
@@ -21,31 +22,47 @@ Polygon3D::Polygon3D(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, ResourceT
 	D3DXVECTOR3 temppos[4];
 	D3DXVECTOR3 tempnor;
 	if (center){
-		if (size.z == 0.0f) {
-			temppos[0] = D3DXVECTOR3(-size.x / 2,  size.y / 2, 0.0f);
-			temppos[1] = D3DXVECTOR3( size.x / 2,  size.y / 2, 0.0f);
-			temppos[2] = D3DXVECTOR3(-size.x / 2, -size.y / 2, 0.0f);
-			temppos[3] = D3DXVECTOR3( size.x / 2, -size.y / 2, 0.0f);
-			tempnor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+		if (size.x == 0.0f)
+		{
+			temppos[0] = D3DXVECTOR3(0.0f,  fabsf(size.y) / 2, -size.z / 2);
+			temppos[1] = D3DXVECTOR3(0.0f,  fabsf(size.y) / 2,  size.z / 2);
+			temppos[2] = D3DXVECTOR3(0.0f, -fabsf(size.y) / 2, -size.z / 2);
+			temppos[3] = D3DXVECTOR3(0.0f, -fabsf(size.y) / 2,  size.z / 2);
 		}
-		else if(size.y == 0.0f) {
-			temppos[0] = D3DXVECTOR3(-size.x / 2, 0.0f,  size.z / 2);
-			temppos[1] = D3DXVECTOR3( size.x / 2, 0.0f,  size.z / 2);
-			temppos[2] = D3DXVECTOR3(-size.x / 2, 0.0f, -size.z / 2);
-			temppos[3] = D3DXVECTOR3( size.x / 2, 0.0f, -size.z / 2);
-			tempnor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		else
+		{
+			temppos[0] = D3DXVECTOR3(-size.x / 2,  fabsf(size.y) / 2,  fabsf(size.z) / 2);
+			temppos[1] = D3DXVECTOR3( size.x / 2,  fabsf(size.y) / 2,  fabsf(size.z) / 2);
+			temppos[2] = D3DXVECTOR3(-size.x / 2, -fabsf(size.y) / 2, -fabsf(size.z) / 2);
+			temppos[3] = D3DXVECTOR3( size.x / 2, -fabsf(size.y) / 2, -fabsf(size.z) / 2);
+		}
+
+
+		if (size.x == 0.0f)
+		{
+			tempnor = D3DXVECTOR3(Calculation::GetInstance()->GetSign(size.y), 0.0f, 0.0f);
+		}
+		else if(size.y == 0.0f) 
+		{
+			tempnor = D3DXVECTOR3(0.0f, Calculation::GetInstance()->GetSign(size.z), 0.0f);
+		}
+		else if(size.z == 0.0f) 
+		{
+			tempnor = D3DXVECTOR3(0.0f, 0.0f, -Calculation::GetInstance()->GetSign(size.x));
 		}
 	}
 	else
 	{
-		if (size.z == 0.0f) {
+		if (size.z == 0.0f) 
+		{
 			temppos[0] = D3DXVECTOR3(0.0f, size.y, 0.0f);
 			temppos[1] = D3DXVECTOR3(size.x, size.y, 0.0f);
 			temppos[2] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			temppos[3] = D3DXVECTOR3(size.x, 0.0f, 0.0f);
 			tempnor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 		}
-		else if(size.y == 0.0f){
+		else if(size.y == 0.0f)
+		{
 			temppos[0] = D3DXVECTOR3(0.0f, 0.0f, size.z);
 			temppos[1] = D3DXVECTOR3(size.x, 0.0f, size.z);
 			temppos[2] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -176,10 +193,6 @@ void Polygon3D::Draw()
 
 		if(m_isBillboard)
 		{
-			if (m_TextureTag == ResourceTag::tParticleCircle)
-			{
-				int sla = 0;
-			}
 			// カメラのビューマトリクスの取得
 			Camera* camera = GetScene()->GetGameObject<Camera>(ObjectType::eObCamera);
 			D3DXMATRIX view = camera->GetViewMatrix();
@@ -222,11 +235,11 @@ void Polygon3D::Draw()
 
 		// テクスチャ設定
 		Renderer::GetInstance()->GetDeviceContext()->PSSetShaderResources(0, 1, ResourceData::GetInstance()->GetTextureResource(m_TextureTag)->GetTexture());	// テクスチャなどをリソースト読んでいる
-		if (m_TextureTagSecond != ResourceTag::NONE) {
+		if (m_TextureTagSecond != ResourceTag::NONE) 
+		{
 			Renderer::GetInstance()->GetDeviceContext()->PSSetShaderResources(1, 1, ResourceData::GetInstance()->GetTextureResource(m_TextureTagSecond)->GetTexture());
 		}
 		
-
 		// プリミティブトポロジ設定
 		Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);	// 難しい名前に変わっているが、描画の方法を設定しているだけ
 

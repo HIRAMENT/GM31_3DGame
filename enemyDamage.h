@@ -6,10 +6,11 @@
 class EnemyDamage : public EnemyState
 {
 public:
-	EnemyDamage();
+	EnemyDamage(Enemy* enemy);
 	~EnemyDamage() {}
 	StateResult Update(Enemy* enemy) override;
 
 private:
 	Counter m_FrameCount;
+	D3DXVECTOR3 m_Velocity;
 };

@@ -42,7 +42,8 @@ void ResultScene::Update()
 	ScreenToClient(GetWindow(), &mouse);
 	if (m_ReturnButton->CursorEnter(mouse))
 	{
-		if (m_Select != 0) {
+		if (m_Select != 0) 
+		{
 			m_Select = 0;
 			ADXSound::GetInstance()->Play(4);
 		}
@@ -50,7 +51,8 @@ void ResultScene::Update()
 	}
 	else if (m_ExitButton->CursorEnter(mouse))
 	{
-		if (m_Select != 1) {
+		if (m_Select != 1) 
+		{
 			m_Select = 1;
 			ADXSound::GetInstance()->Play(4);
 		}

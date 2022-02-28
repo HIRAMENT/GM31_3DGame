@@ -13,7 +13,7 @@
 ViewSensor::ViewSensor(Scene * scene, D3DXVECTOR3 pos, float length, float radius, int drawPriority)
 	: Sensor(scene, pos, drawPriority)
 {
-	m_OutLookUI = new Polygon3D(scene, pos, { 1.0f,0.0f,1.0f }, ResourceTag::tPlane, true, false, 5);
+	m_OutLookUI = new Polygon3D(scene, pos, { 1.0f,0.0f,1.0f }, ResourceTag::tDebugSensor, true, false, 5);
 	SetRange(radius);
 	SetLength(length);
 
@@ -46,10 +46,12 @@ void ViewSensor::SetLength(float length)
 void ViewSensor::SetRotationForward(D3DXVECTOR3 forward, bool rev)
 {
 	float opangle = Movement::GetInstance()->GetTwoVecAngle({ Vec3::Forward.x, Vec3::Forward.z}, {forward.x, forward.z});
-	if (rev && -forward.x < 0.0f) {
+	if (rev && -forward.x < 0.0f) 
+	{
 		opangle *= -1;
 	}
-	else if(forward.x < 0.0f) {
+	else if(forward.x < 0.0f)
+	{
 		 opangle *= -1;
 	}
 
@@ -61,10 +63,10 @@ void ViewSensor::SetVertex()
 {
 	float rad = (m_Range * 3.14159f / 180.0f);
 	m_OutLookUI->SetVertex(
-		{ -std::sinf(rad) * m_Length, 1.0f, std::cosf(rad) * m_Length },
-		{ std::sinf(rad) * m_Length, 1.0f, std::cosf(rad) * m_Length },
-		{ 0.0f, 1.0f, 0.0f },
-		{ 0.0f, 1.0f, 0.0f });
+		{ -std::sinf(rad) * m_Length, 1.0f, std::cosf(rad) * (m_Length + 2) },
+		{  std::sinf(rad) * m_Length, 1.0f, std::cosf(rad) * (m_Length + 2) },
+		{ -std::sinf(rad) * m_Length, 1.0f, 0.0f },
+		{  std::sinf(rad) * m_Length, 1.0f, 0.0f });
 }
 
 void ViewSensor::SetSensorPosition(D3DXVECTOR3 pos)
@@ -104,7 +106,8 @@ bool ViewSensor::WithinRange(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, D3DXVECTOR3 for
 	v2 = D3DXVECTOR3(forward.x, 10, forward.z) * 5 - D3DXVECTOR3(m_Position.x, 10, m_Position.z);
 	D3DXVec3Cross(&n, &v1, &v2);
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) 
+	{
 		angle[i] = Movement::GetInstance()->GetTwoVecAngle({ forward.x, forward.z }, { vec[i].x, vec[i].y });
 		angle[i] = D3DXToDegree(angle[i]);
 		if (D3DXVec3Dot(&n, &D3DXVECTOR3(vec[i].x, 0.0f, vec[i].y)) < 0.0f)
@@ -115,10 +118,12 @@ bool ViewSensor::WithinRange(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, D3DXVECTOR3 for
 		}
 	}
 
-	if (angle[1] > m_Range && angle[2] < -m_Range) {
+	if (angle[1] > m_Range && angle[2] < -m_Range)
+	{
 		return true;
 	}
-	else if (angle[3] > m_Range && angle[4] < -m_Range) {
+	else if (angle[3] > m_Range && angle[4] < -m_Range) 
+	{
 		return true;
 	}
 

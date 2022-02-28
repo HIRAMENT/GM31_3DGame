@@ -59,7 +59,8 @@ void Particle2D::Uninit()
 void Particle2D::Update()
 {
 	D3DXVECTOR2 pos = { m_Sprite->GetPosition().x, m_Sprite->GetPosition().y };
-	if (m_Info->m_GravityUse) {
+	if (m_Info->m_GravityUse) 
+	{
 		m_Gravity += D3DXVECTOR2(m_Info->m_Gravity.x, m_Info->m_Gravity.y) * 0.01f;
 	}
 	m_Sprite->SetVertex(pos + m_Velocity + m_Gravity);
@@ -72,7 +73,8 @@ void Particle2D::Update()
 	m_LifeSpan -= 0.01f;
 
 	if (!Collision::GetInstance()->BoundingBox2D(pos, m_Sprite->GetSize(), { SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f }, {SCREEN_WIDTH, SCREEN_HEIGHT})
-		|| m_LifeSpan.GetIsFinish()) {
+		|| m_LifeSpan.GetIsFinish()) 
+	{
 		SetDestroy();
 	}
 }
@@ -130,12 +132,14 @@ void Particle3D::Uninit()
 void Particle3D::Update()
 {
 	// 重力処理
-	if (m_Info->m_GravityUse) {
+	if (m_Info->m_GravityUse)
+	{
 		m_Gravity += m_Info->m_Gravity;
 	}
 
 	// カーブ処理
-	if (m_Info->m_isCurve){
+	if (m_Info->m_isCurve)
+	{
 		m_CurveInfo.Time += (1.0f / m_LifeSpan.GetMax()) * 0.01f;
 		m_CurvePosition =  Movement::GetInstance()->BezierCurve(m_CurveInfo);
 		m_SpriteFront->SetPosition(m_CurvePosition);
@@ -158,7 +162,8 @@ void Particle3D::Update()
 		m_SpriteFront->SetAlpha(m_LifeSpan.GetRest() / (m_LifeSpan.GetMax() * 0.2f));
 	}
 
-	if (m_LifeSpan.GetIsFinish()) {
+	if (m_LifeSpan.GetIsFinish()) 
+	{
 		SetDestroy();
 	}
 }

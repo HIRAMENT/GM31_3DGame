@@ -13,7 +13,7 @@ Skydome::Skydome(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
 {
 	SetPosition(pos);
 	SetRotation({ 0.0f, 0.0f, 0.0f });
-	SetScale({ 100.0f, 100.0f, 100.0f });
+	SetScale({ 500.0f, 500.0f, 500.0f });
 
 	scene->Add(this);
 }

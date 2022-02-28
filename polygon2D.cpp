@@ -142,8 +142,7 @@ void Polygon2D::Draw()
 		Renderer::GetInstance()->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_VertexBuffer, &stride, &offset);
 
 		// テクスチャ設定
-		Renderer::GetInstance()->GetDeviceContext()->PSSetShaderResources(0, 1, ResourceData::GetInstance()->GetTextureResource(m_TextureTag)->GetTexture());	// テクスチャなどをリソースト読んでいる
-		Renderer::GetInstance()->GetDeviceContext()->PSSetShaderResources(1, 1, ResourceData::GetInstance()->GetTextureResource(ResourceTag::tTitleBG)->GetTexture());
+		Renderer::GetInstance()->GetDeviceContext()->PSSetShaderResources(0, 1, ResourceData::GetInstance()->GetTextureResource(m_TextureTag)->GetTexture());	// テクスチャなどをリソースを読んでいる
 
 		// プリミティブトポロジ設定
 		Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);	// 難しい名前に変わっているが、描画の方法を設定しているだけ
@@ -194,8 +193,8 @@ void Polygon2D::SlideTexture()
 void Polygon2D::StartSlide(int maxcapa, int capa, float speed = 1.0f)
 {
 	m_SlideOn = true;
-	m_VariaRatio = (1.0f - (float)capa / (float)maxcapa);
-	m_SlideMove = m_VariaRatio - m_SliddValue;
+	m_VariaRatio = (1.0f - (float)capa / (float)maxcapa);	// 残量の割合
+	m_SlideMove = m_VariaRatio - m_SliddValue;				// 今回の割合 - 前回の割合 = 動く割合
 	m_AnimationSpeed = speed;
 }
 
@@ -211,8 +210,9 @@ void Polygon2D::SetPartition(int section)
 
 bool Polygon2D::Slide()
 {
-	m_SliddValue += m_SlideMove / ((1.0f - m_AnimationSpeed) * 10);
-	if (m_SliddValue >= m_VariaRatio) { m_SliddValue = m_VariaRatio; }
+	m_SliddValue += m_SlideMove * m_AnimationSpeed;
+	if(m_SlideMove > 0.0f && m_SliddValue >= m_VariaRatio) { m_SliddValue = m_VariaRatio; }
+	else if (m_SlideMove < 0.0f && m_SliddValue <= m_VariaRatio){m_SliddValue = m_VariaRatio;}
 	float minX = m_Position.x - m_Size.x * 0.5f;
 	float maxX = m_Position.x + m_Size.x * 0.5f;
 

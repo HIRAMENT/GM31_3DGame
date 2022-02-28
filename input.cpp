@@ -207,8 +207,10 @@ HRESULT UpdateKeyboard(void)
 	{
 		for(int cnt = 0; cnt < NUM_KEY_MAX; cnt++)
 		{
-			g_keyStateTrigger[cnt] = (keyStateOld[cnt] ^ g_keyState[cnt]) & g_keyState[cnt];
-			g_keyStateRelease[cnt] = (keyStateOld[cnt] ^ g_keyState[cnt]) & ~g_keyState[cnt];
+			//g_keyStateTrigger[cnt] = (keyStateOld[cnt] ^ g_keyState[cnt]) & g_keyState[cnt];
+			g_keyStateTrigger[cnt] = (g_keyState[cnt] & (~keyStateOld[cnt]));
+			//g_keyStateRelease[cnt] = (keyStateOld[cnt] ^ g_keyState[cnt]) & ~g_keyState[cnt];
+			g_keyStateRelease[cnt] = (~g_keyState[cnt]) & keyStateOld[cnt];
 			g_keyStateRepeat[cnt] = g_keyStateTrigger[cnt];
 
 			if(g_keyState[cnt])

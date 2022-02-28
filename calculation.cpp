@@ -29,3 +29,15 @@ float Calculation::RandomRange(float min, float max)
 {
 	return ((float)rand() / RAND_MAX) * (max - min) + min;
 }
+
+int Calculation::RandomSign()
+{
+	if (rand() % 2 == 0)
+	{
+		return 1;
+	}
+	else
+	{
+		return -1;
+	}
+}

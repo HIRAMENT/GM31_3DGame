@@ -10,6 +10,7 @@ public:
 	Counter& operator -=(float num);
 
 	void Reset();
+	void Half() { m_Rest = m_Max / 2; }
 
 	float GetMax() const { return m_Max; }
 	float GetRest() const { return m_Rest; }

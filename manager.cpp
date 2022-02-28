@@ -13,6 +13,7 @@
 #include "myImGui.h"
 #include "ImGUI/imgui.h"
 #include "information.h"
+#include "myEffekseer.h"
 
 
 // ‰Šú‰»
@@ -20,12 +21,13 @@ void Manager::Init()
 {
 	Renderer::GetInstance()->Init();		// ‚±‚±‚ÅDirectX‚Ì‰Šú‰»‚ğ‚µ‚Ä‚¢‚é‚Ì‚Å‚±‚ÌŒã‚É‘‚©‚È‚¢‚Æ“®‚©‚È‚¢
 	Audio::InitMaster();
+	MyEffekseer::GetInstance()->Init();
 	ResourceData::GetInstance()->Init();
 	MyImGui::GetInstance()->Init();
 
 	Fade::GetInstance();
 
-	SetScene(SceneTag::eGame);
+	SetScene(SceneTag::eTitle);
 }
 
 // I—¹ˆ—
@@ -37,6 +39,7 @@ void Manager::Uninit()
 	MyImGui::GetInstance()->Uninit();
 	Fade::GetInstance()->Uninit();
 	Audio::UninitMaster();
+	MyEffekseer::GetInstance()->Uninit();
 	ResourceData::GetInstance()->Uninit();
 	Renderer::GetInstance()->Uninit();
 }
@@ -65,6 +68,8 @@ void Manager::Update()
 	//Information::GetInstance()->Display();
 
 	MyImGui::GetInstance()->UpdateEnd();
+
+	MyEffekseer::GetInstance()->Update();
 }
 
 // •`‰æˆ—
@@ -75,6 +80,7 @@ void Manager::Draw()
 	m_Scene->Draw();
 	Fade::GetInstance()->Draw();
 	MyImGui::GetInstance()->Draw();
+	MyEffekseer::GetInstance()->Draw();
 
 	Renderer::GetInstance()->End();
 }

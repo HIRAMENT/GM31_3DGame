@@ -14,6 +14,7 @@ public:
 
 	int GetPower()const { return m_Power; }
 	Counter GetCoolTime() const { return m_CoolTime; }
+	void ResetCoolTime() { m_CoolTime.Reset(); }
 	void SetPower(const int pow) { m_Power = pow; }
 	void SetCoolTime(float time) { m_CoolTime = time; }
 

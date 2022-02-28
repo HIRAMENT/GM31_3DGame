@@ -12,7 +12,7 @@ Attack::Attack(int pow, float time)
 
 void Attack::Update()
 {
-	m_CoolTime -= 0.1f;
+	m_CoolTime -= 1.0f;
 }
 
 bool Attack::CheckCoolTime()
@@ -29,7 +29,8 @@ bool Attack::CheckHit(D3DXVECTOR3 vec, D3DXVECTOR3 forward, float ang, float len
 	angle = Movement::GetInstance()->GetTwoVecAngle({ -forward.x, -forward.z }, { vpe.x, vpe.y });
 	angle = fabs(angle * 180 / 3.14159);
 	length = D3DXVec2Length(&vpe);
-	if (angle < ang && length < len) {
+	if (angle < ang && length < len) 
+	{
 		return true;
 	}
 

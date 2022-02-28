@@ -88,6 +88,33 @@
     <Filter Include="ソース ファイル\GameObject\Enemy\State">
       <UniqueIdentifier>{0c615c0d-79f7-4397-89ec-8fd156ba0094}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\System\Effekseer">
+      <UniqueIdentifier>{7c38a007-4063-48c8-aafe-c2e7983b6c59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\System\Effekseer\Effekseer">
+      <UniqueIdentifier>{9a3dd404-0e1c-400e-95e4-8aca17302730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\System\Effect">
+      <UniqueIdentifier>{55871e67-8272-4b23-bff8-50b1f842de98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameObject\Player">
+      <UniqueIdentifier>{8300d3d0-7277-4f49-9b91-f6b1f1d40ffe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\Player">
+      <UniqueIdentifier>{3167cc6d-0ee1-4c2e-ac2a-830c17ea8ef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameObject\Player\State">
+      <UniqueIdentifier>{1fbc1206-e0a0-4dac-a091-aec57ff0def4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\Player\State">
+      <UniqueIdentifier>{314a31ed-778d-4101-8b02-4e4b4892c5b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\Obstancle">
+      <UniqueIdentifier>{616661b6-0cee-4f61-b104-1f25376da2da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameObject\Obstancle">
+      <UniqueIdentifier>{67c3abb7-f630-4084-ae74-77f0b17d283b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="input.cpp">
@@ -114,13 +141,7 @@
     <ClCompile Include="resource.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="field.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="polygon2D.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="player.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="texture.cpp">
@@ -135,13 +156,7 @@
     <ClCompile Include="skydome.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="sword.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="shadow.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="rock.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="titleScene.cpp">
@@ -183,9 +198,6 @@
     <ClCompile Include="button.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="tree.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="tutorialScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
@@ -194,9 +206,6 @@
     </ClCompile>
     <ClCompile Include="meshField.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="fileManager.cpp">
-      <Filter>ソース ファイル\System</Filter>
     </ClCompile>
     <ClCompile Include="ImGUI\imgui.cpp">
       <Filter>ヘッダー ファイル\System\ImGUI\ImGUI</Filter>
@@ -295,18 +304,63 @@
       <Filter>ソース ファイル\GameObject\Enemy\State</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル\Manager</Filter>
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="effectData.cpp">
+      <Filter>ソース ファイル\System\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="effectDataBase.cpp">
+      <Filter>ソース ファイル\System\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="myEffekseer.cpp">
+      <Filter>ソース ファイル\System\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="enemyDead.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy\State</Filter>
+    </ClCompile>
+    <ClCompile Include="debugCamera.cpp">
+      <Filter>ソース ファイル\GameObject\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>ソース ファイル\GameObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="playerIdle.cpp">
+      <Filter>ソース ファイル\GameObject\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="playerJump.cpp">
+      <Filter>ソース ファイル\GameObject\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="playerMove.cpp">
+      <Filter>ソース ファイル\GameObject\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="playerAttack.cpp">
+      <Filter>ソース ファイル\GameObject\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="obstancle.cpp">
+      <Filter>ソース ファイル\GameObject\Obstancle</Filter>
+    </ClCompile>
+    <ClCompile Include="tree.cpp">
+      <Filter>ソース ファイル\GameObject\Obstancle</Filter>
+    </ClCompile>
+    <ClCompile Include="rock.cpp">
+      <Filter>ソース ファイル\GameObject\Obstancle</Filter>
+    </ClCompile>
+    <ClCompile Include="playerDamage.cpp">
+      <Filter>ソース ファイル\GameObject\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="box.cpp">
+      <Filter>ソース ファイル\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="playerStateSelector.cpp">
+      <Filter>ソース ファイル\GameObject\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="playerDead.cpp">
+      <Filter>ソース ファイル\GameObject\Player\State</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
       <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="field.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="polygon2D.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
@@ -356,9 +410,6 @@
     <ClInclude Include="skydome.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="sword.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="shader.h">
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
@@ -376,9 +427,6 @@
     </ClInclude>
     <ClInclude Include="audio.h">
       <Filter>ヘッダー ファイル\System</Filter>
-    </ClInclude>
-    <ClInclude Include="rock.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="ADX2\cri_adx2le.h">
       <Filter>ヘッダー ファイル\System\ADX2\ADX2</Filter>
@@ -452,9 +500,6 @@
     <ClInclude Include="ADX2\GM31Summer_acf.h">
       <Filter>ヘッダー ファイル\System\ADX2</Filter>
     </ClInclude>
-    <ClInclude Include="tree.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="tutorialScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
@@ -462,9 +507,6 @@
       <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="animationModel.h">
-      <Filter>ヘッダー ファイル\System</Filter>
-    </ClInclude>
-    <ClInclude Include="fileManager.h">
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
     <ClInclude Include="ImGUI\imconfig.h">
@@ -497,13 +539,7 @@
     <ClInclude Include="information.h">
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
-    <ClInclude Include="experiencePoint.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="hitPoint.h">
-      <Filter>ヘッダー ファイル\GameObject\Status</Filter>
-    </ClInclude>
-    <ClInclude Include="level.h">
       <Filter>ヘッダー ファイル\GameObject\Status</Filter>
     </ClInclude>
     <ClInclude Include="status.h">
@@ -551,9 +587,6 @@
     <ClInclude Include="enemyDamage.h">
       <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
     </ClInclude>
-    <ClInclude Include="enemyIdol.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
-    </ClInclude>
     <ClInclude Include="enemyMove.h">
       <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
     </ClInclude>
@@ -571,6 +604,75 @@
     </ClInclude>
     <ClInclude Include="viewSensor.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="myEffekseer.h">
+      <Filter>ヘッダー ファイル\System\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.h">
+      <Filter>ヘッダー ファイル\System\Effekseer\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\EffekseerRendererDX11.h">
+      <Filter>ヘッダー ファイル\System\Effekseer\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.Modules.h">
+      <Filter>ヘッダー ファイル\System\Effekseer\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.SIMD.h">
+      <Filter>ヘッダー ファイル\System\Effekseer\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="effectData.h">
+      <Filter>ヘッダー ファイル\System\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="effectDataBase.h">
+      <Filter>ヘッダー ファイル\System\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyDead.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="debugCamera.h">
+      <Filter>ヘッダー ファイル\GameObject\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyIdle.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="playerState.h">
+      <Filter>ヘッダー ファイル\GameObject\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="playerIdle.h">
+      <Filter>ヘッダー ファイル\GameObject\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="playerJump.h">
+      <Filter>ヘッダー ファイル\GameObject\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="playerMove.h">
+      <Filter>ヘッダー ファイル\GameObject\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="playerAttack.h">
+      <Filter>ヘッダー ファイル\GameObject\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="obstancle.h">
+      <Filter>ヘッダー ファイル\GameObject\Obstancle</Filter>
+    </ClInclude>
+    <ClInclude Include="rock.h">
+      <Filter>ヘッダー ファイル\GameObject\Obstancle</Filter>
+    </ClInclude>
+    <ClInclude Include="tree.h">
+      <Filter>ヘッダー ファイル\GameObject\Obstancle</Filter>
+    </ClInclude>
+    <ClInclude Include="playerDamage.h">
+      <Filter>ヘッダー ファイル\GameObject\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="box.h">
+      <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="playerStateSelector.h">
+      <Filter>ヘッダー ファイル\GameObject\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="playerDead.h">
+      <Filter>ヘッダー ファイル\GameObject\Player\State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

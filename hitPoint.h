@@ -12,6 +12,7 @@ public:
 
 	void SetHitPoint(const int hp) { m_HitPoint = hp; }
 	void SetHitPointMax(const int hp) { m_HitPointMax = hp; }
+	void SetIsHitDamage(bool hit) { m_isHitDamage = hit; }
 	int GetHitPoint() const { return m_HitPoint; }
 	int GetHitPointMax() const { return m_HitPointMax; }
 	Gauge* GetGauge() const { return m_HitPointGauge; }
@@ -29,11 +30,12 @@ protected:
 	int m_HitPointMax;
 	Counter m_CoolTimeCounter;
 	Gauge* m_HitPointGauge;
+	bool m_isHitDamage;
 };
 
 class HitPoint2D : public HitPoint {
 public:
-	HitPoint2D(class Scene* scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int hp);
+	HitPoint2D(class Scene* scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int hp, bool isnum);
 	void SetNumberDisplay(const bool dis);
 
 	void Damage(int dam) override;

@@ -5,7 +5,7 @@
 #include "enemyAttack.h"
 #include "enemyAttackJump.h"
 #include "enemyAttackRush.h"
-#include "enemyIdol.h"
+#include "enemyMove.h"
 #include "player.h"
 #include "scene.h"
 #include "status.h"
@@ -37,16 +37,16 @@ StateResult EnemyAttack::Update(Enemy * enemy)
 
 	// UŒ‚ˆ—
 	Player* player = Manager::GetInstance()->GetScene()->GetGameObject<Player>(ObjectType::eObPlayer);
-	if (enemy->GetStatus()->GetAttack()->CheckCoolTime() && Collision::GetInstance()->ObbToObb(player->GetObb(), enemy->GetObb()))
+	if (enemy->GetStatus()->GetAttack()->CheckCoolTime() && player->GetStatus()->GetHitPoint()->CheckCollTime() && player->GetStatus()->GetHitPoint()->GetHitPoint() > 0 && Collision::GetInstance()->ObbToObb(player->GetObb(), enemy->GetObb()))
 	{
-		enemy->GetStatus()->GetAttack()->GetCoolTime().Reset();
+		enemy->GetStatus()->GetAttack()->ResetCoolTime();
 		player->GetStatus()->GetHitPoint()->Damage(enemy->GetStatus()->GetAttack()->GetPower());
 		ADXSound::GetInstance()->Play(9);
 	}
 
 	if (sr == StateResult::Success)
 	{
-		enemy->ChangeState(new EnemyIdol);
+		enemy->ChangeState(new EnemyMove);
 	}
 
 	return sr;

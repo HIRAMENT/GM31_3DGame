@@ -8,14 +8,12 @@ enum class ResourceTag
 
 	tGround,
 	tShadow,
-	tTitleBG,
 	tPlane,
 	tSlash,
 	tGauge,
 	tGaugeBase,
 	tGaugeFrame,
 	tNumber,
-	tExclamation,
 	tTitleName,
 	tButtonFrame,
 	tButtonSelect,
@@ -27,12 +25,14 @@ enum class ResourceTag
 	tGameOver,
 	tGameClearLetter,
 	tGameOverLetter,
-	tTree0,
-	tTree1,
 	tTutorial,
 	tTitleTemp,
 	tTitleSphare,
 	tTargetMarker,
+	tDebugLine,
+	tDebugLineHit,
+	tDebugSensor,
+	tDebugSensorHit,
 
 	tParticleStar,
 	tParticleHeart,
@@ -41,17 +41,13 @@ enum class ResourceTag
 
 	mPlayer,
 	mSkydome,
-	mSword,
 	mRock,
-	mEnemy,
+	mTree,
 	mSmallEnemy,
 	mBossEnemy,
-	mBullet,
-	mTestEnemy,
 
 	fPlayer,
 	fTest,
-
 };
 
 enum class AnimationTag
@@ -60,7 +56,11 @@ enum class AnimationTag
 	Jump,
 	Run,
 	Attack,
-	Dance,
+	Avoidance,
+	Dash,
+	Hit,
+	Dead,
+	Backstep,
 };
 
 enum class ResourceType
@@ -69,6 +69,9 @@ enum class ResourceType
 	Model,
 	FBX,
 };
+
+class EffectDataBase;
+enum class EffectTag;
 
 class ResourceData : public Singleton<ResourceData>
 {
@@ -82,6 +85,7 @@ public:
 	class Texture* GetTextureResource(ResourceTag tag) { return m_TextureResource.at(tag); }
 	class AnimationModel* GetAnimationModel(ResourceTag tag) { return m_AnimationModelResource.at(tag); }
 	class Animation* GetAnimationResource(AnimationTag tag) {return m_AnimationResource.at(tag); }
+	class EffectData* GetEffectResource(EffectTag tag) const;
 	
 private:
 	std::unordered_map<ResourceTag,  class Model*>            m_ModelResource;
@@ -102,20 +106,3 @@ protected:
 	ResourceData() {}
 	virtual ~ResourceData() {}
 };
-
-//class Resource : public Singleton<Resource>
-//{
-//private:
-//	std::unordered_map<ResourceTag, ResourceData*> m_ResourceData;
-//
-//public:
-//	void Init();
-//	void Uninit();
-//
-//	template <typename T>
-//	T* GetResource(ResourceTag tag) { return (T*)m_ResourceData.at(tag); }
-//
-//protected:
-//	Resource() {}
-//	virtual ~Resource() {}
-//};

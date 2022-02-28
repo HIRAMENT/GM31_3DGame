@@ -4,7 +4,8 @@ Counter & Counter::operator+=(float num)
 {
 	m_Rest += num;
 
-	if (m_Rest >= m_Max) {
+	if (m_Rest >= m_Max)
+	{
 		m_Rest = m_Max;
 	}
 
@@ -13,11 +14,13 @@ Counter & Counter::operator+=(float num)
 
 Counter & Counter::operator-=(float num)
 {
-	if (!m_isFinish){
+	if (!m_isFinish)
+	{
 		m_Rest -= num;
 	}
 
-	if (m_Rest <= 0.0f) {
+	if (m_Rest <= 0.0f) 
+	{
 		m_isFinish = true;
 	}
 

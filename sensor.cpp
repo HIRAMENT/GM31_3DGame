@@ -13,7 +13,7 @@
 #include "collision.h"
 
 Sensor::Sensor(Scene * scene, D3DXVECTOR3 pos, int drawPriority)
-	:GameObject(scene, ObjectType::eObSensor, drawPriority)
+	:GameObject(scene, ObjectType::eObSensor, drawPriority - 1)
 {
 	m_Position = pos;
 	m_Rotation = { 0.0f, 0.0f, 0.0f };
@@ -27,7 +27,7 @@ Sensor::Sensor(Scene * scene, D3DXVECTOR3 pos, D3DXVECTOR3 size, int drawPriorit
 	m_Size = size;
 	m_Rotation = { 0.0f, 0.0f, 0.0f };
 	m_Scale = { 1.0f, 1.0f, 1.0f };
-	m_Obb = new OBB(pos, size, m_Rotation);
+	m_Obb = new OBB(pos, size, {0.0f,0.0f,0.0f}, m_Rotation);
 
 	scene->Add(this);
 }
@@ -52,7 +52,7 @@ void Sensor::SetRotationForward(Transform transform)
 void Sensor::SetSensorPosition(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 rot)
 {
 	m_Position = pos;
-	m_Obb->SetObb(pos, size, rot);
+	m_Obb->SetObb(pos, size, { 0.0f,0.0f,0.0f }, rot);
 }
 
 void Sensor::Update()

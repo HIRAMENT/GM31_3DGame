@@ -33,8 +33,8 @@ public:
 	void FlockIt(Enemy* enemy);
 
 private:
-	D3DXVECTOR3 SalculatingRatio(D3DXVECTOR3 vec1, D3DXVECTOR3 vec2, bool approach = true);
-	D3DXVECTOR3 SalculatingRatio(D3DXVECTOR3 vec, bool approach = true);
+	D3DXVECTOR3 SalculatingRatio(D3DXVECTOR3 vec1, D3DXVECTOR3 vec2, float dist, bool approach = true);
+	D3DXVECTOR3 SalculatingRatio(D3DXVECTOR3 vec, float dist, bool approach = true);
 
 public:
 	Boids* m_NearMate;
@@ -64,6 +64,7 @@ public:
 
 	void Add(Boids* boids);
 	void Organize();	// nullÇÃóvëfÇçÌèú
+	void Erasure(Boids* boids);
 
 public:
 	std::list<Boids*> boidsList;

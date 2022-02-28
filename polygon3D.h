@@ -3,6 +3,10 @@
 #include "gameObject.h"
 #include "shader.h"
 
+enum class BlendMode;
+enum class ShaderType;
+enum class ResourceTag;
+
 class Polygon3D : public GameObject
 {
 public:
@@ -20,6 +24,7 @@ public:
 	void SetVertex(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, D3DXVECTOR3 pos3, D3DXVECTOR3 pos4);
 	void SetAlpha(float alpha);
 	void SetColor(float r, float g, float b);
+	void SetTextureTag(ResourceTag tag) { m_TextureTag = tag; }
 	void SetTextureTagSecond(ResourceTag tag) { m_TextureTagSecond = tag; }
 	void AnimationTexture();
 	void StartSlide(int maxcapa, int capa, int speed);

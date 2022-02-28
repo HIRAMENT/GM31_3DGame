@@ -12,7 +12,7 @@
 TargetMark::TargetMark(Scene * scene, Camera* camera, int drawPriority)
 	: GameObject(scene, ObjectType::eObTargetMark, drawPriority)
 {
-	m_MarkerUI = new Polygon3D(scene, {0.0f,0.0f,0.0f}, { 1.0f, 1.0f, 0.0f }, ResourceTag::tTargetMarker, true, true, drawPriority);
+	m_MarkerUI = new Polygon3D(scene, {100.0f,100.0f,100.0f}, { 1.0f, 1.0f, 0.0f }, ResourceTag::tTargetMarker, true, true, drawPriority);
 	m_Camera = camera;
 	m_Target = nullptr;
 

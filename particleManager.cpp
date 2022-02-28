@@ -46,10 +46,12 @@ void ParticleManager::Update()
 void ParticleManager::CreateParticle()
 {
 	int prodaction;
-	if (m_ParticleInfo.m_ProductionMax == m_ParticleInfo.m_ProductionMin) {
+	if (m_ParticleInfo.m_ProductionMax == m_ParticleInfo.m_ProductionMin) 
+	{
 		prodaction = m_ParticleInfo.m_ProductionMax;
 	}
-	else{
+	else
+	{
 		prodaction = rand() % (m_ParticleInfo.m_ProductionMax - m_ParticleInfo.m_ProductionMin) + m_ParticleInfo.m_ProductionMin;
 	}
 

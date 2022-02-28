@@ -15,6 +15,7 @@ public:
 
 	void SetTarget(D3DXVECTOR3 target) { m_Target = target; }
 	D3DXMATRIX GetViewMatrix() const { return m_ViewMatrix; }
+	D3DXMATRIX GetProjectionMatrix() const { return m_ProjectionMatrix; }
 	D3DXVECTOR3 GetForwardVec() const;
 	D3DXVECTOR3 GetRightVec() const;
 
